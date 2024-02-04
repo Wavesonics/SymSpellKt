@@ -99,7 +99,7 @@ class InMemoryDataHolder(
 		)
 		for (delete in editDeletes) {
 			val hash = hashFunction.hash(delete)
-			if(hash != null) {
+			if (hash != null) {
 				if (deletes.containsKey(hash)) {
 					deletes[hash]!!.add(key)
 				} else {
@@ -113,8 +113,7 @@ class InMemoryDataHolder(
 
 	private fun addToDictionary(key: String, frequency: Double): Boolean {
 		if (spellCheckSettings.doKeySplit
-			&& key.split(spellCheckSettings.keySplitRegex.toRegex()).dropLastWhile { it.isEmpty() }
-				.toTypedArray().size > 1
+			&& key.split(spellCheckSettings.keySplitRegex).size > 1
 		) {
 			bigramsDictionary[key] = frequency
 			if (frequency < spellCheckSettings.bigramCountMin) {
@@ -136,7 +135,8 @@ class InMemoryDataHolder(
 
 	override fun getDeletes(key: String): ArrayList<String>? = deletes[hashFunction.hash(key)]
 
-	override val size: Int = wordsDictionary.size
+	override val size: Int
+		get() = wordsDictionary.size
 
 	override fun clear(): Boolean {
 		wordsDictionary.clear()

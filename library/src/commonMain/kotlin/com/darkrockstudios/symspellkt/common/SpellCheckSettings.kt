@@ -74,5 +74,5 @@ data class SpellCheckSettings(
 
 	val doKeySplit: Boolean = true,
 
-	val keySplitRegex: String = "\\s+",
+	val keySplitRegex: Regex = "\\s+".toRegex(),
 )

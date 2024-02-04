@@ -39,7 +39,6 @@ data class SuggestionItem(
 			return if(y.isNaN()) 0 else 1
 		if (y.isNaN())
 			return -1
-		// recall that 0.0 == -0.0, so we convert to infinites and try again
 		if (x == 0.0 && y == 0.0)
 			return (1 / x - 1 / y).toInt()
 		if (x == y)
