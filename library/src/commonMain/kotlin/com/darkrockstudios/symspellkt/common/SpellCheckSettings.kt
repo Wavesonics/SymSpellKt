@@ -17,22 +17,22 @@ data class SpellCheckSettings(
 	/**
 	 * Damerau function variables Deletion weight: 1.20 ~ 1.40
 	 */
-	val deletionWeight: Float = 1.0f,
+	val deletionWeight: Double = 1.0,
 
 	/**
 	 * Damerau function variables Insertion weight: 1.01
 	 */
-	val insertionWeight: Float = 1.0f,
+	val insertionWeight: Double = 1.0,
 
 	/**
 	 * Damerau function variables Replace weight: 0.9f ~ 1.20
 	 */
-	val replaceWeight: Float = 1.0f,
+	val replaceWeight: Double = 1.0,
 
 	/**
 	 * Damerau function variables Transposition weight: 0.7f ~ 1.05
 	 */
-	val transpositionWeight: Float = 1.0f,
+	val transpositionWeight: Double = 1.0,
 
 	/**
 	 * true if the spellchecker should lowercase terms

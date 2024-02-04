@@ -16,11 +16,11 @@ class TestDataHolder {
 	fun setup() {
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 4,
-			deletionWeight = 0.8f,
-			insertionWeight = 1.01f,
-			replaceWeight = 0.9f,
+			deletionWeight = 0.8,
+			insertionWeight = 1.01,
+			replaceWeight = 0.9,
 			maxEditDistance = 2.0,
-			transpositionWeight = 0.7f,
+			transpositionWeight = 0.7,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,

@@ -6,7 +6,7 @@ import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
 import org.junit.Assert
-import org.junit.BeforeClass
+import org.junit.Before
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.File
@@ -15,6 +15,51 @@ import java.io.IOException
 import java.util.*
 
 class SymSpellTest {
+	private lateinit var dataHolder: DataHolder
+	private lateinit var symSpellCheck: SymSpellCheck
+	private lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
+
+	@Before
+	@Throws(IOException::class, SpellCheckException::class)
+	fun setup() {
+		val classLoader = SymSpellTest::class.java.classLoader
+
+		val spellCheckSettings = SpellCheckSettings(
+			countThreshold = 1L,
+			deletionWeight = 1.0,
+			insertionWeight = 1.0,
+			replaceWeight = 1.0,
+			maxEditDistance = 2.0,
+			transpositionWeight = 1.0,
+			topK = 5,
+			prefixLength = 0,
+			verbosity = Verbosity.ALL,
+		)
+
+		weightedDamerauLevenshteinDistance =
+			WeightedDamerauLevenshteinDistance(
+				spellCheckSettings.deletionWeight,
+				spellCheckSettings.insertionWeight,
+				spellCheckSettings.replaceWeight,
+				spellCheckSettings.transpositionWeight,
+				null
+			)
+		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
+
+		symSpellCheck = SymSpellCheck(
+			dataHolder,
+			weightedDamerauLevenshteinDistance,
+			spellCheckSettings
+		)
+
+		loadUniGramFile(
+			File(classLoader.getResource("frequency_dictionary_en_82_765.txt")!!.file)
+		)
+		loadBiGramFile(
+			File(classLoader.getResource("frequency_bigramdictionary_en_243_342.txt")!!.file)
+		)
+	}
+
 	@Test
 	@Throws(SpellCheckException::class)
 	fun testMultiWordCorrection() {
@@ -204,75 +249,28 @@ class SymSpellTest {
 		)
 	}
 
+	@Throws(IOException::class, SpellCheckException::class)
+	private fun loadUniGramFile(file: File) {
+		val br = BufferedReader(FileReader(file))
+		var line = ""
+		while ((br.readLine()?.also { line = it }) != null) {
+			val arr = line.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+			dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
+		}
+	}
+
+	@Throws(IOException::class, SpellCheckException::class)
+	private fun loadBiGramFile(file: File) {
+		val br = BufferedReader(FileReader(file))
+		var line = ""
+		while ((br.readLine()?.also { line = it }) != null) {
+			val arr = line.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+			dataHolder
+				.addItem(DictionaryItem(arr[0] + " " + arr[1], arr[2].toDouble(), -1.0))
+		}
+	}
 
 	companion object {
-		private lateinit var dataHolder: DataHolder
-		lateinit var symSpellCheck: SymSpellCheck
-		private lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
-
-		@JvmStatic
-		@BeforeClass
-		@Throws(IOException::class, SpellCheckException::class)
-		fun setup() {
-			val classLoader = SymSpellTest::class.java.classLoader
-
-			val spellCheckSettings = SpellCheckSettings(
-				countThreshold = 1L,
-				deletionWeight = 1f,
-				insertionWeight = 1f,
-				replaceWeight = 1f,
-				maxEditDistance = 2.0,
-				transpositionWeight = 1f,
-				topK = 5,
-				prefixLength = 0,
-				verbosity = Verbosity.ALL,
-			)
-
-			weightedDamerauLevenshteinDistance =
-				WeightedDamerauLevenshteinDistance(
-					spellCheckSettings.deletionWeight.toDouble(),
-					spellCheckSettings.insertionWeight.toDouble(),
-					spellCheckSettings.replaceWeight.toDouble(),
-					spellCheckSettings.transpositionWeight.toDouble(),
-					null
-				)
-			dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
-
-			symSpellCheck = SymSpellCheck(
-				dataHolder,
-				weightedDamerauLevenshteinDistance,
-				spellCheckSettings
-			)
-
-			loadUniGramFile(
-				File(classLoader.getResource("frequency_dictionary_en_82_765.txt")!!.file)
-			)
-			loadBiGramFile(
-				File(classLoader.getResource("frequency_bigramdictionary_en_243_342.txt")!!.file)
-			)
-		}
-
-		@Throws(IOException::class, SpellCheckException::class)
-		private fun loadUniGramFile(file: File) {
-			val br = BufferedReader(FileReader(file))
-			var line = ""
-			while ((br.readLine()?.also { line = it }) != null) {
-				val arr = line.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-				dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
-			}
-		}
-
-		@Throws(IOException::class, SpellCheckException::class)
-		private fun loadBiGramFile(file: File) {
-			val br = BufferedReader(FileReader(file))
-			var line = ""
-			while ((br.readLine()?.also { line = it }) != null) {
-				val arr = line.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-				dataHolder
-					.addItem(DictionaryItem(arr[0] + " " + arr[1], arr[2].toDouble(), -1.0))
-			}
-		}
-
 		@Throws(SpellCheckException::class)
 		fun assertTypoAndCorrected(
 			spellCheck: SymSpellCheck?, typo: String, correct: String,

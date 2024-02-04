@@ -22,11 +22,11 @@ class MiscUnitTest {
 	fun testSpellCheckSettings() {
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 1f,
-			insertionWeight = 1f,
-			replaceWeight = 1f,
+			deletionWeight = 1.0,
+			insertionWeight = 1.0,
+			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
-			transpositionWeight = 1f,
+			transpositionWeight = 1.0,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
@@ -43,11 +43,11 @@ class MiscUnitTest {
 	fun testSpellChecker() {
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 1f,
-			insertionWeight = 1f,
-			replaceWeight = 1f,
+			deletionWeight = 1.0,
+			insertionWeight = 1.0,
+			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
-			transpositionWeight = 1f,
+			transpositionWeight = 1.0,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
@@ -55,10 +55,10 @@ class MiscUnitTest {
 
 		val weightedDamerauLevenshteinDistance: StringDistance =
 			WeightedDamerauLevenshteinDistance(
-				spellCheckSettings.deletionWeight.toDouble(),
-				spellCheckSettings.insertionWeight.toDouble(),
-				spellCheckSettings.replaceWeight.toDouble(),
-				spellCheckSettings.transpositionWeight.toDouble(),
+				spellCheckSettings.deletionWeight,
+				spellCheckSettings.insertionWeight,
+				spellCheckSettings.replaceWeight,
+				spellCheckSettings.transpositionWeight,
 				null
 			)
 		val dataHolder: DataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())

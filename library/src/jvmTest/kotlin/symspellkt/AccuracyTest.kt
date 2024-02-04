@@ -179,10 +179,10 @@ class AccuracyTest {
 		//Weighted
 		println("=========  Weighted =============================")
 		spellCheckSettings = SpellCheckSettings(
-			deletionWeight = 1.01f,
-			insertionWeight = 0.9f,
-			replaceWeight = 0.7f,
-			transpositionWeight = 1.0f,
+			deletionWeight = 1.01,
+			insertionWeight = 0.9,
+			replaceWeight = 0.7,
+			transpositionWeight = 1.0,
 			countThreshold = 0,
 			prefixLength = 40,
 			maxEditDistance = 2.0
@@ -223,10 +223,10 @@ class AccuracyTest {
 		//QwertyWeighted
 		println("=========  QwertyWeighted =============================")
 		spellCheckSettings = SpellCheckSettings(
-			deletionWeight = 1.01f,
-			insertionWeight = 0.9f,
-			replaceWeight = 0.7f,
-			transpositionWeight = 1.0f,
+			deletionWeight = 1.01,
+			insertionWeight = 0.9,
+			replaceWeight = 0.7,
+			transpositionWeight = 1.0,
 			countThreshold = 0,
 			prefixLength = 40,
 			maxEditDistance = 2.0,
@@ -249,10 +249,10 @@ class AccuracyTest {
 		charDistance: CharDistance?
 	): StringDistance {
 		return WeightedDamerauLevenshteinDistance(
-			spellCheckSettings.deletionWeight.toDouble(),
-			spellCheckSettings.insertionWeight.toDouble(),
-			spellCheckSettings.replaceWeight.toDouble(),
-			spellCheckSettings.transpositionWeight.toDouble(),
+			spellCheckSettings.deletionWeight,
+			spellCheckSettings.insertionWeight,
+			spellCheckSettings.replaceWeight,
+			spellCheckSettings.transpositionWeight,
 			charDistance
 		)
 	}
