@@ -23,16 +23,28 @@ data class SuggestionItem(
 	 * Comparison to use in Sorting: Prefernce given to distance, and if distance is same then count
 	 */
 	override fun compareTo(other: SuggestionItem?): Int {
-		// TODO had to deal with nullability here, returning -1 and Double.NaN in
-		// null cases, not sure if that is correct, or if it matters at all
-		return if (SpellHelper.isEqualDouble(this.distance, other?.distance ?: Double.NaN, 0.001)) {
-			other?.count?.compareTo(this.count) ?: -1
-		} else {
-			this.distance.compareTo(other?.distance ?: Double.NaN)
+		other ?: error("TODO how to handle null?")
+		if (SpellHelper.isEqualDouble(this.distance, other.distance, 0.001)) {
+			return doubleCompare(other.count, this.count)
 		}
+		return doubleCompare(this.distance, other.distance)
 	}
 
 	override fun compare(a: SuggestionItem?, b: SuggestionItem?): Int {
-		return a?.compareTo(b) ?: -1
+		return a?.compareTo(b) ?: error("TODO how to handle null?")
+	}
+
+	private fun doubleCompare(x: Double, y: Double): Int {
+		if (x.isNaN())
+			return if(y.isNaN()) 0 else 1
+		if (y.isNaN())
+			return -1
+		// recall that 0.0 == -0.0, so we convert to infinites and try again
+		if (x == 0.0 && y == 0.0)
+			return (1 / x - 1 / y).toInt()
+		if (x == y)
+			return 0
+
+		return if(x > y) 1 else -1
 	}
 }
