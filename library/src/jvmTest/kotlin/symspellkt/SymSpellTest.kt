@@ -131,29 +131,12 @@ class SymSpellTest {
 		Assert.assertEquals(correctedPhrase.lowercase(), suggestionItems[0].term.trim())
 	}
 
-
 	@Test
 	fun testDoubleComparison() {
 		Assert.assertTrue(SpellHelper.isEqualDouble(1.00999, 1.0, 0.01))
 		Assert.assertTrue(SpellHelper.isLessDouble(0.90999, 1.0, 0.01))
 		Assert.assertTrue(SpellHelper.isLessOrEqualDouble(0.7, 1.0, 0.01))
 	}
-
-//	@Test(expected = SpellCheckException::class)
-//	@Throws(SpellCheckException::class)
-//	fun testEdgeCases() {
-//		val suggestionItems: List<SuggestionItem> = symSpellCheck
-//			.lookupCompound(null, 2.0)
-//		Assert.assertNotNull(suggestionItems)
-//		assertTypoAndCorrected(
-//			symSpellCheck,
-//			"", "with", 2.0
-//		)
-//		assertTypoAndCorrected(
-//			symSpellCheck,
-//			"", "with", 3.0
-//		)
-//	}
 
 	@Test(expected = SpellCheckException::class)
 	@Throws(SpellCheckException::class)
@@ -186,30 +169,6 @@ class SymSpellTest {
 			"", "with", 3.0
 		)
 	}
-
-//	@Test
-//	fun testExceptionCodeCases() {
-//		try {
-//			val suggestionItems: List<SuggestionItem> = symSpellCheck
-//				.lookupCompound(null, 2.0)
-//			Assert.assertNotNull(suggestionItems)
-//			assertTypoAndCorrected(
-//				symSpellCheck,
-//				"", "with", 2.0
-//			)
-//			assertTypoAndCorrected(
-//				symSpellCheck,
-//				"", "with", 3.0
-//			)
-//		} catch (ex: SpellCheckException) {
-//			Assert.assertTrue((ex.customMessage?.length ?: -1) > 5)
-//			Assert.assertTrue(
-//				ex.customMessage?.equals(
-//					SpellCheckExceptionCode.LOOKUP_ERROR.message
-//				) ?: false
-//			)
-//		}
-//	}
 
 	@Test
 	@Throws(SpellCheckException::class)
@@ -252,9 +211,8 @@ class SymSpellTest {
 	@Throws(IOException::class, SpellCheckException::class)
 	private fun loadUniGramFile(file: File) {
 		val br = BufferedReader(FileReader(file))
-		var line = ""
-		while ((br.readLine()?.also { line = it }) != null) {
-			val arr = line.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+		br.forEachLine { line ->
+			val arr = line.split("\\s+".toRegex())
 			dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
 		}
 	}
@@ -262,9 +220,8 @@ class SymSpellTest {
 	@Throws(IOException::class, SpellCheckException::class)
 	private fun loadBiGramFile(file: File) {
 		val br = BufferedReader(FileReader(file))
-		var line = ""
-		while ((br.readLine()?.also { line = it }) != null) {
-			val arr = line.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+		br.forEachLine { line ->
+			val arr = line.split("\\s+".toRegex())
 			dataHolder
 				.addItem(DictionaryItem(arr[0] + " " + arr[1], arr[2].toDouble(), -1.0))
 		}

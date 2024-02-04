@@ -12,7 +12,8 @@ import java.io.File
 import java.io.FileReader
 import java.io.IOException
 
-class SymSpellTestWeighted {
+class SymSpellTestCustomized {
+
 	lateinit var dataHolder: DataHolder
 	lateinit var symSpellCheck: SymSpellCheck
 	lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
@@ -24,11 +25,11 @@ class SymSpellTestWeighted {
 
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 0.8,
-			insertionWeight = 1.01,
-			replaceWeight = 1.5,
+			deletionWeight = 1.0,
+			insertionWeight = 1.0,
+			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
-			transpositionWeight = 0.7,
+			transpositionWeight = 1.0,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
@@ -40,20 +41,21 @@ class SymSpellTestWeighted {
 				spellCheckSettings.insertionWeight,
 				spellCheckSettings.replaceWeight,
 				spellCheckSettings.transpositionWeight,
-				null
+				QwertyDistance(),
 			)
 		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
 		symSpellCheck = SymSpellCheck(
-			dataHolder, weightedDamerauLevenshteinDistance,
+			dataHolder,
+			weightedDamerauLevenshteinDistance,
 			spellCheckSettings
 		)
-		val file = File(classLoader.getResource("frequency_dictionary_en_82_765.txt")!!.file)
-		val br = BufferedReader(FileReader(file))
-		br.forEachLine { line ->
-			val arr = line.split("\\s+".toRegex())
-			dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
-		}
+		loadUniGramFile(
+			File(classLoader.getResource("frequency_dictionary_en_82_765.txt")!!.file)
+		)
+		loadBiGramFile(
+			File(classLoader.getResource("frequency_bigramdictionary_en_243_342.txt")!!.file)
+		)
 	}
 
 	@Test
@@ -61,23 +63,23 @@ class SymSpellTestWeighted {
 	fun testSingleWordCorrection() {
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"uick", "quick", 2.0
+			"uick", "huck", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"bigjest", "big jest", 2.0
+			"bigjest", "biggest", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"playrs", "plays", 2.0
+			"playrs", "players", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"slatew", "slate", 2.0
+			"slatew", "slates", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"ith", "it", 2.0
+			"ith", "with", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
@@ -87,17 +89,18 @@ class SymSpellTestWeighted {
 			symSpellCheck,
 			"funn", "fun", 2.0
 		)
+		SymSpellTest.assertTypoAndCorrected(
+			symSpellCheck,
+			"slives", "slices", 2.0
+		)
 	}
 
 	@Test
 	@Throws(SpellCheckException::class)
 	fun testDoubleWordCorrection() {
-		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
-			"theq uick brown f ox jumps over the lazy dog",
-			"the quick brown fox jumps over the lazy dog",
-			2.0
-		)
+		SymSpellTest.assertTypoAndCorrected(symSpellCheck, "Whereis", "where is", 2.0)
+		SymSpellTest.assertTypoAndCorrected(symSpellCheck, "couqdn'tread", "couldn't read", 2.0)
+		SymSpellTest.assertTypoAndCorrected(symSpellCheck, "hehaD", "he had", 2.0)
 	}
 
 	@Test
@@ -105,9 +108,30 @@ class SymSpellTestWeighted {
 	fun testMultiWordCorrection() {
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"theq uick brown f ox jumps over the lazy dog",
-			"the quick brown fox jumps over the lazy dog",
+			"Whereis th elove hehaD Dated FOREEVER forImuch of thepast who couqdn'tread in "
+					+ "sixthgrade AND ins pired him",
+			"where is the love he had dated forever for much of the past who couldn't read "
+					+ "in sixth grade and inspired him",
 			2.0
 		)
+	}
+
+	@Throws(IOException::class, SpellCheckException::class)
+	private fun loadUniGramFile(file: File) {
+		val br = BufferedReader(FileReader(file))
+		br.forEachLine { line ->
+			val arr = line.split("\\s+".toRegex())
+			dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
+		}
+	}
+
+	@Throws(IOException::class, SpellCheckException::class)
+	private fun loadBiGramFile(file: File) {
+		val br = BufferedReader(FileReader(file))
+		br.forEachLine { line ->
+			val arr = line.split("\\s+".toRegex())
+			dataHolder
+				.addItem(DictionaryItem(arr[0] + " " + arr[1], arr[2].toDouble(), -1.0))
+		}
 	}
 }

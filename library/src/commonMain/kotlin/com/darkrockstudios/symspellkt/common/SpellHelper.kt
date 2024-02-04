@@ -76,7 +76,7 @@ object SpellHelper {
 	}
 
 	fun tokenizeOnWhiteSpace(word: String): Array<String> {
-		return word.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+		return word.split("\\s+".toRegex()).toTypedArray()
 	}
 
 	fun isLessOrEqualDouble(d1: Double, d2: Double, threshold: Double): Boolean {

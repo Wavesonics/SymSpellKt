@@ -39,6 +39,14 @@ kotlin {
             }
         }
     }
+
+    // The german test needs a lot of memory
+    val jvmTest by sourceSets.getting
+    tasks.withType<Test> {
+        if (name == jvmTest.name) {
+            jvmArgs = listOf("-Xms4g", "-Xmx8g")
+        }
+    }
 }
 
 android {
