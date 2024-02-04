@@ -548,7 +548,9 @@ class SymSpellCheck(
 	 * this is just a hash collision
 	 */
 	private fun deleteInSuggestionPrefix(
-		delete: String?, deleteLen: Int, suggestion: String,
+		delete: String,
+		deleteLen: Int,
+		suggestion: String,
 		suggestionLen: Int
 	): Boolean {
 		var runningSuggestionLen = suggestionLen
@@ -561,7 +563,7 @@ class SymSpellCheck(
 
 		var j = 0
 		for (i in 0 until deleteLen) {
-			val delChar = delete!![i]
+			val delChar = delete[i]
 			while (j < runningSuggestionLen && delChar != suggestion[j]) {
 				j++
 			}
@@ -606,50 +608,49 @@ class SymSpellCheck(
 	 */
 	@Throws(SpellCheckException::class)
 	override fun wordBreakSegmentation(
-		phrase: String,
-		maxSegmentationWordLength: Int,
+		phrase: String, maxSegmentationWordLength: Int,
 		maxEditDistance: Double
 	): Composition {
 		/*
-    number of all words in the corpus used to generate the
-        frequency dictionary. This is used to calculate the word
-        occurrence probability p from word counts c : p=c/nMax. nMax equals
-        the sum of all counts c in the dictionary only if the
-        dictionary is complete, but not if the dictionary is
-        truncated or filtered
-     */
+	    number of all words in the corpus used to generate the
+	        frequency dictionary. This is used to calculate the word
+	        occurrence probability p from word counts c : p=c/nMax. nMax equals
+	        the sum of all counts c in the dictionary only if the
+	        dictionary is complete, but not if the dictionary is
+	        truncated or filtered
+	     */
 
-		var runningPhrase = phrase
-		if (runningPhrase.isEmpty()) {
+		var curPhrase = phrase
+		if (curPhrase.isEmpty()) {
 			return Composition()
 		}
 		if (spellCheckSettings.lowerCaseTerms) {
-			runningPhrase = runningPhrase.lowercase()
+			curPhrase = curPhrase.lowercase()
 		}
 
 		/*
-      Early exit when in exclusion list
-     */
-		val exclusionItem = dataHolder.getExclusionItem(runningPhrase)
-		if (!exclusionItem.isNullOrEmpty()) {
-			return Composition(runningPhrase, exclusionItem)
+	      Early exit when in exclusion list
+	     */
+		val exclusion = dataHolder.getExclusionItem(curPhrase)
+		if (!exclusion.isNullOrEmpty()) {
+			return Composition(curPhrase, dataHolder.getExclusionItem(curPhrase))
 		}
 
-		val arraySize = min(maxSegmentationWordLength.toDouble(), runningPhrase.length.toDouble()).toInt()
-		val compositions = arrayOfNulls<Composition>(arraySize)
+		val arraySize = min(maxSegmentationWordLength.toDouble(), curPhrase.length.toDouble()).toInt()
+		val compositions: Array<Composition?> = arrayOfNulls<Composition>(arraySize)
 		for (i in 0 until arraySize) {
 			compositions[i] = Composition()
 		}
 		var circularIndex = -1
 		//outer loop (column): all possible part start positions
-		for (j in runningPhrase.indices) {
+		for (j in curPhrase.indices) {
 			//inner loop (row): all possible part lengths (from start position): part can't be bigger
 			// than longest word in dictionary (other than long unknown word)
-			val imax = min((runningPhrase.length - j).toDouble(), maxSegmentationWordLength.toDouble())
+			val imax = min((curPhrase.length - j).toDouble(), maxSegmentationWordLength.toDouble())
 				.toInt()
 			for (i in 1..imax) {
 				//get top spelling correction/ed for part
-				var part = runningPhrase.substring(j, j + i)
+				var part = curPhrase.substring(j, j + i)
 				var separatorLength = 0
 				var topEd = 0.0
 				var topProbabilityLog: Double
@@ -695,32 +696,28 @@ class SymSpellCheck(
 				}
 				val destinationIndex = ((i + circularIndex) % arraySize)
 
-				val destComp =
-					compositions[destinationIndex] ?: error("Failed to find destinationIndex: $destinationIndex")
-				val circularComp = compositions[circularIndex] ?: error("Failed to find circularIndex: $circularIndex")
-
 				//set values in first loop
 				if (j == 0) {
-					compositions[destinationIndex]?.apply {
-						segmentedString = part
-						correctedString = topResult
-						distanceSum = topEd
-						logProbSum = topProbabilityLog
-					}
+					compositions[destinationIndex]!!.segmentedString = part
+					compositions[destinationIndex]!!.correctedString = topResult
+					compositions[destinationIndex]!!.distanceSum = topEd
+					compositions[destinationIndex]!!.logProbSum = topProbabilityLog
 				} else if ((i == maxSegmentationWordLength) //replace values if better probabilityLogSum, if same edit distance OR one
-
 					// space difference
-					|| (((circularComp.distanceSum + topEd
-							== destComp.distanceSum) || (circularComp.distanceSum + separatorLength + topEd
-							== destComp.distanceSum)) && (destComp.logProbSum
-							< circularComp.logProbSum + topProbabilityLog)) //replace values if smaller edit distance
-					|| (circularComp.distanceSum + separatorLength + topEd
-							< destComp.distanceSum)
+					|| (((compositions[circularIndex]?.distanceSum!! + topEd
+							== compositions[destinationIndex]!!.distanceSum) || (compositions[circularIndex]!!.distanceSum + separatorLength + topEd
+							== compositions[destinationIndex]!!.distanceSum)) && (compositions[destinationIndex]!!.logProbSum
+							< compositions[circularIndex]!!.logProbSum + topProbabilityLog)) //replace values if smaller edit distance
+					|| (compositions[circularIndex]!!.distanceSum + separatorLength + topEd
+							< compositions[destinationIndex]!!.distanceSum)
 				) {
-					destComp.segmentedString = circularComp.segmentedString + " " + part
-					destComp.correctedString = circularComp.correctedString + " " + topResult
-					destComp.distanceSum = circularComp.distanceSum + topEd
-					destComp.logProbSum = circularComp.logProbSum + topProbabilityLog
+					compositions[destinationIndex]!!.segmentedString =
+						compositions[circularIndex]!!.segmentedString + " " + part
+					compositions[destinationIndex]!!.correctedString =
+						compositions[circularIndex]!!.correctedString + " " + topResult
+					compositions[destinationIndex]!!.distanceSum = compositions[circularIndex]!!.distanceSum + topEd
+					compositions[destinationIndex]!!.logProbSum =
+						compositions[circularIndex]!!.logProbSum + topProbabilityLog
 				}
 			}
 			circularIndex++
