@@ -11,8 +11,8 @@ import com.darkrockstudios.symspellkt.exception.SpellCheckException
  */
 abstract class SpellChecker(
 	var dataHolder: DataHolder,
-	protected var stringDistance: StringDistance,
-	protected var spellCheckSettings: SpellCheckSettings,
+	var stringDistance: StringDistance,
+	var spellCheckSettings: SpellCheckSettings,
 ) {
 	@Throws(SpellCheckException::class)
 	abstract fun lookup(
