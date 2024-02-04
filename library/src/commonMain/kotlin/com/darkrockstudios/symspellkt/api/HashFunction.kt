@@ -7,7 +7,7 @@ interface HashFunction {
 	 * @param bytes the bytes to be hashed
 	 * @return the generated hash value
 	 */
-	fun hash(bytes: ByteArray?): Long
+	fun hash(bytes: ByteArray?): Long?
 
 
 	/**
