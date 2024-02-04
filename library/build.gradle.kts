@@ -40,7 +40,7 @@ kotlin {
 				implementation(libs.junit4)
 				implementation(libs.cvsparser)
 				implementation(libs.jmh)
-				configurations["kapt"].dependencies.add(libs.jmh.annprocess.get())
+				//configurations["kapt"].dependencies.add(libs.jmh.annprocess.get())
 			}
 		}
 	}
