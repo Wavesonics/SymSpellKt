@@ -46,38 +46,38 @@ class WeightedDamerauLevenshteinDistance(
 		this.charDistance = charDistance
 	}
 
-	override fun getDistance(source: String, target: String): Double {
-		if (source == target) {
+	override fun getDistance(w1: String, w2: String): Double {
+		if (w1 == w2) {
 			return 0.0
 		}
 
-		if (source.isEmpty()) {
-			return target.length.toDouble()
+		if (w1.isEmpty()) {
+			return w2.length.toDouble()
 		}
 
-		if (target.isEmpty()) {
-			return source.length.toDouble()
+		if (w2.isEmpty()) {
+			return w1.length.toDouble()
 		}
 
-		val useCharDistance = (charDistance != null && source.length == target.length)
-		val d = Array(target.length + 1) {
+		val useCharDistance = (charDistance != null && w1.length == w2.length)
+		val d = Array(w2.length + 1) {
 			DoubleArray(
-				source.length + 1
+				w1.length + 1
 			)
 		} // 2d matrix
 
 		// Step 2
-		for (i in target.length downTo 0) {
+		for (i in w2.length downTo 0) {
 			d[i][0] = i * insertionWeight // Add insertion weight
 		}
-		for (j in source.length downTo 0) {
+		for (j in w1.length downTo 0) {
 			d[0][j] = j * deletionWeight
 		}
 
-		for (i in 1..target.length) {
-			val target_i = target[i - 1]
-			for (j in 1..source.length) {
-				val source_j = source[j - 1]
+		for (i in 1..w2.length) {
+			val target_i = w2[i - 1]
+			for (j in 1..w1.length) {
+				val source_j = w1[j - 1]
 
 				val cost = getReplaceCost(target_i, source_j, useCharDistance)
 
@@ -86,13 +86,13 @@ class WeightedDamerauLevenshteinDistance(
 					d[i][j - 1] + deletionWeight,  //Deltion
 					d[i - 1][j - 1] + cost
 				) //Replacement
-				if (isTransposition(i, j, source, target)) {
+				if (isTransposition(i, j, w1, w2)) {
 					min = kotlin.math.min(min, d[i - 2][j - 2] + transpositionWeight) // transpose
 				}
 				d[i][j] = min
 			}
 		}
-		return d[target.length][source.length]
+		return d[w2.length][w1.length]
 	}
 
 	override fun getDistance(w1: String, w2: String, maxEditDistance: Double): Double {
