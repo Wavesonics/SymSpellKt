@@ -8,6 +8,7 @@ android-compileSdk = "33"
 murmurhash = "0.4.0"
 cvsparser = "1.10.0"
 junit = "4.13.2"
+jmh = "1.37"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -15,6 +16,8 @@ nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.grad
 murmurhash = { module = "com.goncalossilva:murmurhash", version.ref = "murmurhash" }
 cvsparser = { module = "org.apache.commons:commons-csv", version.ref = "cvsparser" }
 junit4 = { module = "junit:junit", version.ref = "junit" }
+jmh = { module = "org.openjdk.jmh:jmh-core-benchmarks", version.ref = "jmh" }
+jmh-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
