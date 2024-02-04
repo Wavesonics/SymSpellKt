@@ -97,7 +97,7 @@ class SymSpellCheck(
 				//choose best suggestion
 				suggestionParts.add(suggestions[0])
 			} else {
-				lookupSplitWords(suggestionParts, suggestions, items[i], editDistance)
+				lookupSplitWords(suggestionParts, suggestions, items[i]!!, editDistance)
 			}
 		}
 
@@ -179,7 +179,7 @@ class SymSpellCheck(
 	@Throws(SpellCheckException::class)
 	private fun lookupSplitWords(
 		suggestionParts: MutableList<SuggestionItem>,
-		suggestions: List<SuggestionItem>, word: String?, maxEditDistance: Double
+		suggestions: List<SuggestionItem>, word: String, maxEditDistance: Double
 	) {
 		//if no perfect suggestion, split word into pairs
 
@@ -188,7 +188,7 @@ class SymSpellCheck(
 			suggestionSplitBest = suggestions[0]
 		}
 
-		if (word!!.length <= 1) {
+		if (word.length <= 1) {
 			suggestionParts.add(SuggestionItem(word, maxEditDistance + 1, 0.0))
 			return
 		}
@@ -197,7 +197,7 @@ class SymSpellCheck(
 			val part1 = word.substring(0, j)
 			val part2 = word.substring(j)
 
-			val suggestions1: List<SuggestionItem> = lookup(
+			val suggestions1 = lookup(
 				part1, Verbosity.TOP,
 				maxEditDistance
 			)
@@ -206,14 +206,14 @@ class SymSpellCheck(
 				continue
 			}
 
-			val suggestions2: List<SuggestionItem> = lookup(part2, Verbosity.TOP, maxEditDistance)
+			val suggestions2 = lookup(part2, Verbosity.TOP, maxEditDistance)
 
 			if (SpellHelper.continueConditionIfHeadIsSame(suggestions, suggestions2)) {
 				continue
 			}
 
-			val split: String = suggestions1[0].term + " " + suggestions2[0].term
-			var splitDistance: Double = stringDistance.getDistance(word, split, maxEditDistance)
+			val split = suggestions1[0].term + " " + suggestions2[0].term
+			var splitDistance = stringDistance.getDistance(word, split, maxEditDistance)
 			var count: Double
 
 			if (splitDistance < 0) {
@@ -229,7 +229,7 @@ class SymSpellCheck(
 				}
 			}
 
-			val bigramFreq: Double? = dataHolder.getItemFrequencyBiGram(split)
+			val bigramFreq = dataHolder.getItemFrequencyBiGram(split)
 
 			//if bigram exists in bigram dictionary
 			if (bigramFreq != null) {
@@ -240,12 +240,12 @@ class SymSpellCheck(
 						//make count bigger than count of single term correction
 						count = max(count, suggestions[0].count + 2)
 					} else if ((suggestions1[0].term === suggestions[0].term)
-						|| (suggestions2[0].term.equals(suggestions[0].term))
+						|| (suggestions2[0].term == suggestions[0].term)
 					) {
 						//make count bigger than count of single term correction
 						count = max(count, suggestions[0].count + 1)
 					}
-				} else if ((suggestions1[0].term + suggestions2[0].term).equals(word)) {
+				} else if ((suggestions1[0].term + suggestions2[0].term) == word) {
 					count = max(
 						count,
 						max(suggestions1[0].count, suggestions2[0].count)
@@ -259,7 +259,7 @@ class SymSpellCheck(
 				)
 			}
 
-			val suggestionSplit: SuggestionItem = SuggestionItem(split, splitDistance, count)
+			val suggestionSplit = SuggestionItem(split, splitDistance, count)
 
 			if ((suggestionSplitBest == null) || (suggestionSplit.count > suggestionSplitBest
 					.count)
@@ -506,13 +506,14 @@ class SymSpellCheck(
 
 
 	private fun getMinDistanceOnPrefixbasis(
-		maxEditDistance: Double,
-		candidate: String,
-		phrase: String,
+		maxEditDistance: Double, candidate: String?, phrase: String,
 		suggestion: String
 	): Int {
-		return if ((spellCheckSettings.prefixLength - maxEditDistance) == candidate.length.toDouble()) {
-			(min(phrase.length.toDouble(), suggestion.length.toDouble()) - spellCheckSettings.prefixLength).toInt()
+		return if ((spellCheckSettings.prefixLength - maxEditDistance) == candidate!!.length.toDouble()) {
+			(min(
+				phrase.length.toDouble(),
+				suggestion.length.toDouble()
+			) - spellCheckSettings.prefixLength).toInt()
 		} else {
 			0
 		}
