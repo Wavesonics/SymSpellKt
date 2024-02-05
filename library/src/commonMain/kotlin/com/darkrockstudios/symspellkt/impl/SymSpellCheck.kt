@@ -348,7 +348,7 @@ class SymSpellCheck(
 		consideredSuggestions.add(curPhrase)
 		var maxEditDistance2 = maxEditDistance
 		val phrasePrefixLen: Int
-		val candidates: MutableList<String?> = ArrayList()
+		val candidates: MutableList<String> = ArrayList()
 
 		if (phraseLen > spellCheckSettings.prefixLength) {
 			phrasePrefixLen = spellCheckSettings.prefixLength
@@ -360,7 +360,7 @@ class SymSpellCheck(
 
 		while (candidates.isNotEmpty()) {
 			val candidate = candidates.removeAt(0)
-			val candidateLen = candidate!!.length
+			val candidateLen = candidate.length
 			val lenDiff = phraseLen - candidateLen
 			/*
       early termination: if candidate distance is already higher than suggestion distance,

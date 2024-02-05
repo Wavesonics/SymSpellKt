@@ -32,7 +32,7 @@ class SymSpellTest {
 			maxEditDistance = 2.0,
 			transpositionWeight = 1.0,
 			topK = 5,
-			prefixLength = 0,
+			prefixLength = 10,
 			verbosity = Verbosity.ALL,
 		)
 
@@ -88,7 +88,6 @@ class SymSpellTest {
 			2.0
 		)
 	}
-
 
 	@Test
 	@Throws(SpellCheckException::class)
@@ -173,14 +172,13 @@ class SymSpellTest {
 	@Test
 	@Throws(SpellCheckException::class)
 	fun testLookup() {
-		var suggestionItems: MutableList<SuggestionItem?> = symSpellCheck.lookup("hel").toMutableList()
-		Collections.sort(suggestionItems)
+		var suggestionItems = symSpellCheck.lookup("hel")
 		Assert.assertNotNull(suggestionItems)
 		Assert.assertTrue(suggestionItems.size > 0)
-		Assert.assertEquals(78, suggestionItems.size.toLong())
+		Assert.assertEquals(78, suggestionItems.size)
 
-		suggestionItems = symSpellCheck.lookup("hel", Verbosity.ALL).toMutableList()
-		Assert.assertEquals(78, suggestionItems.size.toLong())
+		suggestionItems = symSpellCheck.lookup("hel", Verbosity.ALL)
+		Assert.assertEquals(78, suggestionItems.size)
 	}
 
 	@Test
@@ -190,7 +188,7 @@ class SymSpellTest {
 		Collections.sort(suggestionItems)
 		Assert.assertNotNull(suggestionItems)
 		Assert.assertTrue(suggestionItems.isNotEmpty())
-		Assert.assertEquals(3, suggestionItems.size.toLong())
+		Assert.assertEquals(3, suggestionItems.size)
 	}
 
 	@Test
@@ -230,11 +228,11 @@ class SymSpellTest {
 	companion object {
 		@Throws(SpellCheckException::class)
 		fun assertTypoAndCorrected(
-			spellCheck: SymSpellCheck?, typo: String, correct: String,
+			spellCheck: SymSpellCheck, typo: String, correct: String,
 			maxEd: Double
 		) {
 			val suggestionItems: List<SuggestionItem> = spellCheck
-				?.lookupCompound(typo.lowercase().trim(), maxEd)!!
+				.lookupCompound(typo.lowercase().trim(), maxEd)
 			Assert.assertTrue(suggestionItems.isNotEmpty())
 			Assert.assertEquals(
 				correct.lowercase().trim(),
