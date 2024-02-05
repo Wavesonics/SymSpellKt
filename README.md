@@ -19,8 +19,8 @@ output.
 
 ### Performance
 
-The performance of the Kotlin implementation VS the Java implementation is about half
-as fast, it's possible there are more Kotlin specific optimizations that could improve this.
+The performance of the Kotlin implementation VS the Java implementation is about the same.
+Kotlin might be slightly better after a few optimizations I applied.
 
 ## SymSpell v6.6 (Bigrams)
 

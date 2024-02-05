@@ -61,8 +61,8 @@ class SymSpellCheck(
 		var isLastCombi = false
 
 		/*
-      Early exit when in exclusion list
-     */
+	      Early exit when in exclusion list
+	     */
 		if (dataHolder.getExclusionItem(runningPhrase)?.isNotEmpty() == true) {
 			return SpellHelper
 				.earlyExit(
@@ -154,8 +154,9 @@ class SymSpellCheck(
 
 		val editDistance: Double = stringDistance
 			.getDistance(
-				best1.term + " ${best2.term}",
-				"$previousToken $token", maxEditDistance
+				"${best1.term} ${best2.term}",
+				"$previousToken $token",
+				maxEditDistance
 			)
 
 		if (editDistance >= 0 && suggestionsCombi[0].distance < editDistance) {
@@ -179,10 +180,11 @@ class SymSpellCheck(
 	@Throws(SpellCheckException::class)
 	private fun lookupSplitWords(
 		suggestionParts: MutableList<SuggestionItem>,
-		suggestions: List<SuggestionItem>, word: String, maxEditDistance: Double
+		suggestions: List<SuggestionItem>,
+		word: String,
+		maxEditDistance: Double
 	) {
 		//if no perfect suggestion, split word into pairs
-
 		var suggestionSplitBest: SuggestionItem? = null
 		if (suggestions.isNotEmpty()) {
 			suggestionSplitBest = suggestions[0]
@@ -254,16 +256,13 @@ class SymSpellCheck(
 			} else {
 				count = min(
 					spellCheckSettings.bigramCountMin,
-					(suggestions1[0].count / nMax
-							* suggestions2[0].count)
+					(suggestions1[0].count / nMax * suggestions2[0].count)
 				)
 			}
 
 			val suggestionSplit = SuggestionItem(split, splitDistance, count)
 
-			if ((suggestionSplitBest == null) || (suggestionSplit.count > suggestionSplitBest
-					.count)
-			) {
+			if ((suggestionSplitBest == null) || (suggestionSplit.count > suggestionSplitBest.count)) {
 				suggestionSplitBest = suggestionSplit
 			}
 		}
@@ -314,8 +313,8 @@ class SymSpellCheck(
 		)
 
 		/*
-      Early exit when in exclusion list
-     */
+	      Early exit when in exclusion list
+	     */
 		val exclusionItem = dataHolder.getExclusionItem(curPhrase)
 		if (!exclusionItem.isNullOrEmpty()) {
 			return SpellHelper
@@ -323,8 +322,8 @@ class SymSpellCheck(
 		}
 
 		/*
-    Early exit when word is too big
-     */
+	    Early exit when word is too big
+	     */
 		if ((phraseLen - maxEditDistance) > spellCheckSettings.maxLength) {
 			return SpellHelper.earlyExit(
 				suggestionItems, curPhrase, maxEditDistance,
@@ -689,36 +688,40 @@ class SymSpellCheck(
 					topResult = part
 					//default, if word not found
 					//otherwise long input text would win as long unknown word (with ed=edmax+1 ), although
-					// there there should many spaces inserted
+					// there should many spaces inserted
 					topEd += part.length
 					topProbabilityLog = log10(10.0 / (nMax * 10.0.pow(part.length.toDouble())))
 				}
 				val destinationIndex = ((i + circularIndex) % arraySize)
 
+				val destComp =
+					compositions[destinationIndex] ?: error("Failed to find destinationIndex: $destinationIndex")
+				val circularComp = compositions[circularIndex] ?: error("Failed to find circularIndex: $circularIndex")
+
 				//set values in first loop
 				if (j == 0) {
-					compositions[destinationIndex]!!.segmentedString = part
-					compositions[destinationIndex]!!.correctedString = topResult
-					compositions[destinationIndex]!!.distanceSum = topEd
-					compositions[destinationIndex]!!.logProbSum = topProbabilityLog
+					destComp.apply {
+						segmentedString = part
+						correctedString = topResult
+						distanceSum = topEd
+						logProbSum = topProbabilityLog
+					}
 				} else if ((i == maxSegmentationWordLength) //replace values if better probabilityLogSum, if same edit distance OR one
 					// space difference
-					|| (((compositions[circularIndex]?.distanceSum!! + topEd
-							== compositions[destinationIndex]!!.distanceSum) || (compositions[circularIndex]!!.distanceSum + separatorLength + topEd
-							== compositions[destinationIndex]!!.distanceSum)) && (compositions[destinationIndex]!!.logProbSum
-							< compositions[circularIndex]!!.logProbSum + topProbabilityLog)) //replace values if smaller edit distance
-					|| (compositions[circularIndex]!!.distanceSum + separatorLength + topEd
-							< compositions[destinationIndex]!!.distanceSum)
+					|| (((circularComp.distanceSum + topEd
+							== destComp.distanceSum) || (circularComp.distanceSum + separatorLength + topEd
+							== destComp.distanceSum)) && (destComp.logProbSum
+							< circularComp.logProbSum + topProbabilityLog)) //replace values if smaller edit distance
+					|| (circularComp.distanceSum + separatorLength + topEd
+							< destComp.distanceSum)
 				) {
-					compositions[destinationIndex]!!.segmentedString =
-						compositions[circularIndex]!!.segmentedString + " " + part
-					compositions[destinationIndex]!!.correctedString =
-						compositions[circularIndex]!!.correctedString + " " + topResult
-					compositions[destinationIndex]!!.distanceSum = compositions[circularIndex]!!.distanceSum + topEd
-					compositions[destinationIndex]!!.logProbSum =
-						compositions[circularIndex]!!.logProbSum + topProbabilityLog
+					destComp.segmentedString = circularComp.segmentedString + " " + part
+					destComp.correctedString = circularComp.correctedString + " " + topResult
+					destComp.distanceSum = circularComp.distanceSum + topEd
+					destComp.logProbSum = circularComp.logProbSum + topProbabilityLog
 				}
 			}
+
 			circularIndex++
 			if (circularIndex >= arraySize) {
 				circularIndex = 0
