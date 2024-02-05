@@ -9,11 +9,11 @@ import com.darkrockstudios.symspellkt.api.CharDistance
  * [Qwerty Adjacency Map](http://www.nada.kth.se/~ann/exjobb/axel_samuelsson.pdf)
  */
 class QwertyDistance : CharDistance {
-	var directConnect: Double = 0.1
-	var diagonalConnect: Double = 0.4
-	var defaultValue: Double = 1.0
+	private val directConnect: Double = 0.1
+	private val diagonalConnect: Double = 0.4
+	private val defaultValue: Double = 1.0
 
-	var operationCost: Array<DoubleArray> = Array('z'.code + 1) { DoubleArray('z'.code + 1) }
+	private var operationCost: Array<DoubleArray> = Array('z'.code + 1) { DoubleArray('z'.code + 1) }
 
 	init {
 		this.initializeCostMatrix()
@@ -29,7 +29,7 @@ class QwertyDistance : CharDistance {
 	/**
 	 * Initializing the cost matrix
 	 */
-	fun initializeCostMatrix() {
+	private fun initializeCostMatrix() {
 		for (row in this.operationCost) {
 			row.fill(defaultValue)
 		}

@@ -3,11 +3,11 @@ package com.darkrockstudios.symspellkt.common
 import com.darkrockstudios.symspellkt.api.CharDistance
 
 class QwertzDistance : CharDistance {
-	var directConnect: Double = 0.1
-	var diagonalConnect: Double = 0.4
-	var defaultValue: Double = 1.0
+	private val directConnect: Double = 0.1
+	private val diagonalConnect: Double = 0.4
+	private val defaultValue: Double = 1.0
 
-	var operationCost: MutableMap<String, Double> = mutableMapOf()
+	private val operationCost: MutableMap<String, Double> = mutableMapOf()
 
 	init {
 		this.initializeCostMatrix()
@@ -23,7 +23,7 @@ class QwertzDistance : CharDistance {
 	/**
 	 * Initializing the cost matrix
 	 */
-	fun initializeCostMatrix() {
+	private fun initializeCostMatrix() {
 		//Middle row
 
 		addReplaceWeight('a', "s", directConnect)

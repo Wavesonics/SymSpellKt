@@ -13,38 +13,12 @@ import com.darkrockstudios.symspellkt.api.StringDistance
  * action.
  */
 class WeightedDamerauLevenshteinDistance(
-	deletionWeight: Double,
-	insertionWeight: Double,
-	replaceWeight: Double,
-	transpositionWeight: Double,
-	charDistance: CharDistance?
+	private val deletionWeight: Double = 0.8,
+	private val insertionWeight: Double = 1.01,
+	private val replaceWeight: Double = 0.9,
+	private val transpositionWeight: Double = 0.7,
+	private val charDistance: CharDistance?,
 ) : StringDistance {
-	// Damerau function variables
-	private var deletionWeight = 0.8
-
-	private var insertionWeight = 1.01
-
-	private var replaceWeight = 0.9
-
-	private var transpositionWeight = 0.7
-
-	private val charDistance: CharDistance?
-
-	/**
-	 * Constructor for Weighted Damerau Levenshtein
-	 * @param deletionWeight
-	 * @param insertionWeight
-	 * @param replaceWeight
-	 * @param transpositionWeight
-	 * @param charDistance
-	 */
-	init {
-		this.deletionWeight = deletionWeight
-		this.insertionWeight = insertionWeight
-		this.replaceWeight = replaceWeight
-		this.transpositionWeight = transpositionWeight
-		this.charDistance = charDistance
-	}
 
 	override fun getDistance(w1: String, w2: String): Double {
 		if (w1 == w2) {
@@ -98,7 +72,7 @@ class WeightedDamerauLevenshteinDistance(
 	override fun getDistance(w1: String, w2: String, maxEditDistance: Double): Double {
 		val distance = getDistance(w1, w2)
 		if (distance > maxEditDistance) {
-			return (-1).toDouble()
+			return -1.0
 		}
 		return distance
 	}
@@ -113,7 +87,10 @@ class WeightedDamerauLevenshteinDistance(
 
 
 	private fun isTransposition(i: Int, j: Int, source: String?, target: String?): Boolean {
-		return i > 2 && j > 2 && source!![j - 2] == target!![i - 1] && target[i - 2] == source[j - 1]
+		return i > 2
+				&& j > 2
+				&& source!![j - 2] == target!![i - 1]
+				&& target[i - 2] == source[j - 1]
 	}
 
 	private fun getReplaceCost(aI: Char, bJ: Char, useCharDistance: Boolean): Double {
