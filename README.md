@@ -3,6 +3,10 @@
 _This is a Kotlin Multiplatform implementation of the [symspell](https://github.com/wolfgarbe/symspell) fuzzy search
 algorithm. It has been ported from [Java implementation](https://github.com/MighTguY/customized-symspell/) of symspell._
 
+## Dependency
+
+`implementation("com.darkrockstudios:symspellkt:0.1.0")`
+
 ## Current status
 
 ### Accuracy
@@ -21,6 +25,13 @@ output.
 
 The performance of the Kotlin implementation VS the Java implementation is about the same.
 Kotlin might be slightly better after a few optimizations I applied.
+
+### Broken Tests
+
+Many of the tests ported over from the Java version are currently failing.
+These tests are marked with `@Ignore("Original Test, get working")`
+This needs to be sorted out, figure out why they're failing, is it the test?
+Or is it the SymSpell code it's self that needs fixing?
 
 ## SymSpell v6.6 (Bigrams)
 
