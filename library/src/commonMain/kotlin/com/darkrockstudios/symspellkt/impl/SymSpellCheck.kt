@@ -696,7 +696,6 @@ class SymSpellCheck(
 
 				val destComp =
 					compositions[destinationIndex] ?: error("Failed to find destinationIndex: $destinationIndex")
-				val circularComp = compositions[circularIndex] ?: error("Failed to find circularIndex: $circularIndex")
 
 				//set values in first loop
 				if (j == 0) {
@@ -706,19 +705,24 @@ class SymSpellCheck(
 						distanceSum = topEd
 						logProbSum = topProbabilityLog
 					}
-				} else if ((i == maxSegmentationWordLength) //replace values if better probabilityLogSum, if same edit distance OR one
-					// space difference
-					|| (((circularComp.distanceSum + topEd
-							== destComp.distanceSum) || (circularComp.distanceSum + separatorLength + topEd
-							== destComp.distanceSum)) && (destComp.logProbSum
-							< circularComp.logProbSum + topProbabilityLog)) //replace values if smaller edit distance
-					|| (circularComp.distanceSum + separatorLength + topEd
-							< destComp.distanceSum)
-				) {
-					destComp.segmentedString = circularComp.segmentedString + " " + part
-					destComp.correctedString = circularComp.correctedString + " " + topResult
-					destComp.distanceSum = circularComp.distanceSum + topEd
-					destComp.logProbSum = circularComp.logProbSum + topProbabilityLog
+				} else {
+					val circularComp =
+						compositions[circularIndex] ?: error("Failed to find circularIndex: $circularIndex")
+
+					if ((i == maxSegmentationWordLength) //replace values if better probabilityLogSum, if same edit distance OR one
+						// space difference
+						|| (((circularComp.distanceSum + topEd
+								== destComp.distanceSum) || (circularComp.distanceSum + separatorLength + topEd
+								== destComp.distanceSum)) && (destComp.logProbSum
+								< circularComp.logProbSum + topProbabilityLog)) //replace values if smaller edit distance
+						|| (circularComp.distanceSum + separatorLength + topEd
+								< destComp.distanceSum)
+					) {
+						destComp.segmentedString = circularComp.segmentedString + " " + part
+						destComp.correctedString = circularComp.correctedString + " " + topResult
+						destComp.distanceSum = circularComp.distanceSum + topEd
+						destComp.logProbSum = circularComp.logProbSum + topProbabilityLog
+					}
 				}
 			}
 
