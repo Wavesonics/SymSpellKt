@@ -10,7 +10,9 @@ object SpellHelper {
 	 */
 	fun getEditDeletes(
 		key: String,
-		maxEditDistance: Double, prefixLength: Int, editFactor: Double
+		maxEditDistance: Double,
+		prefixLength: Int,
+		editFactor: Double,
 	): Set<String> {
 		val deletedWords: MutableSet<String> = mutableSetOf()
 		if (key.length <= maxEditDistance) {
@@ -41,8 +43,10 @@ object SpellHelper {
 	 * and inserts are expensive and language dependent
 	 */
 	fun edits(
-		word: String, editDistance: Double, deletedWords: MutableSet<String>,
-		maxEd: Double
+		word: String,
+		editDistance: Double,
+		deletedWords: MutableSet<String>,
+		maxEd: Double,
 	): Set<String> {
 		var runningEditDistance = editDistance
 		runningEditDistance++
