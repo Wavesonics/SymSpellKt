@@ -13,9 +13,9 @@ import java.io.FileReader
 import java.io.IOException
 
 class SymSpellTestWeighted {
-	lateinit var dataHolder: DataHolder
-	lateinit var symSpellCheck: SymSpellCheck
-	lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
+	private lateinit var dataHolder: DataHolder
+	private lateinit var symSpellCheck: SymSpellCheck
+	private lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
 
 	@Before
 	@Throws(IOException::class, SpellCheckException::class)
