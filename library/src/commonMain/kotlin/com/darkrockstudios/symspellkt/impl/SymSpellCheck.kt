@@ -107,7 +107,7 @@ class SymSpellCheck(
 			joinedTerm = joinedTerm + si.term + " "
 			joinedCount = min(joinedCount, si.count)
 		}
-		joinedTerm = joinedTerm.trim { it <= ' ' }
+		joinedTerm = joinedTerm.trim()
 		val dist: Double = stringDistance.getDistance(
 			joinedTerm, runningPhrase, 2.0.pow(31.0) - 1
 		)

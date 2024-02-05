@@ -234,10 +234,10 @@ class SymSpellTest {
 			maxEd: Double
 		) {
 			val suggestionItems: List<SuggestionItem> = spellCheck
-				?.lookupCompound(typo.lowercase(Locale.getDefault()).trim { it <= ' ' }, maxEd)!!
+				?.lookupCompound(typo.lowercase().trim(), maxEd)!!
 			Assert.assertTrue(suggestionItems.isNotEmpty())
 			Assert.assertEquals(
-				correct.lowercase(Locale.getDefault()).trim { it <= ' ' },
+				correct.lowercase().trim(),
 				suggestionItems[0].term.trim()
 			)
 		}
