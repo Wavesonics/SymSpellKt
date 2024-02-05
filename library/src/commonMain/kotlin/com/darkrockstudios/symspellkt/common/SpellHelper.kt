@@ -2,7 +2,7 @@ package com.darkrockstudios.symspellkt.common
 
 import kotlin.math.abs
 import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 object SpellHelper {
 	/**
@@ -29,7 +29,7 @@ object SpellHelper {
 	}
 
 	private fun getEdistance(maxEditDistance: Double, length: Int, factor: Double): Double {
-		val computedEd: Double = (factor * length).roundToInt().toDouble()
+		val computedEd: Double = (factor * length).roundToLong().toDouble()
 		if (min(maxEditDistance, computedEd) == maxEditDistance) {
 			return maxEditDistance
 		}
