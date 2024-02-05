@@ -70,7 +70,7 @@ object SpellHelper {
 		ignoreUnknown: Boolean
 	): MutableList<SuggestionItem> {
 		if (suggestionItems.isEmpty() && !ignoreUnknown && phrase != null) {
-			suggestionItems.add(SuggestionItem(phrase, maxEditDistance + 1, 0.0))
+			suggestionItems.add(SuggestionItem(phrase, maxEditDistance + 1.0, 0.0))
 		}
 		return suggestionItems
 	}
@@ -102,9 +102,11 @@ object SpellHelper {
 		suggestions: List<SuggestionItem>,
 		suggestions1: List<SuggestionItem?>
 	): Boolean {
-		return (suggestions1.isEmpty()
-				|| (suggestions.isNotEmpty()
-				&& suggestions1.isNotEmpty()
-				&& suggestions[0] == suggestions1[0]))
+		return (
+				suggestions1.isEmpty()
+						|| (suggestions.isNotEmpty()
+						&& suggestions1.isNotEmpty()
+						&& suggestions[0] == suggestions1[0])
+				)
 	}
 }

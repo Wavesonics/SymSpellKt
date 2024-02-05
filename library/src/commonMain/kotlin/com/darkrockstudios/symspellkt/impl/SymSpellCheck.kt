@@ -109,7 +109,7 @@ class SymSpellCheck(
 		}
 		joinedTerm = joinedTerm.trim()
 		val dist: Double = stringDistance.getDistance(
-			joinedTerm, runningPhrase, 2.0.pow(31.0) - 1
+			joinedTerm, runningPhrase, 2.0.pow(31.0) - 1.0
 		)
 
 		val suggestionItem = SuggestionItem(joinedTerm, dist, joinedCount)
