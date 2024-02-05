@@ -606,7 +606,8 @@ class SymSpellCheck(
 	 */
 	@Throws(SpellCheckException::class)
 	override fun wordBreakSegmentation(
-		phrase: String, maxSegmentationWordLength: Int,
+		phrase: String,
+		maxSegmentationWordLength: Int,
 		maxEditDistance: Double
 	): Composition {
 		/*
