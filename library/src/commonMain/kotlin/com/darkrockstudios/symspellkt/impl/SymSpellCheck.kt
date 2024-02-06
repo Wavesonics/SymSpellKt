@@ -365,6 +365,15 @@ class SymSpellCheck(
 			val candidate = candidates.removeAt(0)
 			val candidateLen = candidate.length
 			val lenDiff = phraseLen - candidateLen
+
+			// Empty candidates cause a bunch of unnecessary suggestions and waste time.
+			// I think this is okay? If there are ever problems with single letter word
+			// corrections, this could be the culprit, because this causes words like "a"
+			// and "I" to be suggested.
+			if (candidate.isEmpty()) {
+				continue
+			}
+
 			/*
       early termination: if candidate distance is already higher than suggestion distance,
       than there are no better suggestions to be expected
