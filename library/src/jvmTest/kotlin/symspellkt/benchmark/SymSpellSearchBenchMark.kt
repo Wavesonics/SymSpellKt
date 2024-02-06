@@ -133,7 +133,7 @@ class SymSpellSearchBenchMark {
 		return queries
 	}
 
-	@Ignore
+	@Ignore("KAPT isn't working in KMP projects yet")
 	@Test
 	@Throws(RunnerException::class, IOException::class)
 	fun testBenchmarkSearch() {
