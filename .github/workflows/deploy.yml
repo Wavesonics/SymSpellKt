@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    uses: ./.github/workflows/gradle.yml
+    uses: ./.github/workflows/ci-build.yml
   deploy:
     needs: build
     strategy:
