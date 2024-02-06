@@ -1,6 +1,6 @@
 # SymSpell Spell Check Kotlin
 
-![Build](https://github.com/wavesonics/SymSpellKt/actions/workflows/ci-build.yml/badge.svg?branch=main)
+![Build Status](https://github.com/wavesonics/SymSpellKt/actions/workflows/ci-build.yml/badge.svg?branch=main)
 
 _This is a Kotlin Multiplatform implementation of the [symspell](https://github.com/wolfgarbe/symspell) fuzzy search
 algorithm. It has been ported from [Java implementation](https://github.com/MighTguY/customized-symspell/) of symspell._
@@ -8,32 +8,6 @@ algorithm. It has been ported from [Java implementation](https://github.com/Migh
 ## Dependency
 
 `implementation("com.darkrockstudios:symspellkt:0.1.0")`
-
-## Current status
-
-### Accuracy
-
-The library is compiled and running, but lots of tests ported over from Java are failing.
-The failures are mainly around correct accuracy.
-
-There appear to be small differences in some of the mathematical calculations,
-differences in the tenths or hundredths places.
-
-Interestingly the customized values found in the Java implementation appear to work
-completely, while the default values have the aforementioned accuracy errors in their
-output.
-
-### Performance
-
-The performance of the Kotlin implementation VS the Java implementation is about the same.
-Kotlin might be slightly better after a few optimizations I applied.
-
-### Broken Tests
-
-Many of the tests ported over from the Java version are currently failing.
-These tests are marked with `@Ignore("Original Test, get working")`
-This needs to be sorted out, figure out why they're failing, is it the test?
-Or is it the SymSpell code it's self that needs fixing?
 
 ## SymSpell v6.6 (Bigrams)
 
