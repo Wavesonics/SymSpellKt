@@ -1,6 +1,6 @@
 # SymSpell Spell Check Kotlin
 
-![Build](https://github.com/github/docs/actions/workflows/gradle.yml/badge.svg?branch=main)
+![Build](https://github.com/wavesonics/SymSpellKt/actions/workflows/gradle.yml/badge.svg?branch=main)
 
 _This is a Kotlin Multiplatform implementation of the [symspell](https://github.com/wolfgarbe/symspell) fuzzy search
 algorithm. It has been ported from [Java implementation](https://github.com/MighTguY/customized-symspell/) of symspell._
