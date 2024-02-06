@@ -85,7 +85,6 @@ class WeightedDamerauLevenshteinDistance(
 		return kotlin.math.min(a, kotlin.math.min(b, kotlin.math.min(c, d)))
 	}
 
-
 	private fun isTransposition(i: Int, j: Int, source: String?, target: String?): Boolean {
 		return i > 2
 				&& j > 2

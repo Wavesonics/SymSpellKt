@@ -132,9 +132,9 @@ class SymSpellTest {
 
 	@Test
 	fun testDoubleComparison() {
-		Assert.assertTrue(SpellHelper.isEqualDouble(1.00999, 1.0, 0.01))
-		Assert.assertTrue(SpellHelper.isLessDouble(0.90999, 1.0, 0.01))
-		Assert.assertTrue(SpellHelper.isLessOrEqualDouble(0.7, 1.0, 0.01))
+		Assert.assertTrue(SpellHelper.isEqualDouble(1.00999, 1.0))
+		Assert.assertTrue(SpellHelper.isLessDouble(0.90999, 1.0))
+		Assert.assertTrue(SpellHelper.isLessOrEqualDouble(0.7, 1.0))
 	}
 
 	@Test(expected = SpellCheckException::class)

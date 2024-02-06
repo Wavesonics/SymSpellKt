@@ -54,7 +54,7 @@ class SymSpellCheck(
 		val items = if (tokenizeOnWhiteSpace) {
 			SpellHelper.tokenizeOnWhiteSpace(runningPhrase)
 		} else {
-			arrayOf<String?>(runningPhrase)
+			arrayOf<String>(runningPhrase)
 		}
 		var suggestions: MutableList<SuggestionItem> = mutableListOf()
 		val suggestionParts: MutableList<SuggestionItem> = mutableListOf()
@@ -74,14 +74,18 @@ class SymSpellCheck(
 		}
 
 		for (i in items.indices) {
+			val item = items[i]
 			//Normal suggestions
-			suggestions = lookup(items[i]!!, Verbosity.TOP, editDistance)
+			suggestions = lookup(item, Verbosity.TOP, editDistance)
 
 			//combi check, always before split
 			if (i > 0 && !isLastCombi
 				&& lookupCombineWords(
-					items[i]!!, items[i - 1], suggestions, suggestionParts,
-					editDistance
+					item,
+					items[i - 1],
+					suggestions,
+					suggestionParts,
+					editDistance,
 				)
 			) {
 				isLastCombi = true
@@ -92,12 +96,12 @@ class SymSpellCheck(
 
 			if (
 				suggestions.isNotEmpty() &&
-				(suggestions[0].distance == 0.0 || items[i]!!.length == 1)
+				(suggestions[0].distance == 0.0 || item.length == 1)
 			) {
 				//choose best suggestion
 				suggestionParts.add(suggestions[0])
 			} else {
-				lookupSplitWords(suggestionParts, suggestions, items[i]!!, editDistance)
+				lookupSplitWords(suggestionParts, suggestions, item, editDistance)
 			}
 		}
 
@@ -142,13 +146,13 @@ class SymSpellCheck(
 			return false
 		}
 		val best1: SuggestionItem = suggestionParts[suggestionParts.size - 1]
-		val best2: SuggestionItem
-		if (suggestions.isNotEmpty()) {
-			best2 = suggestions[0]
+		val best2 = if (suggestions.isNotEmpty()) {
+			suggestions[0]
 		} else {
-			best2 = SuggestionItem(
+			SuggestionItem(
 				token,
-				maxEditDistance + 1, 0.0
+				maxEditDistance + 1,
+				0.0
 			)
 		}
 
@@ -200,7 +204,8 @@ class SymSpellCheck(
 			val part2 = word.substring(j)
 
 			val suggestions1 = lookup(
-				part1, Verbosity.TOP,
+				part1,
+				Verbosity.TOP,
 				maxEditDistance
 			)
 
@@ -308,9 +313,7 @@ class SymSpellCheck(
 		var suggestionCount: Double
 		val consideredDeletes: MutableSet<String> = HashSet()
 		val consideredSuggestions: MutableSet<String> = HashSet()
-		val suggestionItems: MutableList<SuggestionItem> = ArrayList(
-			spellCheckSettings.topK
-		)
+		val suggestionItems: MutableList<SuggestionItem> = ArrayList(spellCheckSettings.topK)
 
 		/*
 	      Early exit when in exclusion list
@@ -461,14 +464,14 @@ class SymSpellCheck(
 						}
 					}
 
-					if (SpellHelper.isLessOrEqualDouble(distance, maxEditDistance2, 0.01)) {
+					if (SpellHelper.isLessOrEqualDouble(distance, maxEditDistance2)) {
 						suggestionCount = dataHolder.getItemFrequency(suggestion)!!
 						val si = SuggestionItem(suggestion, distance, suggestionCount)
 						if (suggestionItems.isNotEmpty()) {
 							if (verbosity == Verbosity.CLOSEST && distance < maxEditDistance2) {
 								suggestionItems.clear()
 							} else if (verbosity == Verbosity.TOP) {
-								if (SpellHelper.isLessDouble(distance, maxEditDistance2, 0.01)
+								if (SpellHelper.isLessDouble(distance, maxEditDistance2)
 									|| suggestionCount > suggestionItems[0].count
 								) {
 									maxEditDistance2 = distance

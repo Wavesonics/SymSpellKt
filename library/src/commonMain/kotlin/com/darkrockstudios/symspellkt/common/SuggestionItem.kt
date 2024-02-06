@@ -24,7 +24,7 @@ data class SuggestionItem(
 	 */
 	override fun compareTo(other: SuggestionItem?): Int {
 		other ?: error("TODO how to handle null?")
-		if (SpellHelper.isEqualDouble(this.distance, other.distance, 0.001)) {
+		if (SpellHelper.isEqualDouble(this.distance, other.distance)) {
 			return doubleCompare(other.count, this.count)
 		}
 		return doubleCompare(this.distance, other.distance)

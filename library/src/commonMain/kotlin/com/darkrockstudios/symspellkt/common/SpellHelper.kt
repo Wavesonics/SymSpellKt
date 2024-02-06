@@ -83,16 +83,16 @@ object SpellHelper {
 		return word.split("\\s+".toRegex()).toTypedArray()
 	}
 
-	fun isLessOrEqualDouble(d1: Double, d2: Double, threshold: Double): Boolean {
+	fun isLessOrEqualDouble(d1: Double, d2: Double, threshold: Double = EPSILON): Boolean {
 		return abs(d1 - d2) < threshold || d1 < d2
 	}
 
-	fun isLessDouble(d1: Double, d2: Double, threshold: Double): Boolean {
+	fun isLessDouble(d1: Double, d2: Double, threshold: Double = EPSILON): Boolean {
 		return !isEqualDouble(d1, d2, threshold) && d1 < d2
 	}
 
 
-	fun isEqualDouble(d1: Double, d2: Double, threshold: Double): Boolean {
+	fun isEqualDouble(d1: Double, d2: Double, threshold: Double = EPSILON): Boolean {
 		return abs(d1 - d2) < threshold
 	}
 
@@ -113,4 +113,6 @@ object SpellHelper {
 						&& suggestions[0] == suggestions1[0])
 				)
 	}
+
+	private const val EPSILON = 0.02
 }
