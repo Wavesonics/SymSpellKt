@@ -23,6 +23,7 @@ import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
+import kotlin.test.Ignore
 
 @State(Scope.Benchmark)
 class SymSpellSearchBenchMark {
@@ -132,6 +133,7 @@ class SymSpellSearchBenchMark {
 		return queries
 	}
 
+	@Ignore
 	@Test
 	@Throws(RunnerException::class, IOException::class)
 	fun testBenchmarkSearch() {

@@ -114,5 +114,5 @@ object SpellHelper {
 				)
 	}
 
-	private const val EPSILON = 0.02
+	const val EPSILON = 0.02
 }
