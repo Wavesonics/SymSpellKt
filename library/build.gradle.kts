@@ -7,12 +7,16 @@ plugins {
 
 kotlin {
 	applyDefaultHierarchyTemplate()
-	jvm()
+	jvm {
+		compilations.all {
+			kotlinOptions.jvmTarget = libs.versions.jvm.get()
+		}
+	}
 	androidTarget {
 		publishLibraryVariants("release")
 		compilations.all {
 			kotlinOptions {
-				jvmTarget = "17"
+				jvmTarget = libs.versions.jvm.get()
 			}
 		}
 	}
