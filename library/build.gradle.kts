@@ -1,8 +1,9 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
 	alias(libs.plugins.androidLibrary)
 	id("module.publication")
-	kotlin("kapt")
 }
 
 kotlin {
@@ -20,15 +21,21 @@ kotlin {
 			}
 		}
 	}
+	@OptIn(ExperimentalWasmDsl::class)
+	wasmJs()
 	iosX64()
 	iosArm64()
-	//iosSimulatorArm64()
+	iosSimulatorArm64()
 	linuxX64()
+	macosX64()
+	macosArm64()
+	mingwX64()
 
 	sourceSets {
 		val commonMain by getting {
 			dependencies {
-				implementation(libs.murmurhash)
+				// Copied the code in until they add more targets
+				//implementation(libs.murmurhash)
 			}
 		}
 		val commonTest by getting {

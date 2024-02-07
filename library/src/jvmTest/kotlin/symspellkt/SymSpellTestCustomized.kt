@@ -5,6 +5,8 @@ import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import com.darkrockstudios.symspellkt.impl.loadBiGramLine
+import com.darkrockstudios.symspellkt.impl.loadUniGramLine
 import org.junit.Before
 import org.junit.Test
 import java.io.BufferedReader
@@ -120,8 +122,7 @@ class SymSpellTestCustomized {
 	private fun loadUniGramFile(file: File) {
 		val br = BufferedReader(FileReader(file))
 		br.forEachLine { line ->
-			val arr = line.split("\\s+".toRegex())
-			dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
+			dataHolder.loadUniGramLine(line)
 		}
 	}
 
@@ -129,9 +130,7 @@ class SymSpellTestCustomized {
 	private fun loadBiGramFile(file: File) {
 		val br = BufferedReader(FileReader(file))
 		br.forEachLine { line ->
-			val arr = line.split("\\s+".toRegex())
-			dataHolder
-				.addItem(DictionaryItem(arr[0] + " " + arr[1], arr[2].toDouble(), -1.0))
+			dataHolder.loadBiGramLine(line)
 		}
 	}
 }
