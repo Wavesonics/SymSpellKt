@@ -7,6 +7,13 @@
 
 name: Deploy to central
 
+env:
+  OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+  OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+  SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+  SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+  SIGNING_USER: ${{ secrets.SIGNING_USER }}
+
 on: workflow_dispatch
 
 permissions:

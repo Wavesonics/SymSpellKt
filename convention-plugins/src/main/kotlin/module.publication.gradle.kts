@@ -1,7 +1,3 @@
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.`maven-publish`
-
 plugins {
     `maven-publish`
     signing
@@ -18,9 +14,9 @@ publishing {
 
         // Provide artifacts information required by Maven Central
         pom {
-            name.set("Kotlin Multiplatform library template")
-            description.set("Dummy library to test deployment to Maven Central")
-            url.set("https://github.com/Kotlin/multiplatform-library-template")
+            name.set("SymSpell Kt")
+            description.set("A Kotlin Multiplatform implementation of the SymSpell Spell Checking algorithm.")
+            url.set("https://github.com/Wavesonics/SymSpellKt")
 
             licenses {
                 license {
@@ -30,22 +26,26 @@ publishing {
             }
             developers {
                 developer {
-                    id.set("JetBrains")
-                    name.set("JetBrains Team")
-                    organization.set("JetBrains")
-                    organizationUrl.set("https://www.jetbrains.com")
+                    name.set("Adam Brown")
+                    id.set("Wavesonics")
                 }
             }
             scm {
-                url.set("https://github.com/Kotlin/multiplatform-library-template")
+                connection.set("scm:git:git://github.com/Wavesonics/SymSpellKt.git")
+                developerConnection.set("scm:git:ssh://github.com/Wavesonics/SymSpellKt.git")
+                url.set("https://github.com/Wavesonics/SymSpellKt")
             }
         }
     }
 }
 
 signing {
-    if (project.hasProperty("signing.gnupg.keyName")) {
-        useGpgCmd()
+    val signingKey: String? = System.getenv("SIGNING_KEY")
+    val signingPassword: String? = System.getenv("SIGNING_PASSWORD")
+    if (signingKey != null && signingPassword != null) {
+        useInMemoryPgpKeys(null, signingKey, signingPassword)
         sign(publishing.publications)
+    } else {
+        println("No signing credentials provided. Skipping Signing.")
     }
 }
