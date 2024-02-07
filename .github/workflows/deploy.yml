@@ -17,6 +17,7 @@ jobs:
     uses: ./.github/workflows/ci-build.yml
   deploy:
     needs: build
+    environment: Publish
     strategy:
       matrix:
         include:
