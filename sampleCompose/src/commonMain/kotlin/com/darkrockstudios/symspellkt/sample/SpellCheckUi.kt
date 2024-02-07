@@ -91,7 +91,7 @@ fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 					suggestions = ""
 				}
 
-				text = it
+				text = it.trim()
 			},
 			label = { Text("Spell Checker") },
 			placeholder = { Text("Type misspelled words") },
@@ -159,35 +159,4 @@ fun MultiWordCorrectionUi(spellChecker: SpellChecker?) {
 			modifier = Modifier.verticalScroll(rememberScrollState()),
 		)
 	}
-}
-
-@OptIn(InternalResourceApi::class)
-@Composable
-fun rememberSpellChecker(): SpellChecker? {
-	val scope = rememberCoroutineScope()
-	var spellChecker by remember { mutableStateOf<SpellChecker?>(null) }
-
-	LaunchedEffect(Unit) {
-		scope.launch(Dispatchers.Default) {
-			val checker = createSymSpellChecker()
-
-			readResourceBytes("raw/frequency_dictionary_en_82_765.txt")
-				.decodeToString()
-				.splitLines()
-				.fastForEach { line ->
-					checker.dataHolder.loadUniGramLine(line)
-				}
-
-			readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
-				.decodeToString()
-				.splitLines()
-				.fastForEach { line ->
-					checker.dataHolder.loadBiGramLine(line)
-				}
-
-			spellChecker = checker
-		}
-	}
-
-	return spellChecker
 }
