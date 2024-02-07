@@ -22,7 +22,15 @@ kotlin {
 		}
 	}
 	@OptIn(ExperimentalWasmDsl::class)
-	wasmJs()
+	wasmJs {
+		moduleName = "symspellkt"
+		browser {
+			commonWebpackConfig {
+				outputFileName = "symspellLibrary.js"
+			}
+		}
+		binaries.library()
+	}
 	iosX64()
 	iosArm64()
 	iosSimulatorArm64()
