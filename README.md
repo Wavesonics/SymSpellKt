@@ -2,13 +2,28 @@
 
 ![Build Status](https://github.com/wavesonics/SymSpellKt/actions/workflows/ci-build.yml/badge.svg?branch=main)
 [![Maven Central](https://img.shields.io/maven-central/v/com.darkrockstudios/symspellkt.svg)](https://search.maven.org/artifact/com.darkrockstudios/symspellkt)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
+
+[![KMP](https://img.shields.io/badge/supported-platforms:-blue.svg?logo=kotlin)](http://kotlinlang.org)
+![badge-jvm] ![badge-android] ![badge-wasm] ![badge-wasmi] ![badge-linux] ![badge-windows] ![badge-mac-x86] ![badge-mac-arm]
+![badge-ios] ![badge-ios-sim]
 
 _This is a Kotlin Multiplatform implementation of the [symspell](https://github.com/wolfgarbe/symspell) fuzzy search
 algorithm. It has been ported from [Java implementation](https://github.com/MighTguY/customized-symspell/) of symspell._
 
 ## Dependency
 
-`implementation("com.darkrockstudios:symspellkt:0.1.0")`
+`implementation("com.darkrockstudios:symspellkt:1.0.0")`
+
+## Sample
+
+Try out the sample desktop application:
+
+`gradlew sampleCompose:run`
+
+![Sample Compose Screenshot](sample.png)
 
 ## SymSpell v6.6 (Bigrams)
 
@@ -61,3 +76,19 @@ The reason for this is in Qwerty Based Keyboard,
 ## Generation of Deletes
 
 Word deletes are generated with taking edit distance which is minimum of max edit distance and 0.3 * word.length
+
+[badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
+[badge-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat
+[badge-js]: http://img.shields.io/badge/-js-F8DB5D.svg?style=flat
+[badge-js-ir]: https://img.shields.io/badge/support-[IR]-AAC4E0.svg?style=flat
+[badge-linux]: http://img.shields.io/badge/-linux-2D3F6C.svg?style=flat
+[badge-windows]: http://img.shields.io/badge/-windows-4D76CD.svg?style=flat
+[badge-wasm]: https://img.shields.io/badge/-wasm-624FE8.svg?style=flat
+[badge-wasmi]: https://img.shields.io/badge/-wasi-626FFF.svg?style=flat
+[badge-apple-silicon]: http://img.shields.io/badge/support-[AppleSilicon]-43BBFF.svg?style=flat
+[badge-ios]: http://img.shields.io/badge/-ios-CDCDCD.svg?style=flat
+[badge-ios-sim]: http://img.shields.io/badge/-iosSim-AFAFAF.svg?style=flat
+[badge-mac-arm]: http://img.shields.io/badge/-macosArm-444444.svg?style=flat
+[badge-mac-x86]: http://img.shields.io/badge/-macosX86-111111.svg?style=flat
+[badge-watchos]: http://img.shields.io/badge/-watchos-C0C0C0.svg?style=flat
+[badge-tvos]: http://img.shields.io/badge/-tvos-808080.svg?style=flat

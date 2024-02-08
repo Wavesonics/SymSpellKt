@@ -6,6 +6,7 @@ plugins {
 	id("module.publication")
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 kotlin {
 	applyDefaultHierarchyTemplate()
 	jvm {
@@ -21,7 +22,6 @@ kotlin {
 			}
 		}
 	}
-	@OptIn(ExperimentalWasmDsl::class)
 	wasmJs {
 		moduleName = "symspellkt"
 		browser {
@@ -31,6 +31,7 @@ kotlin {
 		}
 		binaries.library()
 	}
+	wasmWasi {}
 	iosX64()
 	iosArm64()
 	iosSimulatorArm64()

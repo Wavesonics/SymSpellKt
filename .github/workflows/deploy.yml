@@ -36,6 +36,12 @@ jobs:
             os: ubuntu-latest
           - target: publishLinuxX64PublicationToSonatypeRepository
             os: ubuntu-latest
+          - target: publishMingwX64PublicationToSonatypeRepository
+            os: windows-latest
+          - target: publishWasmJsPublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: publishWasmWasiPublicationToSonatypeRepository
+            os: ubuntu-latest
           - target: publishKotlinMultiplatformPublicationToSonatypeRepository
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
@@ -65,7 +71,7 @@ jobs:
       with:
         arguments: |
           ${{ matrix.target }}
-          closeSonatypeStagingRepository
+          closeAndReleaseSonatypeStagingRepository
           -Psigning.gnupg.passphrase='${{secrets.SIGNING_PASSWORD}}'
           -PsonatypeUsername='${{secrets.OSSRH_USERNAME}}'
           -PsonatypePassword='${{secrets.OSSRH_PASSWORD}}'
