@@ -64,7 +64,7 @@ For 2 terms:
         olives
 
 If the misspelled word is, slives 
-both slices and olives is 1 edit distnace, 
+both slices and olives is 1 edit distance, 
   so in default case the one with higher frequency will end up in the result.
 While with the qwerty based char distance,
  slives is more closer to slices.
