@@ -1,10 +1,14 @@
 package com.darkrockstudios.symspellkt.impl
 
+import com.darkrockstudios.symspellkt.api.CharDistance
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.common.*
 
-fun createSymSpellChecker(): SpellChecker {
-	val spellCheckSettings = SpellCheckSettings(
+fun createSymSpellChecker(
+	settings: SpellCheckSettings? = null,
+	charDistance: CharDistance? = null,
+): SpellChecker {
+	val spellCheckSettings = settings ?: SpellCheckSettings(
 		countThreshold = 1,
 		deletionWeight = 1.0,
 		insertionWeight = 1.0,
@@ -22,7 +26,7 @@ fun createSymSpellChecker(): SpellChecker {
 			spellCheckSettings.insertionWeight,
 			spellCheckSettings.replaceWeight,
 			spellCheckSettings.transpositionWeight,
-			QwertyDistance(),
+			charDistance,
 		)
 	val dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
