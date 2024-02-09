@@ -11,16 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import com.darkrockstudios.symspellkt.api.SpellChecker
+import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.Verbosity
-import com.darkrockstudios.symspellkt.impl.createSymSpellChecker
-import com.darkrockstudios.symspellkt.impl.loadBiGramLine
-import com.darkrockstudios.symspellkt.impl.loadUniGramLine
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.InternalResourceApi
-import org.jetbrains.compose.resources.readResourceBytes
+import kotlin.system.measureNanoTime
 
 @Composable
 fun SpellCheckerUi() {
@@ -57,6 +51,7 @@ fun SpellCheckerUi() {
 @Composable
 fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 	var suggestions by remember { mutableStateOf("") }
+	var searchTime by remember { mutableStateOf("") }
 
 	Column {
 		Text(
@@ -72,11 +67,16 @@ fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 				if (phrase.isNotEmpty()) {
 					var newSuggestions = ""
 					spellChecker?.apply {
-						val items = lookup(
-							it,
-							Verbosity.ALL,
-							2.0
-						).sorted().take(10)
+						var items: List<SuggestionItem>
+						val nanos = measureNanoTime {
+							items = lookup(
+								it,
+								Verbosity.ALL,
+								2.0
+							).sorted().take(10)
+						}
+
+						searchTime = "Lookup Took: ${nanos.toDouble() / 1000000.0} ms"
 
 						if (items.firstOrNull()?.term == phrase) {
 							suggestions = "<No Misspelling>"
@@ -98,6 +98,10 @@ fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 			singleLine = true,
 			enabled = (spellChecker != null)
 		)
+		Text(
+			searchTime,
+			style = MaterialTheme.typography.labelSmall
+		)
 		Spacer(modifier = Modifier.size(16.dp))
 		Text(
 			"Possible Corrections",
@@ -114,6 +118,7 @@ fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 @Composable
 fun MultiWordCorrectionUi(spellChecker: SpellChecker?) {
 	var suggestions by remember { mutableStateOf("") }
+	var searchTime by remember { mutableStateOf("") }
 
 	Column {
 		Text(
@@ -128,14 +133,23 @@ fun MultiWordCorrectionUi(spellChecker: SpellChecker?) {
 				val phrase = it.trim()
 				if (phrase.isNotEmpty()) {
 					var newSuggestions = ""
+
 					spellChecker?.apply {
-						val items = lookupCompound(it)
-							.sorted()
-							.take(10)
-							.forEach { item ->
-								newSuggestions += "${item.term}\n"
-							}
+						var items: List<SuggestionItem>
+						val nanos = measureNanoTime {
+
+							items = lookupCompound(it)
+								.sorted()
+								.take(10)
+						}
+
+						searchTime = "Lookup Took: ${nanos.toDouble() / 1000000.0} ms"
+
+						items.forEach { item ->
+							newSuggestions += "${item.term}\n"
+						}
 					}
+
 					suggestions = newSuggestions
 				} else {
 					suggestions = ""
@@ -147,6 +161,10 @@ fun MultiWordCorrectionUi(spellChecker: SpellChecker?) {
 			placeholder = { Text("Type misspelled words") },
 			singleLine = true,
 			enabled = (spellChecker != null)
+		)
+		Text(
+			searchTime,
+			style = MaterialTheme.typography.labelSmall
 		)
 		Spacer(modifier = Modifier.size(16.dp))
 		Text(
