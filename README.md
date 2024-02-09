@@ -7,7 +7,7 @@
 [![Kotlin](https://img.shields.io/badge/kotlin-1.9.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 [![KMP](https://img.shields.io/badge/supported-platforms:-blue.svg?logo=kotlin)](http://kotlinlang.org)
-![badge-jvm] ![badge-android] ![badge-wasm] ![badge-wasmi] ![badge-linux] ![badge-windows] ![badge-mac-x86] ![badge-mac-arm]
+![badge-jvm] ![badge-android] ![badge-wasm] ![badge-wasmi] ![badge-jsir] ![badge-linux] ![badge-windows] ![badge-mac-x86] ![badge-mac-arm]
 ![badge-ios] ![badge-ios-sim]
 
 _This is a Kotlin Multiplatform implementation of the [symspell](https://github.com/wolfgarbe/symspell) fuzzy search
@@ -96,6 +96,7 @@ Word deletes are generated with taking edit distance which is minimum of max edi
 [badge-windows]: http://img.shields.io/badge/-windows-4D76CD.svg?style=flat
 [badge-wasm]: https://img.shields.io/badge/-wasm-624FE8.svg?style=flat
 [badge-wasmi]: https://img.shields.io/badge/-wasi-626FFF.svg?style=flat
+[badge-jsir]: https://img.shields.io/badge/-js(IR)-22D655.svg?style=flat
 [badge-apple-silicon]: http://img.shields.io/badge/support-[AppleSilicon]-43BBFF.svg?style=flat
 [badge-ios]: http://img.shields.io/badge/-ios-CDCDCD.svg?style=flat
 [badge-ios-sim]: http://img.shields.io/badge/-iosSim-AFAFAF.svg?style=flat

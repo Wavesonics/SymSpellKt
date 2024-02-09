@@ -42,6 +42,8 @@ jobs:
             os: ubuntu-latest
           - target: publishWasmWasiPublicationToSonatypeRepository
             os: ubuntu-latest
+          - target: publishJsPublicationToSonatypeRepository
+            os: ubuntu-latest
           - target: publishKotlinMultiplatformPublicationToSonatypeRepository
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}

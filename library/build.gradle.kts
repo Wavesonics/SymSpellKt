@@ -32,6 +32,7 @@ kotlin {
 		binaries.library()
 	}
 	wasmWasi {}
+	js(IR)
 	iosX64()
 	iosArm64()
 	iosSimulatorArm64()
