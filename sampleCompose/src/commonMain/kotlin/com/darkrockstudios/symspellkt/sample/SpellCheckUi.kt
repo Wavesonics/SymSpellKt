@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.Verbosity
-import kotlin.system.measureNanoTime
 
 @Composable
 fun SpellCheckerUi() {
@@ -68,15 +67,15 @@ fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 					var newSuggestions = ""
 					spellChecker?.apply {
 						var items: List<SuggestionItem>
-						val nanos = measureNanoTime {
+						val mills = measureMillsTime {
 							items = lookup(
 								it,
 								Verbosity.ALL,
 								2.0
-							).sorted().take(10)
+							)
 						}
 
-						searchTime = "Lookup Took: ${nanos.toDouble() / 1000000.0} ms"
+						searchTime = "Lookup Took: $mills ms"
 
 						if (items.firstOrNull()?.term == phrase) {
 							suggestions = "<No Misspelling>"
@@ -136,14 +135,11 @@ fun MultiWordCorrectionUi(spellChecker: SpellChecker?) {
 
 					spellChecker?.apply {
 						var items: List<SuggestionItem>
-						val nanos = measureNanoTime {
-
+						val mills = measureMillsTime {
 							items = lookupCompound(it)
-								.sorted()
-								.take(10)
 						}
 
-						searchTime = "Lookup Took: ${nanos.toDouble() / 1000000.0} ms"
+						searchTime = "Lookup Took: $mills ms"
 
 						items.forEach { item ->
 							newSuggestions += "${item.term}\n"

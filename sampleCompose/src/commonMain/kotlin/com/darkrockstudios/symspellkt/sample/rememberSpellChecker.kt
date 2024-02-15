@@ -8,6 +8,7 @@ import com.darkrockstudios.symspellkt.impl.loadBiGramLine
 import com.darkrockstudios.symspellkt.impl.loadUniGramLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.InternalResourceApi
 import org.jetbrains.compose.resources.readResourceBytes
 
@@ -26,6 +27,7 @@ fun rememberSpellChecker(): SpellChecker? {
 				.splitLines()
 				.fastForEach { line ->
 					checker.dataHolder.loadUniGramLine(line)
+					yield()
 				}
 
 			readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
@@ -33,6 +35,7 @@ fun rememberSpellChecker(): SpellChecker? {
 				.splitLines()
 				.fastForEach { line ->
 					checker.dataHolder.loadBiGramLine(line)
+					yield()
 				}
 
 			spellChecker = checker
