@@ -11,3 +11,11 @@ suspend fun <T> Sequence<T>.parallelForEach(block: (T) -> Unit) {
 	}
 }
 */
+
+suspend fun <T> Sequence<T>.forEachAsync(
+	action: suspend (T) -> Unit
+) {
+	for (item in this) {
+		action(item)
+	}
+}

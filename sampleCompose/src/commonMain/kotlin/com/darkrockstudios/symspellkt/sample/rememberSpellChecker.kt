@@ -5,8 +5,9 @@ import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.impl.createSymSpellChecker
 import com.darkrockstudios.symspellkt.impl.loadBiGramLine
 import com.darkrockstudios.symspellkt.impl.loadUniGramLine
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.darkrockstudios.symspellkt.sample.forEachAsync
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.jetbrains.compose.resources.InternalResourceApi
 import org.jetbrains.compose.resources.readResourceBytes
 
@@ -24,14 +25,14 @@ fun rememberSpellChecker(): SpellChecker? {
 				readResourceBytes("raw/en-80k.txt")
 					.decodeToString()
 					.lineSequence()
-					.forEach { line ->
+					.forEachAsync { line ->
 						checker.dataHolder.loadUniGramLine(line)
 					}
 
 				readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
 					.decodeToString()
 					.lineSequence()
-					.forEach { line ->
+					.forEachAsync { line ->
 						checker.dataHolder.loadBiGramLine(line)
 					}
 			}
