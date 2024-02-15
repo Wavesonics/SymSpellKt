@@ -14,7 +14,10 @@ env:
   SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
   SIGNING_USER: ${{ secrets.SIGNING_USER }}
 
-on: workflow_dispatch
+on:
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
