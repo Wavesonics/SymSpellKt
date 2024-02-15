@@ -27,6 +27,7 @@ fun rememberSpellChecker(): SpellChecker? {
 					.lineSequence()
 					.forEachAsync { line ->
 						checker.dataHolder.loadUniGramLine(line)
+						yield()
 					}
 
 				readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
@@ -34,6 +35,7 @@ fun rememberSpellChecker(): SpellChecker? {
 					.lineSequence()
 					.forEachAsync { line ->
 						checker.dataHolder.loadBiGramLine(line)
+						yield()
 					}
 			}
 			println("Dictionary Loaded in: $mills ms")
