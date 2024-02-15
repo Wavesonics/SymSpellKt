@@ -69,6 +69,7 @@ class SymSpellCheck(
 					suggestions,
 					dataHolder.getExclusionItem(runningPhrase),
 					editDistance,
+					spellCheckSettings.topK,
 					false
 				)
 		}
@@ -321,7 +322,13 @@ class SymSpellCheck(
 		val exclusionItem = dataHolder.getExclusionItem(curPhrase)
 		if (!exclusionItem.isNullOrEmpty()) {
 			return SpellHelper
-				.earlyExit(suggestionItems, exclusionItem, maxEditDistance, false)
+				.earlyExit(
+					suggestionItems,
+					exclusionItem,
+					maxEditDistance,
+					spellCheckSettings.topK,
+					false
+				)
 		}
 
 		/*
@@ -329,7 +336,10 @@ class SymSpellCheck(
 	     */
 		if ((phraseLen - maxEditDistance) > spellCheckSettings.maxLength) {
 			return SpellHelper.earlyExit(
-				suggestionItems, curPhrase, maxEditDistance,
+				suggestionItems,
+				curPhrase,
+				maxEditDistance,
+				spellCheckSettings.topK,
 				spellCheckSettings.ignoreUnknown
 			)
 		}
@@ -338,11 +348,15 @@ class SymSpellCheck(
 
 		if (frequency != null) {
 			suggestionCount = frequency
-			suggestionItems.add(SuggestionItem(curPhrase, 0.0, suggestionCount))
+			val si = SuggestionItem(curPhrase, 0.0, suggestionCount)
+			suggestionItems.addItemSorted(si, spellCheckSettings.topK)
 
 			if (verbosity != Verbosity.ALL) {
 				return SpellHelper.earlyExit(
-					suggestionItems, curPhrase, maxEditDistance,
+					suggestionItems,
+					curPhrase,
+					maxEditDistance,
+					spellCheckSettings.topK,
 					spellCheckSettings.ignoreUnknown
 				)
 			}
@@ -493,7 +507,7 @@ class SymSpellCheck(
 						if (verbosity != Verbosity.ALL) {
 							maxEditDistance2 = distance
 						}
-						suggestionItems.add(si)
+						suggestionItems.addItemSorted(si, spellCheckSettings.topK)
 					}
 				}
 			}
@@ -514,7 +528,6 @@ class SymSpellCheck(
 
 		return suggestionItems
 	}
-
 
 	private fun getMinDistanceOnPrefixbasis(
 		maxEditDistance: Double, candidate: String?, phrase: String,

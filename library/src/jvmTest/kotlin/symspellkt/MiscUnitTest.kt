@@ -88,13 +88,13 @@ class MiscUnitTest {
 	fun testEarlyExit() {
 		var suggestionItems: MutableList<SuggestionItem> = ArrayList<SuggestionItem>()
 		var suggestionItems1: MutableList<SuggestionItem> = SpellHelper
-			.earlyExit(suggestionItems, "term", 2.0, false)
+			.earlyExit(suggestionItems, "term", 2.0, 10, false)
 
 		Assert.assertNotNull(suggestionItems1)
 		Assert.assertEquals(1, suggestionItems1.size.toLong())
 		suggestionItems = ArrayList<SuggestionItem>()
 		suggestionItems1 = SpellHelper
-			.earlyExit(suggestionItems, "term", 2.0, true)
+			.earlyExit(suggestionItems, "term", 2.0, 10, true)
 		Assert.assertNotNull(suggestionItems1)
 		Assert.assertEquals(0, suggestionItems1.size.toLong())
 	}

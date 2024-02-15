@@ -71,7 +71,6 @@ class AccuracyTest {
 
 		for (candidate in tpCandidates.entries) {
 			val results: List<SuggestionItem> = spellChecker.lookupCompound(candidate.key)
-			Collections.sort(results)
 			// first or second match count as success
 			if (isMatch(candidate, results)) {
 				success++
@@ -99,7 +98,6 @@ class AccuracyTest {
 
 		for (candidate in fpCandidates.entries) {
 			val results: MutableList<SuggestionItem> = spellChecker.lookupCompound(candidate.key).toMutableList()
-			Collections.sort(results)
 			// first or second match count as success
 			if (isMatch(candidate, results) && (candidate.key != results[0].term)) {
 				fail++

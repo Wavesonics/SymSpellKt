@@ -71,10 +71,12 @@ object SpellHelper {
 		suggestionItems: MutableList<SuggestionItem>,
 		phrase: String?,
 		maxEditDistance: Double,
-		ignoreUnknown: Boolean
+		topK: Int,
+		ignoreUnknown: Boolean,
 	): MutableList<SuggestionItem> {
 		if (suggestionItems.isEmpty() && !ignoreUnknown && phrase != null) {
-			suggestionItems.add(SuggestionItem(phrase, maxEditDistance + 1.0, 0.0))
+			val si = SuggestionItem(phrase, maxEditDistance + 1.0, 0.0)
+			suggestionItems.addItemSorted(si, topK)
 		}
 		return suggestionItems
 	}
@@ -114,5 +116,20 @@ object SpellHelper {
 				)
 	}
 
-	const val EPSILON = 0.02
+	const val EPSILON = 0.011
+}
+
+fun <T: Comparable<T>> MutableList<T>.addItemSorted(item: T, maxSize: Int): MutableList<T> {
+	if (size >= maxSize) {
+		val lastItem = this[maxSize - 1]
+		if (lastItem <= item) {
+			return this
+		} else {
+			removeAt(maxSize - 1)
+		}
+	}
+	var index = binarySearch(item)
+	if (index < 0) index = -index - 1
+	add(index, item)
+	return this
 }

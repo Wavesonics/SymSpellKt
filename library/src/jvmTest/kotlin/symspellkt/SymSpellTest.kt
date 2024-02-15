@@ -31,7 +31,7 @@ class SymSpellTest {
 			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
 			transpositionWeight = 1.0,
-			topK = 5,
+			topK = 100,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
 		)
@@ -185,7 +185,6 @@ class SymSpellTest {
 	@Throws(SpellCheckException::class)
 	fun testLookupCloset() {
 		val suggestionItems: List<SuggestionItem> = symSpellCheck.lookup("resial", Verbosity.CLOSEST)
-		Collections.sort(suggestionItems)
 		Assert.assertNotNull(suggestionItems)
 		Assert.assertTrue(suggestionItems.isNotEmpty())
 		Assert.assertEquals(3, suggestionItems.size)
