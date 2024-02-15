@@ -24,14 +24,14 @@ fun rememberSpellChecker(): SpellChecker? {
 				readResourceBytes("raw/en-80k.txt")
 					.decodeToString()
 					.lineSequence()
-					.parallelForEach { line ->
+					.forEach { line ->
 						checker.dataHolder.loadUniGramLine(line)
 					}
 
 				readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
 					.decodeToString()
 					.lineSequence()
-					.parallelForEach { line ->
+					.forEach { line ->
 						checker.dataHolder.loadBiGramLine(line)
 					}
 			}
