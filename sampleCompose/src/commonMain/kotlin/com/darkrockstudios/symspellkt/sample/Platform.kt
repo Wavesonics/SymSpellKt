@@ -7,3 +7,5 @@ interface Platform {
 expect fun getPlatform(): Platform
 
 expect fun measureMillsTime(block: () -> Unit): Double
+
+expect suspend fun measureMillsTimeAsync(block: suspend () -> Unit): Double

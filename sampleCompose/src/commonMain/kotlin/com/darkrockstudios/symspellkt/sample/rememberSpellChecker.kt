@@ -1,14 +1,12 @@
 package com.darkrockstudios.symspellkt.sample
 
 import androidx.compose.runtime.*
-import androidx.compose.ui.util.fastForEach
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.impl.createSymSpellChecker
 import com.darkrockstudios.symspellkt.impl.loadBiGramLine
 import com.darkrockstudios.symspellkt.impl.loadUniGramLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.InternalResourceApi
 import org.jetbrains.compose.resources.readResourceBytes
 
@@ -22,21 +20,22 @@ fun rememberSpellChecker(): SpellChecker? {
 		scope.launch(Dispatchers.Default) {
 			val checker = createSymSpellChecker()
 
-			readResourceBytes("raw/en-80k.txt")
-				.decodeToString()
-				.splitLines()
-				.fastForEach { line ->
-					checker.dataHolder.loadUniGramLine(line)
-					yield()
-				}
+			val mills = measureMillsTimeAsync {
+				readResourceBytes("raw/en-80k.txt")
+					.decodeToString()
+					.lineSequence()
+					.parallelForEach { line ->
+						checker.dataHolder.loadUniGramLine(line)
+					}
 
-			readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
-				.decodeToString()
-				.splitLines()
-				.fastForEach { line ->
-					checker.dataHolder.loadBiGramLine(line)
-					yield()
-				}
+				readResourceBytes("raw/frequency_bigramdictionary_en_243_342.txt")
+					.decodeToString()
+					.lineSequence()
+					.parallelForEach { line ->
+						checker.dataHolder.loadBiGramLine(line)
+					}
+			}
+			println("Dictionary Loaded in: $mills ms")
 
 			spellChecker = checker
 		}
