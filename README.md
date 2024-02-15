@@ -15,7 +15,7 @@ algorithm. It has been ported from [Java implementation](https://github.com/Migh
 
 ## Dependency
 
-`implementation("com.darkrockstudios:symspellkt:1.0.0")`
+`implementation("com.darkrockstudios:symspellkt:1..0")`
 
 ## Sample
 
