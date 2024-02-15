@@ -23,7 +23,8 @@ Try out the sample desktop application:
 
 `gradlew sampleCompose:run`
 
-![Sample Compose Screenshot](sample.png)
+[Try sample here](https://wavesonics.github.io/SymSpellKt/)
+[![Sample Compose Screenshot](sample.png)](https://wavesonics.github.io/SymSpellKt/)
 
 ## SymSpell v6.6 (Bigrams)
 
