@@ -16,5 +16,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "symspellkt"
 include(":library", ":sampleCompose")
