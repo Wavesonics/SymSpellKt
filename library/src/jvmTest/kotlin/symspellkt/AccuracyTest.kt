@@ -8,11 +8,13 @@ import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVRecord
+import symspellkt.benchmark.StopWatch
 import java.io.IOException
 import java.nio.charset.Charset
 import java.util.*
-import org.apache.commons.csv.*
-import symspellkt.benchmark.StopWatch
 import kotlin.test.Test
 
 
