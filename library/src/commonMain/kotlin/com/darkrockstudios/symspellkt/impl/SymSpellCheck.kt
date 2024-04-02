@@ -364,21 +364,20 @@ class SymSpellCheck(
 
 		consideredSuggestions.add(curPhrase)
 		var maxEditDistance2 = maxEditDistance
-		val phrasePrefixLen: Int
+		var phrasePrefixLen: Int = phraseLen
 		val candidates: MutableList<String> = ArrayList()
 
 		if (phraseLen > spellCheckSettings.prefixLength) {
 			phrasePrefixLen = spellCheckSettings.prefixLength
 			candidates.add(curPhrase.substring(0, phrasePrefixLen))
 		} else {
-			phrasePrefixLen = phraseLen
+			candidates.add(curPhrase)
 		}
-		candidates.add(curPhrase)
 
 		while (candidates.isNotEmpty()) {
 			val candidate = candidates.removeAt(0)
 			val candidateLen = candidate.length
-			val lenDiff = phraseLen - candidateLen
+			val lenDiff = phrasePrefixLen - candidateLen
 
 			// Empty candidates cause a bunch of unnecessary suggestions and waste time.
 			// I think this is okay? If there are ever problems with single letter word
