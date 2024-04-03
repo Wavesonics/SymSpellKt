@@ -15,19 +15,15 @@ object SpellHelper {
 		editFactor: Double,
 	): Set<String> {
 		val deletedWords: MutableSet<String> = mutableSetOf()
+		var newKey = key
 		if (key.length <= maxEditDistance) {
 			deletedWords.add("")
 		}
 		if (key.length > maxEditDistance) {
-			deletedWords
-				.add(
-					key.substring(
-						0,
-						if (prefixLength < key.length) prefixLength else key.length
-					)
-				)
+			newKey = key.substring(0, if (prefixLength < key.length) prefixLength else key.length)
+			deletedWords.add(newKey)
 		}
-		return edits(key, 0.0, deletedWords, getEdistance(maxEditDistance, key.length, editFactor))
+		return edits(newKey, 0.0, deletedWords, getEdistance(maxEditDistance, newKey.length, editFactor))
 	}
 
 	private fun getEdistance(maxEditDistance: Double, length: Int, factor: Double): Double {
