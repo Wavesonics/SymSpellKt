@@ -11,11 +11,11 @@
 ![badge-ios] ![badge-ios-sim]
 
 _This is a Kotlin Multiplatform implementation of the [symspell](https://github.com/wolfgarbe/symspell) fuzzy search
-algorithm. It has been ported from [Java implementation](https://github.com/MighTguY/customized-symspell/) of symspell._
+algorithm. It has been ported from this [Java implementation](https://github.com/MighTguY/customized-symspell/) of symspell._
 
 ## Dependency
 
-`implementation("com.darkrockstudios:symspellkt:1..0")`
+`implementation("com.darkrockstudios:symspellkt:1.1.0")`
 
 ## Sample
 
