@@ -4,7 +4,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.darkrockstudios/symspellkt.svg)](https://search.maven.org/artifact/com.darkrockstudios/symspellkt)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 [![KMP](https://img.shields.io/badge/supported-platforms:-blue.svg?logo=kotlin)](http://kotlinlang.org)
 ![badge-jvm] ![badge-android] ![badge-wasm] ![badge-wasmi] ![badge-jsir] ![badge-linux] ![badge-windows] ![badge-mac-x86] ![badge-mac-arm]
@@ -15,7 +15,7 @@ algorithm. It has been ported from this [Java implementation](https://github.com
 
 ## Dependency
 
-`implementation("com.darkrockstudios:symspellkt:1.1.0")`
+`implementation("com.darkrockstudios:symspellkt:1.3.0")`
 
 ## Sample
 
