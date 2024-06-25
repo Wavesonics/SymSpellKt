@@ -15,11 +15,6 @@ data class SuggestionItem(
 	val count: Double
 ) : Comparator<SuggestionItem?>, Comparable<SuggestionItem?> {
 	/**
-	 * final similarity
-	 */
-	private val score = 0.0
-
-	/**
 	 * Comparison to use in Sorting: Prefernce given to distance, and if distance is same then count
 	 */
 	override fun compareTo(other: SuggestionItem?): Int {

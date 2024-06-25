@@ -3,7 +3,13 @@ package symspellkt
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
-import com.darkrockstudios.symspellkt.common.*
+import com.darkrockstudios.symspellkt.common.DictionaryItem
+import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
+import com.darkrockstudios.symspellkt.common.SpellCheckSettings
+import com.darkrockstudios.symspellkt.common.SpellHelper
+import com.darkrockstudios.symspellkt.common.SuggestionItem
+import com.darkrockstudios.symspellkt.common.Verbosity
+import com.darkrockstudios.symspellkt.common.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
 import org.junit.Assert
@@ -59,7 +65,6 @@ class MiscUnitTest {
 				spellCheckSettings.insertionWeight,
 				spellCheckSettings.replaceWeight,
 				spellCheckSettings.transpositionWeight,
-				null
 			)
 		val dataHolder: DataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 

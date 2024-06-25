@@ -1,6 +1,5 @@
 package symspellkt.benchmark
 
-import com.darkrockstudios.symspellkt.api.CharDistance
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
@@ -58,7 +57,7 @@ class SymSpellSearchBenchMark {
 
 		spellChecker = SymSpellCheck(
 			dataHolder,
-			getStringDistance(spellCheckSettings, null),
+			getStringDistance(spellCheckSettings),
 			spellCheckSettings
 		)
 		indexData(dataFile, dataHolder)
@@ -89,14 +88,12 @@ class SymSpellSearchBenchMark {
 
 	private fun getStringDistance(
 		spellCheckSettings: SpellCheckSettings,
-		charDistance: CharDistance?
 	): StringDistance {
 		return WeightedDamerauLevenshteinDistance(
 			spellCheckSettings.deletionWeight,
 			spellCheckSettings.insertionWeight,
 			spellCheckSettings.replaceWeight,
 			spellCheckSettings.transpositionWeight,
-			charDistance
 		)
 	}
 

@@ -1,6 +1,5 @@
 package com.darkrockstudios.symspellkt.common
 
-import com.darkrockstudios.symspellkt.api.CharDistance
 import com.darkrockstudios.symspellkt.api.StringDistance
 
 /**
@@ -17,7 +16,6 @@ class WeightedDamerauLevenshteinDistance(
 	private val insertionWeight: Double = 1.01,
 	private val replaceWeight: Double = 0.9,
 	private val transpositionWeight: Double = 0.7,
-	private val charDistance: CharDistance?,
 ) : StringDistance {
 
 	override fun getDistance(w1: String, w2: String): Double {
@@ -33,7 +31,6 @@ class WeightedDamerauLevenshteinDistance(
 			return w1.length.toDouble()
 		}
 
-		val useCharDistance = (charDistance != null && w1.length == w2.length)
 		val d = Array(w2.length + 1) {
 			DoubleArray(
 				w1.length + 1
@@ -53,7 +50,7 @@ class WeightedDamerauLevenshteinDistance(
 			for (j in 1..w1.length) {
 				val source_j = w1[j - 1]
 
-				val cost = getReplaceCost(target_i, source_j, useCharDistance)
+				val cost = getReplaceCost(target_i, source_j)
 
 				var min = min(
 					d[i - 1][j] + insertionWeight,  //Insertion
@@ -81,10 +78,6 @@ class WeightedDamerauLevenshteinDistance(
 		return kotlin.math.min(a, kotlin.math.min(b, c))
 	}
 
-	private fun min(a: Double, b: Double, c: Double, d: Double): Double {
-		return kotlin.math.min(a, kotlin.math.min(b, kotlin.math.min(c, d)))
-	}
-
 	private fun isTransposition(i: Int, j: Int, source: String?, target: String?): Boolean {
 		return i > 2
 				&& j > 2
@@ -92,10 +85,8 @@ class WeightedDamerauLevenshteinDistance(
 				&& target[i - 2] == source[j - 1]
 	}
 
-	private fun getReplaceCost(aI: Char, bJ: Char, useCharDistance: Boolean): Double {
-		return if (aI != bJ && useCharDistance) {
-			replaceWeight * charDistance!!.distance(aI, bJ)
-		} else if (aI != bJ) {
+	private fun getReplaceCost(aI: Char, bJ: Char): Double {
+		return if (aI != bJ) {
 			replaceWeight
 		} else {
 			0.0

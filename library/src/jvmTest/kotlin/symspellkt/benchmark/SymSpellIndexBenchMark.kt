@@ -1,6 +1,5 @@
 package symspellkt.benchmark
 
-import com.darkrockstudios.symspellkt.api.CharDistance
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
@@ -40,7 +39,6 @@ class SymSpellIndexBenchMark {
 	)
 	var dataFile: String? = null
 
-	var queryFile: String = "noisy_query_en_1000.txt"
 	lateinit var spellChecker: SpellChecker
 
 	@Setup(Level.Iteration)
@@ -57,7 +55,7 @@ class SymSpellIndexBenchMark {
 
 		spellChecker = SymSpellCheck(
 			dataHolder,
-			getStringDistance(spellCheckSettings, null),
+			getStringDistance(spellCheckSettings),
 			spellCheckSettings
 		)
 	}
@@ -81,14 +79,12 @@ class SymSpellIndexBenchMark {
 
 	private fun getStringDistance(
 		spellCheckSettings: SpellCheckSettings,
-		charDistance: CharDistance?
 	): StringDistance {
 		return WeightedDamerauLevenshteinDistance(
 			spellCheckSettings.deletionWeight,
 			spellCheckSettings.insertionWeight,
 			spellCheckSettings.replaceWeight,
 			spellCheckSettings.transpositionWeight,
-			charDistance
 		)
 	}
 

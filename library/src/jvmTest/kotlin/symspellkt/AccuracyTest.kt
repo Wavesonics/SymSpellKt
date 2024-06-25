@@ -1,10 +1,13 @@
 package symspellkt
 
-import com.darkrockstudios.symspellkt.api.CharDistance
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
-import com.darkrockstudios.symspellkt.common.*
+import com.darkrockstudios.symspellkt.common.DictionaryItem
+import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
+import com.darkrockstudios.symspellkt.common.SpellCheckSettings
+import com.darkrockstudios.symspellkt.common.SuggestionItem
+import com.darkrockstudios.symspellkt.common.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
@@ -14,7 +17,6 @@ import org.apache.commons.csv.CSVRecord
 import symspellkt.benchmark.StopWatch
 import java.io.IOException
 import java.nio.charset.Charset
-import java.util.*
 import kotlin.test.Test
 
 
@@ -155,7 +157,7 @@ class AccuracyTest {
 	fun testAccuracy() {
 		val accuracyTest = AccuracyTest()
 
-		println("=========  Basic =============================")
+		println("=========  SymSpell =============================")
 		//Basic
 		var spellCheckSettings = SpellCheckSettings(
 			countThreshold = 0,
@@ -170,90 +172,20 @@ class AccuracyTest {
 
 		val spellChecker: SpellChecker = SymSpellCheck(
 			dataHolder,
-			accuracyTest.getStringDistance(spellCheckSettings, null),
+			accuracyTest.getStringDistance(spellCheckSettings),
 			spellCheckSettings
 		)
 		accuracyTest.run(spellChecker)
-		println("==================================================")
-
-		//Weighted
-		println("=========  Weighted =============================")
-		spellCheckSettings = SpellCheckSettings(
-			deletionWeight = 1.01,
-			insertionWeight = 0.9,
-			replaceWeight = 0.7,
-			transpositionWeight = 1.0,
-			countThreshold = 0,
-			prefixLength = 40,
-			maxEditDistance = 2.0
-		)
-
-		dataHolder = InMemoryDataHolder(
-			spellCheckSettings,
-			Murmur3HashFunction()
-		)
-		val weightedSpellChecker: SpellChecker = SymSpellCheck(
-			dataHolder,
-			accuracyTest.getStringDistance(spellCheckSettings, null),
-			spellCheckSettings
-		)
-		accuracyTest.run(weightedSpellChecker)
-		println("==================================================")
-
-
-		//Qwerty
-		println("=========  Qwerty =============================")
-		spellCheckSettings = SpellCheckSettings(
-			countThreshold = 0,
-			prefixLength = 40,
-			maxEditDistance = 2.0
-		)
-		dataHolder = InMemoryDataHolder(
-			spellCheckSettings,
-			Murmur3HashFunction()
-		)
-		val keyboardSpellChecker: SpellChecker = SymSpellCheck(
-			dataHolder,
-			accuracyTest.getStringDistance(spellCheckSettings, QwertyDistance()),
-			spellCheckSettings
-		)
-		accuracyTest.run(keyboardSpellChecker)
-		println("==================================================")
-
-		//QwertyWeighted
-		println("=========  QwertyWeighted =============================")
-		spellCheckSettings = SpellCheckSettings(
-			deletionWeight = 1.01,
-			insertionWeight = 0.9,
-			replaceWeight = 0.7,
-			transpositionWeight = 1.0,
-			countThreshold = 0,
-			prefixLength = 40,
-			maxEditDistance = 2.0,
-		)
-		dataHolder = InMemoryDataHolder(
-			spellCheckSettings,
-			Murmur3HashFunction()
-		)
-		val keyboardWeightedSpellChecker: SpellChecker = SymSpellCheck(
-			dataHolder,
-			accuracyTest.getStringDistance(spellCheckSettings, QwertyDistance()),
-			spellCheckSettings
-		)
-		accuracyTest.run(keyboardWeightedSpellChecker)
-		println("==================================================")
 	}
 
 	private fun getStringDistance(
 		spellCheckSettings: SpellCheckSettings,
-		charDistance: CharDistance?
 	): StringDistance {
 		return WeightedDamerauLevenshteinDistance(
 			spellCheckSettings.deletionWeight,
 			spellCheckSettings.insertionWeight,
 			spellCheckSettings.replaceWeight,
 			spellCheckSettings.transpositionWeight,
-			charDistance
 		)
 	}
 

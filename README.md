@@ -41,33 +41,6 @@ Try out the sample desktop application:
   inserts of the input term are transformed into deletes of the dictionary term.
 * The speed comes from the inexpensive delete-only edit candidate generation and the pre-calculation.
 
-## Customizations
-
-* We replaced the **Damerau-Levenshtein** implementation with a **weighted Damerau-Levenshtein** implementation: where
-  each operation (delete, insert, swap, replace) can have different edit weights.
-* We added some customizing "hooks" that are used to rerank the top-k results (candidate list). The results are then
-  reordered based on a combined proximity
-  * added keyboard-distance to get a dynamic replacement weight (since letters close to each other are more likely to be
-    replaced)
-  * do some query normalization before search
-
-## Keyboard based  Qwerty/Qwertz Distance
-
-There are 2 implementations of the keyboards one is English Qwerty based and other is German Qwertz based implementation
-we used the adjancey graph of the keyboard for the weights to the connected nodes.
-<img src="qwerty.png" align="center">
-
-
-## Accuracy Summary
-
-| Spellcorrection Strategy 	| Accuracy 	| Failures 	| TP   	| TN  	| FP  	| FN   	|
-|--------------------------	|:--------:	|---------:	|------	|-----	|-----	|------	|
-| LUCENE                   	|  78.96%  	|   21.04% 	| 5883 	| 481 	| 146 	| 1550 	|
-| Vanilla SymSpell         	|  88.80%  	|   11.20% 	| 6888 	| 269 	| 358 	| 545  	|
-| Weighted SymSpell        	|  75.74%  	|   24.26% 	| 5781 	| 324 	| 303 	| 1652 	|
-| Qwerty Vanilla SymSpell  	| 88.57%   	| 11.43%   	| 6860 	| 279 	| 348 	| 573  	|
-| Qwerty Weighted SymSpell 	| 75.36%   	| 24.64%   	| 5744 	| 330 	| 297 	| 1689 	|
-
 ### Example
 
 ```
@@ -84,10 +57,6 @@ While with the qwerty based char distance,
 The reason for this is in Qwerty Based Keyboard, 
  S and O are too far while V and C are adjacent.
 ```
-
-## Generation of Deletes
-
-Word deletes are generated with taking edit distance which is minimum of max edit distance and 0.3 * word.length
 
 [badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
 [badge-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat

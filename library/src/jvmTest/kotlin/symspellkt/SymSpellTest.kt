@@ -42,7 +42,6 @@ class SymSpellTest {
 				spellCheckSettings.insertionWeight,
 				spellCheckSettings.replaceWeight,
 				spellCheckSettings.transpositionWeight,
-				null
 			)
 		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
