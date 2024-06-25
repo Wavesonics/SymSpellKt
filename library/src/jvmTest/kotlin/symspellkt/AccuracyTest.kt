@@ -7,7 +7,8 @@ import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SuggestionItem
-import com.darkrockstudios.symspellkt.common.WeightedDamerauLevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
@@ -157,12 +158,11 @@ class AccuracyTest {
 	fun testAccuracy() {
 		val accuracyTest = AccuracyTest()
 
-		println("=========  SymSpell =============================")
+		println("========= Pure DamerauLevenshteinDistance =============================")
 		//Basic
 		var spellCheckSettings = SpellCheckSettings(
 			countThreshold = 0,
 			prefixLength = 40,
-			maxEditDistance = 2.0
 		)
 
 		var dataHolder: DataHolder = InMemoryDataHolder(
@@ -176,6 +176,46 @@ class AccuracyTest {
 			spellCheckSettings
 		)
 		accuracyTest.run(spellChecker)
+
+		println("========= Weighted DamerauLevenshteinDistance =============================")
+		spellCheckSettings = SpellCheckSettings(
+			countThreshold = 0,
+			prefixLength = 40,
+			deletionWeight = 0.8,
+			insertionWeight = 1.01,
+			replaceWeight = 0.9,
+			transpositionWeight = 0.7,
+		)
+
+		dataHolder = InMemoryDataHolder(
+			spellCheckSettings,
+			Murmur3HashFunction()
+		)
+
+		val weightedSpellChecker = SymSpellCheck(
+			dataHolder,
+			accuracyTest.getStringDistance(spellCheckSettings),
+			spellCheckSettings
+		)
+		accuracyTest.run(weightedSpellChecker)
+
+		println("=========  Pure Levenshtein =============================")
+		spellCheckSettings = SpellCheckSettings(
+			countThreshold = 0,
+			prefixLength = 40,
+		)
+		dataHolder = InMemoryDataHolder(
+			spellCheckSettings,
+			Murmur3HashFunction()
+		)
+		val pureLevenshteinSpellChecker: SpellChecker = SymSpellCheck(
+			dataHolder,
+			LevenshteinDistance(),
+			spellCheckSettings
+		)
+		accuracyTest.run(pureLevenshteinSpellChecker)
+		println("==================================================")
+
 	}
 
 	private fun getStringDistance(

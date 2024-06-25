@@ -2,6 +2,7 @@ package symspellkt
 
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.common.*
+import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck

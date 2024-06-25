@@ -6,7 +6,7 @@ import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
-import com.darkrockstudios.symspellkt.common.WeightedDamerauLevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck

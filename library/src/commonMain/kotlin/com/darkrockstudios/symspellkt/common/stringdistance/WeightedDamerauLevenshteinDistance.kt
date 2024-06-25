@@ -1,4 +1,4 @@
-package com.darkrockstudios.symspellkt.common
+package com.darkrockstudios.symspellkt.common.stringdistance
 
 import com.darkrockstudios.symspellkt.api.StringDistance
 
@@ -12,10 +12,10 @@ import com.darkrockstudios.symspellkt.api.StringDistance
  * action.
  */
 class WeightedDamerauLevenshteinDistance(
-	private val deletionWeight: Double = 0.8,
-	private val insertionWeight: Double = 1.01,
-	private val replaceWeight: Double = 0.9,
-	private val transpositionWeight: Double = 0.7,
+	private val deletionWeight: Double = 1.0,
+	private val insertionWeight: Double = 1.0,
+	private val replaceWeight: Double = 1.0,
+	private val transpositionWeight: Double = 1.0,
 ) : StringDistance {
 
 	override fun getDistance(w1: String, w2: String): Double {

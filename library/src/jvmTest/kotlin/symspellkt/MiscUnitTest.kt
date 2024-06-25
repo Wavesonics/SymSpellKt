@@ -9,7 +9,7 @@ import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SpellHelper
 import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.Verbosity
-import com.darkrockstudios.symspellkt.common.WeightedDamerauLevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
 import org.junit.Assert
