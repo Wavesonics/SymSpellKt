@@ -1,12 +1,11 @@
 [versions]
 jvm = "17"
-agp = "8.2.2"
-kotlin = "1.9.21"
+agp = "8.5.0"
+kotlin = "2.0.0"
 nexus-publish = "2.0.0-rc-1"
 android-minSdk = "26"
 android-compileSdk = "34"
-compose = "1.6.0"
-compose-plugin = "1.6.0-beta01"
+compose = "1.6.11"
 
 murmurhash = "0.4.0"
 cvsparser = "1.10.0"
@@ -21,10 +20,9 @@ cvsparser = { module = "org.apache.commons:commons-csv", version.ref = "cvsparse
 junit4 = { module = "junit:junit", version.ref = "junit" }
 jmh = { module = "org.openjdk.jmh:jmh-core-benchmarks", version.ref = "jmh" }
 jmh-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 
 [plugins]
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
-kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

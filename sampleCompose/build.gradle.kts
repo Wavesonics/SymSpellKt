@@ -1,9 +1,12 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose)
 }
 
 kotlin {
@@ -20,8 +23,9 @@ kotlin {
     }
     
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = libs.versions.jvm.get()
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvm.get()))
         }
     }
     
@@ -53,7 +57,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.darkrockstudios.symspellkt.sample"
-            packageVersion = "1.2.0"
+            packageVersion = "1.3.0"
         }
     }
 }
