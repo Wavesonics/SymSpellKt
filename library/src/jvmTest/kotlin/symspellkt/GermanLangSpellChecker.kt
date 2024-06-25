@@ -19,9 +19,7 @@ class GermanLangSpellChecker {
 	lateinit var dataHolder1: DataHolder
 	lateinit var dataHolder2: DataHolder
 	lateinit var symSpellCheck: SymSpellCheck
-	lateinit var qwertzSymSpellCheck: SymSpellCheck
 	lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
-	lateinit var qwertzWeightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
 
 	@Before
 	@Throws(IOException::class, SpellCheckException::class)
@@ -46,16 +44,6 @@ class GermanLangSpellChecker {
 				spellCheckSettings.insertionWeight,
 				spellCheckSettings.replaceWeight,
 				spellCheckSettings.transpositionWeight,
-				null
-			)
-
-		qwertzWeightedDamerauLevenshteinDistance =
-			WeightedDamerauLevenshteinDistance(
-				spellCheckSettings.deletionWeight,
-				spellCheckSettings.insertionWeight,
-				spellCheckSettings.replaceWeight,
-				spellCheckSettings.transpositionWeight,
-				QwertzDistance()
 			)
 
 		dataHolder1 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
@@ -64,12 +52,6 @@ class GermanLangSpellChecker {
 		symSpellCheck = SymSpellCheck(
 			dataHolder1,
 			weightedDamerauLevenshteinDistance,
-			spellCheckSettings
-		)
-
-		qwertzSymSpellCheck = SymSpellCheck(
-			dataHolder2,
-			qwertzWeightedDamerauLevenshteinDistance,
 			spellCheckSettings
 		)
 
@@ -93,13 +75,6 @@ class GermanLangSpellChecker {
 			"nömlich".lowercase(Locale.getDefault()),
 			"nämlich".lowercase(Locale.getDefault()),
 			2.0, 1.0
-		)
-
-		assertTypoEdAndCorrected(
-			qwertzSymSpellCheck,
-			"nömlich".lowercase(Locale.getDefault()),
-			"nämlich".lowercase(Locale.getDefault()),
-			2.0, 0.10
 		)
 	}
 
