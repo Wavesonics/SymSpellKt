@@ -9,7 +9,7 @@ import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SpellHelper
 import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.Verbosity
-import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
 import org.junit.Assert
@@ -28,11 +28,7 @@ class MiscUnitTest {
 	fun testSpellCheckSettings() {
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 1.0,
-			insertionWeight = 1.0,
-			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
-			transpositionWeight = 1.0,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
@@ -49,32 +45,22 @@ class MiscUnitTest {
 	fun testSpellChecker() {
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 1.0,
-			insertionWeight = 1.0,
-			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
-			transpositionWeight = 1.0,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
 		)
 
-		val weightedDamerauLevenshteinDistance: StringDistance =
-			WeightedDamerauLevenshteinDistance(
-				spellCheckSettings.deletionWeight,
-				spellCheckSettings.insertionWeight,
-				spellCheckSettings.replaceWeight,
-				spellCheckSettings.transpositionWeight,
-			)
+		val damerauLevenshteinDistance: StringDistance = DamerauLevenshteinDistance()
 		val dataHolder: DataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
 		val symSpellCheck: SpellChecker = SymSpellCheck(
-			dataHolder, weightedDamerauLevenshteinDistance,
+			dataHolder, damerauLevenshteinDistance,
 			spellCheckSettings
 		)
 
 		Assert.assertEquals(dataHolder, symSpellCheck.dataHolder)
-		Assert.assertEquals(weightedDamerauLevenshteinDistance, symSpellCheck.stringDistance)
+		Assert.assertEquals(damerauLevenshteinDistance, symSpellCheck.stringDistance)
 		Assert.assertEquals(spellCheckSettings, symSpellCheck.spellCheckSettings)
 	}
 

@@ -2,13 +2,12 @@ package symspellkt
 
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
-import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SuggestionItem
+import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
-import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
@@ -172,32 +171,10 @@ class AccuracyTest {
 
 		val spellChecker: SpellChecker = SymSpellCheck(
 			dataHolder,
-			accuracyTest.getStringDistance(spellCheckSettings),
+			DamerauLevenshteinDistance(),
 			spellCheckSettings
 		)
 		accuracyTest.run(spellChecker)
-
-		println("========= Weighted DamerauLevenshteinDistance =============================")
-		spellCheckSettings = SpellCheckSettings(
-			countThreshold = 0,
-			prefixLength = 40,
-			deletionWeight = 0.8,
-			insertionWeight = 1.01,
-			replaceWeight = 0.9,
-			transpositionWeight = 0.7,
-		)
-
-		dataHolder = InMemoryDataHolder(
-			spellCheckSettings,
-			Murmur3HashFunction()
-		)
-
-		val weightedSpellChecker = SymSpellCheck(
-			dataHolder,
-			accuracyTest.getStringDistance(spellCheckSettings),
-			spellCheckSettings
-		)
-		accuracyTest.run(weightedSpellChecker)
 
 		println("=========  Pure Levenshtein =============================")
 		spellCheckSettings = SpellCheckSettings(
@@ -216,17 +193,6 @@ class AccuracyTest {
 		accuracyTest.run(pureLevenshteinSpellChecker)
 		println("==================================================")
 
-	}
-
-	private fun getStringDistance(
-		spellCheckSettings: SpellCheckSettings,
-	): StringDistance {
-		return WeightedDamerauLevenshteinDistance(
-			spellCheckSettings.deletionWeight,
-			spellCheckSettings.insertionWeight,
-			spellCheckSettings.replaceWeight,
-			spellCheckSettings.transpositionWeight,
-		)
 	}
 
 	companion object {

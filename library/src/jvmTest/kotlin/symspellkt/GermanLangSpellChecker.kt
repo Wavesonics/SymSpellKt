@@ -2,7 +2,7 @@ package symspellkt
 
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.common.*
-import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
@@ -20,7 +20,7 @@ class GermanLangSpellChecker {
 	lateinit var dataHolder1: DataHolder
 	lateinit var dataHolder2: DataHolder
 	lateinit var symSpellCheck: SymSpellCheck
-	lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
+	lateinit var damerauLevenshteinDistance: DamerauLevenshteinDistance
 
 	@Before
 	@Throws(IOException::class, SpellCheckException::class)
@@ -29,30 +29,20 @@ class GermanLangSpellChecker {
 
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 1.0,
-			insertionWeight = 1.0,
-			replaceWeight = 1.0,
 			maxEditDistance = 2.0,
-			transpositionWeight = 1.0,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
 		)
 
-		weightedDamerauLevenshteinDistance =
-			WeightedDamerauLevenshteinDistance(
-				spellCheckSettings.deletionWeight,
-				spellCheckSettings.insertionWeight,
-				spellCheckSettings.replaceWeight,
-				spellCheckSettings.transpositionWeight,
-			)
+		damerauLevenshteinDistance = DamerauLevenshteinDistance()
 
 		dataHolder1 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 		dataHolder2 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
 		symSpellCheck = SymSpellCheck(
 			dataHolder1,
-			weightedDamerauLevenshteinDistance,
+			damerauLevenshteinDistance,
 			spellCheckSettings
 		)
 

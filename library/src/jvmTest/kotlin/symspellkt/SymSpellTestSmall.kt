@@ -1,8 +1,9 @@
 package symspellkt
 
 import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.*
-import com.darkrockstudios.symspellkt.common.stringdistance.WeightedDamerauLevenshteinDistance
+import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
 import com.darkrockstudios.symspellkt.impl.SymSpellCheck
@@ -13,10 +14,10 @@ import java.io.File
 import java.io.FileReader
 import java.io.IOException
 
-class SymSpellTestWeighted {
+class SymSpellTestSmall {
 	private lateinit var dataHolder: DataHolder
 	private lateinit var symSpellCheck: SymSpellCheck
-	private lateinit var weightedDamerauLevenshteinDistance: WeightedDamerauLevenshteinDistance
+	private lateinit var stringDistance: StringDistance
 
 	@Before
 	@Throws(IOException::class, SpellCheckException::class)
@@ -25,27 +26,18 @@ class SymSpellTestWeighted {
 
 		val spellCheckSettings = SpellCheckSettings(
 			countThreshold = 1,
-			deletionWeight = 0.8,
-			insertionWeight = 1.01,
-			replaceWeight = 1.5,
 			maxEditDistance = 2.0,
-			transpositionWeight = 0.7,
 			topK = 5,
 			prefixLength = 10,
 			verbosity = Verbosity.ALL,
 		)
 
-		weightedDamerauLevenshteinDistance =
-			WeightedDamerauLevenshteinDistance(
-				spellCheckSettings.deletionWeight,
-				spellCheckSettings.insertionWeight,
-				spellCheckSettings.replaceWeight,
-				spellCheckSettings.transpositionWeight,
-			)
+		stringDistance = LevenshteinDistance()
 		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
 		symSpellCheck = SymSpellCheck(
-			dataHolder, weightedDamerauLevenshteinDistance,
+			dataHolder,
+			stringDistance,
 			spellCheckSettings
 		)
 		val file = File(classLoader.getResource("frequency_dictionary_en_82_765.txt")!!.file)
@@ -65,11 +57,11 @@ class SymSpellTestWeighted {
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"bigjest", "big jest", 2.0
+			"bigjest", "biggest", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"playrs", "plays", 2.0
+			"playrs", "players", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
@@ -77,7 +69,7 @@ class SymSpellTestWeighted {
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
-			"ith", "it", 2.0
+			"ith", "with", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
 			symSpellCheck,
