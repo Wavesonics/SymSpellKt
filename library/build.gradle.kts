@@ -1,7 +1,9 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
+	alias(libs.plugins.kotlin.powerassert)
 	alias(libs.plugins.android.library)
 	id("module.publication")
 }
@@ -85,4 +87,15 @@ android {
 		sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get().toInt())
 		targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get().toInt())
 	}
+}
+
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
+powerAssert {
+	functions = listOf(
+		"kotlin.assert",
+		"kotlin.test.assertTrue",
+		"kotlin.test.assertEquals",
+		"kotlin.test.assertNull"
+	)
+	includedSourceSets = listOf("commonMain", "jvmTest")
 }

@@ -2,7 +2,7 @@
 jvm = "17"
 agp = "8.5.0"
 kotlin = "2.0.0"
-nexus-publish = "2.0.0-rc-1"
+nexus-publish = "2.0.0"
 android-minSdk = "26"
 android-compileSdk = "34"
 compose = "1.6.11"
@@ -24,5 +24,6 @@ jmh-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
