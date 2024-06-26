@@ -57,7 +57,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.darkrockstudios.symspellkt.sample"
-            packageVersion = "1.3.0"
+            packageVersion = "2.0.0"
         }
     }
 }
