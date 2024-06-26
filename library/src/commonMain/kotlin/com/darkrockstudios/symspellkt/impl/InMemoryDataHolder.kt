@@ -6,6 +6,7 @@ import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SpellHelper.getEditDeletes
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
+import kotlin.math.min
 
 /**
  * Class to create in memory dictionary for the items with term->frequency
@@ -94,8 +95,10 @@ class InMemoryDataHolder(
 
 		//create deletes
 		val editDeletes = getEditDeletes(
-			key, spellCheckSettings.maxEditDistance,
-			spellCheckSettings.prefixLength, spellCheckSettings.editFactor
+			key,
+			spellCheckSettings.maxEditDistance,
+			spellCheckSettings.prefixLength,
+			spellCheckSettings.editFactor,
 		)
 		for (delete in editDeletes) {
 			val hash = hashFunction.hash(delete)
@@ -159,8 +162,7 @@ class InMemoryDataHolder(
 			}
 		} else if (wordsDictionary.containsKey(key)) {
 			val prevFreq = wordsDictionary[key] ?: 0.0
-			runningFrequency =
-				prevFreq + (if (Double.MAX_VALUE - prevFreq > runningFrequency) runningFrequency else Double.MAX_VALUE)
+			runningFrequency = min(Double.MAX_VALUE, prevFreq + runningFrequency)
 			addToDictionary(key, runningFrequency)
 			return Double.MIN_VALUE
 		} else if (runningFrequency < spellCheckSettings.countThreshold) {

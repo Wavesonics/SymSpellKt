@@ -122,7 +122,7 @@ class SymSpell(
 		var joinedCount = Double.MAX_VALUE
 		for (si in suggestionParts) {
 			joinedTerm = joinedTerm + si.term + " "
-			joinedCount = min(joinedCount, si.count)
+			joinedCount = min(joinedCount, si.frequency)
 		}
 		joinedTerm = joinedTerm.trim()
 		val dist: Double = stringDistance.getDistance(
@@ -258,29 +258,29 @@ class SymSpell(
 				if (suggestions.isNotEmpty()) {
 					if ((suggestions1[0].term + suggestions2[0].term) == word) {
 						//make count bigger than count of single term correction
-						count = max(count, suggestions[0].count + 2)
+						count = max(count, suggestions[0].frequency + 2)
 					} else if ((suggestions1[0].term === suggestions[0].term)
 						|| (suggestions2[0].term == suggestions[0].term)
 					) {
 						//make count bigger than count of single term correction
-						count = max(count, suggestions[0].count + 1)
+						count = max(count, suggestions[0].frequency + 1)
 					}
 				} else if ((suggestions1[0].term + suggestions2[0].term) == word) {
 					count = max(
 						count,
-						max(suggestions1[0].count, suggestions2[0].count)
+						max(suggestions1[0].frequency, suggestions2[0].frequency)
 					)
 				}
 			} else {
 				count = min(
 					spellCheckSettings.bigramCountMin,
-					(suggestions1[0].count / nMax * suggestions2[0].count)
+					(suggestions1[0].frequency / nMax * suggestions2[0].frequency)
 				)
 			}
 
 			val suggestionSplit = SuggestionItem(split, splitDistance, count)
 
-			if ((suggestionSplitBest == null) || (suggestionSplit.count > suggestionSplitBest.count)) {
+			if ((suggestionSplitBest == null) || (suggestionSplit.frequency > suggestionSplitBest.frequency)) {
 				suggestionSplitBest = suggestionSplit
 			}
 		}
@@ -320,7 +320,7 @@ class SymSpell(
 		if (spellCheckSettings.lowerCaseTerms) {
 			curPhrase = curPhrase.lowercase()
 		}
-		var suggestionCount: Double
+		var suggestionFrequency: Double
 		val consideredDeletes: MutableSet<String> = HashSet()
 		val consideredSuggestions: MutableSet<String> = HashSet()
 		val suggestionItems: MutableList<SuggestionItem> = ArrayList(spellCheckSettings.topK)
@@ -356,8 +356,8 @@ class SymSpell(
 		val frequency = dataHolder.getItemFrequency(curPhrase)
 
 		if (frequency != null) {
-			suggestionCount = frequency
-			val si = SuggestionItem(curPhrase, 0.0, suggestionCount)
+			suggestionFrequency = frequency
+			val si = SuggestionItem(curPhrase, 0.0, suggestionFrequency)
 			suggestionItems.addItemSorted(si, spellCheckSettings.topK)
 
 			if (verbosity != Verbosity.ALL) {
@@ -496,14 +496,14 @@ class SymSpell(
 					}
 
 					if (SpellHelper.isLessOrEqualDouble(distance, maxEditDistance2)) {
-						suggestionCount = dataHolder.getItemFrequency(suggestion)!!
-						val si = SuggestionItem(suggestion, distance, suggestionCount)
+						suggestionFrequency = dataHolder.getItemFrequency(suggestion)!!
+						val si = SuggestionItem(suggestion, distance, suggestionFrequency)
 						if (suggestionItems.isNotEmpty()) {
 							if (verbosity == Verbosity.CLOSEST && distance < maxEditDistance2) {
 								suggestionItems.clear()
 							} else if (verbosity == Verbosity.TOP) {
 								if (SpellHelper.isLessDouble(distance, maxEditDistance2)
-									|| suggestionCount > suggestionItems[0].count
+									|| suggestionFrequency > suggestionItems[0].frequency
 								) {
 									maxEditDistance2 = distance
 									suggestionItems[0] = si
@@ -717,7 +717,7 @@ class SymSpell(
 					//because the probabilities of words are about 10^-10, the product of many such small
 					// numbers could exceed (underflow) the floating number range and become zero
 					//log(ab)=log(a)+log(b)
-					topProbabilityLog = log10(results[0].count / nMax)
+					topProbabilityLog = log10(results[0].frequency / nMax)
 				} else {
 					topResult = part
 					//default, if word not found

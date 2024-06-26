@@ -12,7 +12,7 @@ data class SuggestionItem(
 	/**
 	 * Frequency of suggestion in the dictionary (a measure of how common the word is).
 	 */
-	val count: Double
+	val frequency: Double
 ) : Comparator<SuggestionItem?>, Comparable<SuggestionItem?> {
 	/**
 	 * Comparison to use in Sorting: Prefernce given to distance, and if distance is same then count
@@ -20,7 +20,7 @@ data class SuggestionItem(
 	override fun compareTo(other: SuggestionItem?): Int {
 		other ?: error("TODO how to handle null?")
 		if (SpellHelper.isEqualDouble(this.distance, other.distance)) {
-			return doubleCompare(other.count, this.count)
+			return doubleCompare(other.frequency, this.frequency)
 		}
 		return doubleCompare(this.distance, other.distance)
 	}

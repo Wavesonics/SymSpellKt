@@ -28,23 +28,23 @@ class WolfgarbeTest {
 		var result = symSpell.lookup("pipe", Verbosity.ALL, 1.0)
 		assertEquals(2, result.size)
 		assertEquals("pipe", result[0].term)
-		assertEquals(5.0, result[0].count)
+		assertEquals(5.0, result[0].frequency)
 		assertEquals("pips", result[1].term)
-		assertEquals(10.0, result[1].count)
+		assertEquals(10.0, result[1].frequency)
 
 		result = symSpell.lookup("pips", Verbosity.ALL, 1.0)
 		assertEquals(2, result.size)
 		assertEquals("pips", result[0].term)
-		assertEquals(10.0, result[0].count)
+		assertEquals(10.0, result[0].frequency)
 		assertEquals("pipe", result[1].term)
-		assertEquals(5.0, result[1].count)
+		assertEquals(5.0, result[1].frequency)
 
 		result = symSpell.lookup("pip", Verbosity.ALL, 1.0)
 		assertEquals(2, result.size)
 		assertEquals("pips", result[0].term)
-		assertEquals(10.0, result[0].count)
+		assertEquals(10.0, result[0].frequency)
 		assertEquals("pipe", result[1].term)
-		assertEquals(5.0, result[1].count)
+		assertEquals(5.0, result[1].frequency)
 	}
 
 	@Test
@@ -64,13 +64,13 @@ class WolfgarbeTest {
 		val word = "hello"
 		symSpell.dataHolder.addItem(DictionaryItem(word, Double.MAX_VALUE - 10.0))
 		var result = symSpell.lookup(word, Verbosity.TOP)
-		var count = if (result.isNotEmpty()) result[0].count else 0
-		assertEquals(Long.MAX_VALUE - 10, count)
+		var count = if (result.isNotEmpty()) result[0].frequency else 0
+		assertEquals((Double.MAX_VALUE - 10.0), count)
 
-		symSpell.dataHolder.addItem(DictionaryItem(word, 11.0))
+		symSpell.createDictionaryEntry(word, 11)
 		result = symSpell.lookup(word, Verbosity.TOP)
-		count = if (result.isNotEmpty()) result[0].count else 0
-		assertEquals(Long.MAX_VALUE, count)
+		count = if (result.isNotEmpty()) result[0].frequency else 0
+		assertEquals(Double.MAX_VALUE, count)
 	}
 
 	@Test
@@ -98,7 +98,7 @@ class WolfgarbeTest {
 		val result = symSpell.lookup("steam", Verbosity.TOP, 2.0)
 		assertEquals(1, result.size)
 		assertEquals("steamb", result[0].term)
-		assertEquals(6.0, result[0].count)
+		assertEquals(6.0, result[0].frequency)
 	}
 
 	@Test
