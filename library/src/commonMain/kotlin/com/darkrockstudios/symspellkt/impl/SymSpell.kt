@@ -777,7 +777,7 @@ class SymSpell(
 	}
 
 	companion object {
-		//N equals the sum of all counts c in the dictionary only if the dictionary is complete,
+		// N equals the sum of all counts c in the dictionary only if the dictionary is complete,
 		// but not if the dictionary is truncated or filtered
 		private const val nMax = 1024908267229L
 	}

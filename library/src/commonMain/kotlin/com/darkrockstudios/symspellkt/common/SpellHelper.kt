@@ -114,6 +114,14 @@ object SpellHelper {
 	const val EPSILON = 0.011
 }
 
+/**
+ * Add $item to the proper position in the list, such that the list
+ * remains sorted. Removing an item from the list if necessary in order
+ * to stay within the $maxSize.
+ * 	 * @param item The item to add to the list
+ * 	 * @param maxSize The maximum size of the list to not exceed
+ * 	 * @return this list for chaining
+ */
 fun <T: Comparable<T>> MutableList<T>.addItemSorted(item: T, maxSize: Int): MutableList<T> {
 	if (size >= maxSize) {
 		val lastItem = this[maxSize - 1]
