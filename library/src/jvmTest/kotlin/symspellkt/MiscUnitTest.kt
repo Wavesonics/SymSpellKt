@@ -3,13 +3,13 @@ package symspellkt
 import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
+import com.darkrockstudios.symspellkt.common.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SpellHelper
 import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.Verbosity
-import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Assert

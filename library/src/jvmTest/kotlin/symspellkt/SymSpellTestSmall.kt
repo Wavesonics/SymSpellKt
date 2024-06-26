@@ -3,7 +3,6 @@ package symspellkt
 import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.*
-import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
@@ -32,7 +31,7 @@ class SymSpellTestSmall {
 			verbosity = Verbosity.ALL,
 		)
 
-		stringDistance = LevenshteinDistance()
+		stringDistance = DamerauLevenshteinDistance()
 		dictionaryHolder = InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
 
 		symSpell = SymSpell(

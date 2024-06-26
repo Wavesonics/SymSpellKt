@@ -1,4 +1,4 @@
-package com.darkrockstudios.symspellkt.common.stringdistance
+package com.darkrockstudios.symspellkt.common
 
 import com.darkrockstudios.symspellkt.api.StringDistance
 
