@@ -41,23 +41,6 @@ Try out the sample desktop application:
   inserts of the input term are transformed into deletes of the dictionary term.
 * The speed comes from the inexpensive delete-only edit candidate generation and the pre-calculation.
 
-### Example
-
-```
-For 2 terms: 
-        slices  
-        olives
-
-If the misspelled word is, slives 
-both slices and olives is 1 edit distance, 
-  so in default case the one with higher frequency will end up in the result.
-While with the qwerty based char distance,
- slives is more closer to slices.
-
-The reason for this is in Qwerty Based Keyboard, 
- S and O are too far while V and C are adjacent.
-```
-
 [badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
 [badge-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat
 [badge-js]: http://img.shields.io/badge/-js-F8DB5D.svg?style=flat
