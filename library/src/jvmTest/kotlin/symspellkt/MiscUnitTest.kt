@@ -31,7 +31,7 @@ class MiscUnitTest {
 			maxEditDistance = 2.0,
 			topK = 5,
 			prefixLength = 10,
-			verbosity = Verbosity.ALL,
+			verbosity = Verbosity.All,
 		)
 
 		spellCheckSettings.maxLength = 1
@@ -48,7 +48,7 @@ class MiscUnitTest {
 			maxEditDistance = 2.0,
 			topK = 5,
 			prefixLength = 10,
-			verbosity = Verbosity.ALL,
+			verbosity = Verbosity.All,
 		)
 
 		val damerauLevenshteinDistance: StringDistance = DamerauLevenshteinDistance()

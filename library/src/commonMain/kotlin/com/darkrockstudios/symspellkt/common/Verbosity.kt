@@ -8,16 +8,16 @@ enum class Verbosity {
 	 * Top suggestion with the highest term frequency of the suggestions of smallest edit distance
 	 * found.
 	 */
-	TOP,
+	Top,
 
 	/**
 	 * All suggestions of smallest edit distance found, suggestions ordered by term frequency.
 	 */
-	CLOSEST,
+	Closest,
 
 	/**
 	 * All suggestions within maxEditDistance, suggestions ordered by edit distance,
 	 * then by term frequency (slower, no early termination).
 	 */
-	ALL
+	All
 }

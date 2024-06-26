@@ -7,7 +7,7 @@ data class SpellCheckSettings(
 	/**
 	 * Default verbosity [Verbosity]
 	 */
-	val verbosity: Verbosity = Verbosity.ALL,
+	val verbosity: Verbosity = Verbosity.Closest,
 
 	/**
 	 * limit suggestion list to topK entries

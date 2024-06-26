@@ -92,7 +92,7 @@ class SymSpell(
 		for (i in items.indices) {
 			val item = items[i]
 			//Normal suggestions
-			suggestions = lookup(item, Verbosity.TOP, editDistance)
+			suggestions = lookup(item, Verbosity.Top, editDistance)
 
 			//combi check, always before split
 			if (i > 0 && !isLastCombi
@@ -155,7 +155,7 @@ class SymSpell(
 	): Boolean {
 		val suggestionsCombi: List<SuggestionItem> = lookup(
 			previousToken + token,
-			Verbosity.TOP,
+			Verbosity.Top,
 			maxEditDistance
 		)
 		if (suggestionsCombi.isEmpty()) {
@@ -221,7 +221,7 @@ class SymSpell(
 
 			val suggestions1 = lookup(
 				part1,
-				Verbosity.TOP,
+				Verbosity.Top,
 				maxEditDistance
 			)
 
@@ -229,7 +229,7 @@ class SymSpell(
 				continue
 			}
 
-			val suggestions2 = lookup(part2, Verbosity.TOP, maxEditDistance)
+			val suggestions2 = lookup(part2, Verbosity.Top, maxEditDistance)
 
 			if (SpellHelper.continueConditionIfHeadIsSame(suggestions, suggestions2)) {
 				continue
@@ -363,7 +363,7 @@ class SymSpell(
 			val si = SuggestionItem(curPhrase, 0.0, suggestionFrequency)
 			suggestionItems.addItemSorted(si, spellCheckSettings.topK)
 
-			if (verbosity != Verbosity.ALL) {
+			if (verbosity != Verbosity.All) {
 				return SpellHelper.earlyExit(
 					suggestionItems,
 					curPhrase,
@@ -404,7 +404,7 @@ class SymSpell(
       than there are no better suggestions to be expected
        */
 			if (lenDiff > maxEditDistance2) {
-				if (verbosity == Verbosity.ALL) {
+				if (verbosity == Verbosity.All) {
 					continue
 				}
 				break
@@ -482,7 +482,7 @@ class SymSpell(
 						) {
 							continue
 						} else {
-							if (verbosity != Verbosity.ALL
+							if (verbosity != Verbosity.All
 								&& !deleteInSuggestionPrefix(
 									candidate, candidateLen,
 									suggestion, suggestion.length
@@ -502,9 +502,9 @@ class SymSpell(
 						suggestionFrequency = dictionary.getItemFrequency(suggestion)!!
 						val si = SuggestionItem(suggestion, distance, suggestionFrequency)
 						if (suggestionItems.isNotEmpty()) {
-							if (verbosity == Verbosity.CLOSEST && distance < maxEditDistance2) {
+							if (verbosity == Verbosity.Closest && distance < maxEditDistance2) {
 								suggestionItems.clear()
-							} else if (verbosity == Verbosity.TOP) {
+							} else if (verbosity == Verbosity.Top) {
 								if (SpellHelper.isLessDouble(distance, maxEditDistance2)
 									|| suggestionFrequency > suggestionItems[0].frequency
 								) {
@@ -515,7 +515,7 @@ class SymSpell(
 							}
 						}
 
-						if (verbosity != Verbosity.ALL) {
+						if (verbosity != Verbosity.All) {
 							maxEditDistance2 = distance
 						}
 						suggestionItems.addItemSorted(si, spellCheckSettings.topK)
@@ -524,7 +524,7 @@ class SymSpell(
 			}
 
 			if (lenDiff < maxEditDistance && candidateLen <= spellCheckSettings.prefixLength) {
-				if (verbosity != Verbosity.ALL && lenDiff >= maxEditDistance2) {
+				if (verbosity != Verbosity.All && lenDiff >= maxEditDistance2) {
 					continue
 				}
 
@@ -705,7 +705,8 @@ class SymSpell(
 				//add number of removed spaces to ed
 				topEd -= part.length
 
-				val results: List<SuggestionItem> = this.lookup(part, Verbosity.TOP, maxEditDistance)
+				val results: List<SuggestionItem> =
+					this.lookup(part, Verbosity.Top, maxEditDistance)
 				if (results.isNotEmpty()) {
 					topResult = results[0].term
 					topEd += results[0].distance

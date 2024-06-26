@@ -29,7 +29,7 @@ class SymSpellTest {
 			maxEditDistance = 2.0,
 			topK = 100,
 			prefixLength = 10,
-			verbosity = Verbosity.ALL,
+			verbosity = Verbosity.All,
 		)
 
 		damerauLevenshteinDistance = DamerauLevenshteinDistance()
@@ -166,14 +166,14 @@ class SymSpellTest {
 		Assert.assertTrue(suggestionItems.size > 0)
 		Assert.assertEquals(78, suggestionItems.size)
 
-		suggestionItems = symSpell.lookup("hel", Verbosity.ALL)
+		suggestionItems = symSpell.lookup("hel", Verbosity.All)
 		Assert.assertEquals(78, suggestionItems.size)
 	}
 
 	@Test
 	@Throws(SpellCheckException::class)
 	fun testLookupCloset() {
-		val suggestionItems: List<SuggestionItem> = symSpell.lookup("resial", Verbosity.CLOSEST)
+		val suggestionItems: List<SuggestionItem> = symSpell.lookup("resial", Verbosity.Closest)
 		Assert.assertNotNull(suggestionItems)
 		Assert.assertTrue(suggestionItems.isNotEmpty())
 		Assert.assertEquals(3, suggestionItems.size)

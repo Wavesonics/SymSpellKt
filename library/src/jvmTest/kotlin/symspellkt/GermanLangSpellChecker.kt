@@ -31,7 +31,7 @@ class GermanLangSpellChecker {
 			maxEditDistance = 2.0,
 			topK = 5,
 			prefixLength = 10,
-			verbosity = Verbosity.ALL,
+			verbosity = Verbosity.All,
 		)
 
 		damerauLevenshteinDistance = DamerauLevenshteinDistance()

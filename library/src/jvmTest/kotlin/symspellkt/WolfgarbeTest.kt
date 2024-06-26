@@ -24,21 +24,21 @@ class WolfgarbeTest {
 		symSpell.createDictionaryEntry("pipe", 5.0)
 		symSpell.createDictionaryEntry("pips", 10.0)
 
-		var result = symSpell.lookup("pipe", Verbosity.ALL, 1.0)
+		var result = symSpell.lookup("pipe", Verbosity.All, 1.0)
 		assertEquals(2, result.size)
 		assertEquals("pipe", result[0].term)
 		assertEquals(5.0, result[0].frequency)
 		assertEquals("pips", result[1].term)
 		assertEquals(10.0, result[1].frequency)
 
-		result = symSpell.lookup("pips", Verbosity.ALL, 1.0)
+		result = symSpell.lookup("pips", Verbosity.All, 1.0)
 		assertEquals(2, result.size)
 		assertEquals("pips", result[0].term)
 		assertEquals(10.0, result[0].frequency)
 		assertEquals("pipe", result[1].term)
 		assertEquals(5.0, result[1].frequency)
 
-		result = symSpell.lookup("pip", Verbosity.ALL, 1.0)
+		result = symSpell.lookup("pip", Verbosity.All, 1.0)
 		assertEquals(2, result.size)
 		assertEquals("pips", result[0].term)
 		assertEquals(10.0, result[0].frequency)
@@ -62,12 +62,12 @@ class WolfgarbeTest {
 		val symSpell = SymSpell()
 		val word = "hello"
 		symSpell.createDictionaryEntry(word, Double.MAX_VALUE - 10.0)
-		var result = symSpell.lookup(word, Verbosity.TOP)
+		var result = symSpell.lookup(word, Verbosity.Top)
 		var count = if (result.isNotEmpty()) result[0].frequency else 0
 		assertEquals((Double.MAX_VALUE - 10.0), count)
 
 		symSpell.createDictionaryEntry(word, 11)
-		result = symSpell.lookup(word, Verbosity.TOP)
+		result = symSpell.lookup(word, Verbosity.Top)
 		count = if (result.isNotEmpty()) result[0].frequency else 0
 		assertEquals(Double.MAX_VALUE, count)
 	}
@@ -78,13 +78,13 @@ class WolfgarbeTest {
 		symSpell.createDictionaryEntry("steam", 1)
 		symSpell.createDictionaryEntry("steams", 2)
 		symSpell.createDictionaryEntry("steem", 3)
-		var result = symSpell.lookup("steems", Verbosity.TOP, 2.0)
+		var result = symSpell.lookup("steems", Verbosity.Top, 2.0)
 		assertEquals(1, result.size)
 
-		result = symSpell.lookup("steems", Verbosity.CLOSEST, 2.0)
+		result = symSpell.lookup("steems", Verbosity.Closest, 2.0)
 		assertEquals(2, result.size)
 
-		result = symSpell.lookup("steems", Verbosity.ALL, 2.0)
+		result = symSpell.lookup("steems", Verbosity.All, 2.0)
 		assertEquals(3, result.size)
 	}
 
@@ -94,7 +94,7 @@ class WolfgarbeTest {
 		symSpell.createDictionaryEntry("steama", 4)
 		symSpell.createDictionaryEntry("steamb", 6)
 		symSpell.createDictionaryEntry("steamc", 2)
-		val result = symSpell.lookup("steam", Verbosity.TOP, 2.0)
+		val result = symSpell.lookup("steam", Verbosity.Top, 2.0)
 		assertEquals(1, result.size)
 		assertEquals("steamb", result[0].term)
 		assertEquals(6.0, result[0].frequency)
@@ -107,7 +107,7 @@ class WolfgarbeTest {
 		symSpell.createDictionaryEntry("steamb", 6)
 		symSpell.createDictionaryEntry("steamc", 2)
 
-		val result = symSpell.lookup("steama", Verbosity.TOP, 2.0)
+		val result = symSpell.lookup("steama", Verbosity.Top, 2.0)
 		assertEquals(1, result.size)
 		assertEquals("steama", result[0].term)
 	}
@@ -124,10 +124,10 @@ class WolfgarbeTest {
 		)
 		symSpell.createDictionaryEntry("pawn", 10)
 
-		var result = symSpell.lookup("paw", Verbosity.TOP, 0.0)
+		var result = symSpell.lookup("paw", Verbosity.Top, 0.0)
 		assertEquals(0, result.size)
 
-		result = symSpell.lookup("awn", Verbosity.TOP, 0.0)
+		result = symSpell.lookup("awn", Verbosity.Top, 0.0)
 		assertEquals(0, result.size)
 	}
 
@@ -143,7 +143,7 @@ class WolfgarbeTest {
 		)
 		symSpell.createDictionaryEntry("pawn", 1)
 
-		val result = symSpell.lookup("pawn", Verbosity.TOP, 0.0)
+		val result = symSpell.lookup("pawn", Verbosity.Top, 0.0)
 		assertEquals(0, result.size)
 	}
 
@@ -160,7 +160,7 @@ class WolfgarbeTest {
 		symSpell.createDictionaryEntry("flame", 20)
 		symSpell.createDictionaryEntry("flam", 1)
 
-		val result = symSpell.lookup("flam", Verbosity.TOP, 0.0)
+		val result = symSpell.lookup("flam", Verbosity.Top, 0.0)
 		assertEquals(0, result.size)
 	}
 }

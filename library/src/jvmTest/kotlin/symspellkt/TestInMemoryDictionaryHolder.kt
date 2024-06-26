@@ -14,7 +14,7 @@ class TestInMemoryDictionaryHolder {
 		maxEditDistance = 2.0,
 		topK = 5,
 		prefixLength = 10,
-		verbosity = Verbosity.ALL,
+		verbosity = Verbosity.All,
 	)
 
 	private lateinit var dataHolder: InMemoryDictionaryHolder

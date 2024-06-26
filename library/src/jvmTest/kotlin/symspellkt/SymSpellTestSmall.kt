@@ -28,7 +28,7 @@ class SymSpellTestSmall {
 			maxEditDistance = 2.0,
 			topK = 5,
 			prefixLength = 10,
-			verbosity = Verbosity.ALL,
+			verbosity = Verbosity.All,
 		)
 
 		stringDistance = DamerauLevenshteinDistance()

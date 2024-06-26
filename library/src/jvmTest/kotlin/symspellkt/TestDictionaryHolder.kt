@@ -19,7 +19,7 @@ class TestDictionaryHolder {
 			maxEditDistance = 2.0,
 			topK = 5,
 			prefixLength = 10,
-			verbosity = Verbosity.ALL,
+			verbosity = Verbosity.All,
 		)
 
 		dictionaryHolder = InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
