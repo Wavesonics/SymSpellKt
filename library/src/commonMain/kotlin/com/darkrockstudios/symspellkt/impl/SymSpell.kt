@@ -307,9 +307,6 @@ class SymSpell(
 	): MutableList<SuggestionItem> {
 		var curPhrase = word
 		var maxEditDistance = editDistance
-		if (maxEditDistance <= 0) {
-			maxEditDistance = spellCheckSettings.maxEditDistance
-		}
 
 		if (maxEditDistance > spellCheckSettings.maxEditDistance) {
 			throw SpellCheckException(
