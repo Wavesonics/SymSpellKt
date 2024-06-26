@@ -1,18 +1,20 @@
 package com.darkrockstudios.symspellkt.common
 
 /**
- * SpellCheckSetting contians all the setting used by [SpellChecker]
+ * SpellCheckSetting contains all the setting used by [SpellChecker]
  */
 data class SpellCheckSettings(
 	/**
 	 * Default verbosity [Verbosity]
+	 * (default Closest)
 	 */
 	val verbosity: Verbosity = Verbosity.Closest,
 
 	/**
 	 * limit suggestion list to topK entries
+	 * limits result to n entries
 	 */
-	val topK: Int = 10, // limits result to n entries
+	val topK: Int = 10,
 
 	/**
 	 * true if the spellchecker should lowercase terms
@@ -20,18 +22,20 @@ data class SpellCheckSettings(
 	val lowerCaseTerms: Boolean = true,
 
 	/**
-	 * Maximum edit distance for doing lookups. (default 2.0)
+	 * Maximum edit distance for doing lookups.
+	 * (default 2.0)
 	 */
 	val maxEditDistance: Double = 2.0,
 
 	/**
-	 * The length of word prefixes used for spell checking. (default 7)
+	 * The length of word prefixes used for spell checking.
+	 * (default 7)
 	 */
 	val prefixLength: Int = 7,
 
 	/**
-	 * The minimum frequency count for dictionary words to be considered correct spellings. (default
-	 * 1)
+	 * The minimum frequency count for dictionary words to be considered correct spellings.
+	 * (default 1)
 	 */
 	val countThreshold: Long = 1,
 
@@ -43,7 +47,7 @@ data class SpellCheckSettings(
 	var bigramCountMin: Double = Double.MAX_VALUE,
 
 	/**
-	 * Ignore the word in resultset, if suggestions are empty
+	 * Ignore the word in result set, if suggestions are empty
 	 */
 	val ignoreUnknown: Boolean = true,
 
