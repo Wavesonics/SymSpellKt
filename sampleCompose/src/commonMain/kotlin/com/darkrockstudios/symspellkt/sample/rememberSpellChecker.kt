@@ -32,7 +32,7 @@ fun rememberSpellChecker(): SpellChecker? {
 					.decodeToString()
 					.lineSequence()
 					.forEachAsync { line ->
-						checker.dataHolder.loadUniGramLine(line)
+						checker.dictionary.loadUniGramLine(line)
 						yield()
 					}
 
@@ -40,7 +40,7 @@ fun rememberSpellChecker(): SpellChecker? {
 					.decodeToString()
 					.lineSequence()
 					.forEachAsync { line ->
-						checker.dataHolder.loadBiGramLine(line)
+						checker.dictionary.loadBiGramLine(line)
 						yield()
 					}
 			}

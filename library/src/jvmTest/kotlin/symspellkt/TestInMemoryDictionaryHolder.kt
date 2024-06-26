@@ -5,10 +5,10 @@ import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.Verbosity
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import org.junit.*
 
-class TestInMemoryDataHolder {
+class TestInMemoryDictionaryHolder {
 	private val spellCheckSettings = SpellCheckSettings(
 		countThreshold = 4,
 		maxEditDistance = 2.0,
@@ -17,11 +17,11 @@ class TestInMemoryDataHolder {
 		verbosity = Verbosity.ALL,
 	)
 
-	private lateinit var dataHolder: InMemoryDataHolder
+	private lateinit var dataHolder: InMemoryDictionaryHolder
 
 	@Before
 	fun setup() {
-		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
+		dataHolder = InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
 	}
 
 	@Test
@@ -35,7 +35,7 @@ class TestInMemoryDataHolder {
 		dataHolder.addItem(DictionaryItem("dummy", 12.0, -1.0))
 		dataHolder.addItem(DictionaryItem("delta", 12.0, -1.0))
 
-		Assert.assertEquals(6, dataHolder.size)
+		Assert.assertEquals(6, dataHolder.wordCount)
 	}
 
 	@Test

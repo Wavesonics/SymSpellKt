@@ -1,6 +1,6 @@
 package com.darkrockstudios.symspellkt.impl
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.HashFunction
 import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
@@ -11,13 +11,13 @@ import kotlin.math.min
 /**
  * Class to create in memory dictionary for the items with term->frequency
  */
-class InMemoryDataHolder(
+class InMemoryDictionaryHolder(
 	/**
 	 * Spell check settings to use the values while ingesting the terms.
 	 */
 	private val spellCheckSettings: SpellCheckSettings,
-	private val hashFunction: HashFunction
-) : DataHolder {
+	private val hashFunction: HashFunction,
+) : DictionaryHolder {
 	/**
 	 * Dictionary of unique correct spelling words, and the frequency count for each word
 	 */
@@ -138,7 +138,7 @@ class InMemoryDataHolder(
 
 	override fun getDeletes(key: String): ArrayList<String>? = deletes[hashFunction.hash(key)]
 
-	override val size: Int
+	override val wordCount: Int
 		get() = wordsDictionary.size
 
 	override fun clear(): Boolean {

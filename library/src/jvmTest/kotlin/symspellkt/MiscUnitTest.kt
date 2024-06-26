@@ -1,6 +1,6 @@
 package symspellkt
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.DictionaryItem
@@ -10,7 +10,7 @@ import com.darkrockstudios.symspellkt.common.SpellHelper
 import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.Verbosity
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Assert
 import org.junit.Test
@@ -52,17 +52,14 @@ class MiscUnitTest {
 		)
 
 		val damerauLevenshteinDistance: StringDistance = DamerauLevenshteinDistance()
-		val dataHolder: DataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
+		val dictionaryHolder: DictionaryHolder =
+			InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
 
 		val symSpell: SpellChecker = SymSpell(
-			dataHolder = dataHolder,
+			dictionaryHolder = dictionaryHolder,
 			stringDistance = damerauLevenshteinDistance,
 			spellCheckSettings = spellCheckSettings
 		)
-
-		Assert.assertEquals(dataHolder, symSpell.dataHolder)
-		Assert.assertEquals(damerauLevenshteinDistance, symSpell.stringDistance)
-		Assert.assertEquals(spellCheckSettings, symSpell.spellCheckSettings)
 	}
 
 	@Test

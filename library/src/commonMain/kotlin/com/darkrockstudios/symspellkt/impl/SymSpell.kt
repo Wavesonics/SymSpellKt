@@ -1,6 +1,6 @@
 package com.darkrockstudios.symspellkt.impl
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.Composition
@@ -21,13 +21,16 @@ import kotlin.math.min
 import kotlin.math.pow
 
 /**
- * Symspell variant of the Spellchecker
+ * Symspell implementation of the Spellchecker
  */
 class SymSpell(
 	spellCheckSettings: SpellCheckSettings = SpellCheckSettings(),
 	stringDistance: StringDistance = DamerauLevenshteinDistance(),
-	dataHolder: DataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction()),
-) : SpellChecker(dataHolder, stringDistance, spellCheckSettings) {
+	dictionaryHolder: DictionaryHolder = InMemoryDictionaryHolder(
+		spellCheckSettings,
+		Murmur3HashFunction()
+	),
+) : SpellChecker(dictionaryHolder, stringDistance, spellCheckSettings) {
 	/**
 	 * supports compound aware automatic spelling correction of multi-word input strings with three
 	 * cases 1. mistakenly inserted space into a correct word led to two incorrect terms 2. mistakenly
@@ -75,11 +78,11 @@ class SymSpell(
 		/*
 	      Early exit when in exclusion list
 	     */
-		if (dataHolder.getExclusionItem(runningPhrase)?.isNotEmpty() == true) {
+		if (dictionary.getExclusionItem(runningPhrase)?.isNotEmpty() == true) {
 			return SpellHelper
 				.earlyExit(
 					suggestions,
-					dataHolder.getExclusionItem(runningPhrase),
+					dictionary.getExclusionItem(runningPhrase),
 					editDistance,
 					spellCheckSettings.topK,
 					false
@@ -249,7 +252,7 @@ class SymSpell(
 				}
 			}
 
-			val bigramFreq = dataHolder.getItemFrequencyBiGram(split)
+			val bigramFreq = dictionary.getItemFrequencyBiGram(split)
 
 			//if bigram exists in bigram dictionary
 			if (bigramFreq != null) {
@@ -328,7 +331,7 @@ class SymSpell(
 		/*
 	      Early exit when in exclusion list
 	     */
-		val exclusionItem = dataHolder.getExclusionItem(curPhrase)
+		val exclusionItem = dictionary.getExclusionItem(curPhrase)
 		if (!exclusionItem.isNullOrEmpty()) {
 			return SpellHelper
 				.earlyExit(
@@ -353,7 +356,7 @@ class SymSpell(
 			)
 		}
 
-		val frequency = dataHolder.getItemFrequency(curPhrase)
+		val frequency = dictionary.getItemFrequency(curPhrase)
 
 		if (frequency != null) {
 			suggestionFrequency = frequency
@@ -411,7 +414,7 @@ class SymSpell(
 			/*
       read candidate entry from dictionary
        */
-			val deletes = dataHolder.getDeletes(candidate)
+			val deletes = dictionary.getDeletes(candidate)
 			if (deletes != null && deletes.size > 0) {
 				for (suggestion in deletes) {
 					if (filterOnEquivalance(suggestion, curPhrase, candidate, maxEditDistance2)
@@ -496,7 +499,7 @@ class SymSpell(
 					}
 
 					if (SpellHelper.isLessOrEqualDouble(distance, maxEditDistance2)) {
-						suggestionFrequency = dataHolder.getItemFrequency(suggestion)!!
+						suggestionFrequency = dictionary.getItemFrequency(suggestion)!!
 						val si = SuggestionItem(suggestion, distance, suggestionFrequency)
 						if (suggestionItems.isNotEmpty()) {
 							if (verbosity == Verbosity.CLOSEST && distance < maxEditDistance2) {
@@ -663,9 +666,9 @@ class SymSpell(
 		/*
 	      Early exit when in exclusion list
 	     */
-		val exclusion = dataHolder.getExclusionItem(curPhrase)
+		val exclusion = dictionary.getExclusionItem(curPhrase)
 		if (!exclusion.isNullOrEmpty()) {
-			return Composition(curPhrase, dataHolder.getExclusionItem(curPhrase))
+			return Composition(curPhrase, dictionary.getExclusionItem(curPhrase))
 		}
 
 		val arraySize = min(maxSegmentationWordLength.toDouble(), curPhrase.length.toDouble()).toInt()
@@ -768,12 +771,12 @@ class SymSpell(
 		return compositions[circularIndex]!!
 	}
 
-	fun createDictionaryEntry(word: String, frequency: Int) {
-		createDictionaryEntry(word, frequency.toDouble())
+	override fun createDictionaryEntry(word: String, frequency: Int): Boolean {
+		return createDictionaryEntry(word, frequency.toDouble())
 	}
 
-	fun createDictionaryEntry(word: String, frequency: Double) {
-		dataHolder.addItem(DictionaryItem(word, frequency))
+	override fun createDictionaryEntry(word: String, frequency: Double): Boolean {
+		return dictionary.addItem(DictionaryItem(word, frequency))
 	}
 
 	companion object {

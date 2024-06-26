@@ -6,7 +6,7 @@ import com.darkrockstudios.symspellkt.exception.SpellCheckException
 /**
  * Interface to contain the dictionary
  */
-interface DataHolder {
+interface DictionaryHolder {
 	@Throws(SpellCheckException::class)
 	fun addItem(dictionaryItem: DictionaryItem): Boolean
 
@@ -19,7 +19,7 @@ interface DataHolder {
 	@Throws(SpellCheckException::class)
 	fun getDeletes(key: String): ArrayList<String>?
 
-	val size: Int
+	val wordCount: Int
 
 	@Throws(SpellCheckException::class)
 	fun clear(): Boolean

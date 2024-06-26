@@ -1,11 +1,11 @@
 package symspellkt
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.StringDistance
 import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Before
 import org.junit.Test
@@ -15,7 +15,7 @@ import java.io.FileReader
 import java.io.IOException
 
 class SymSpellTestSmall {
-	private lateinit var dataHolder: DataHolder
+	private lateinit var dictionaryHolder: DictionaryHolder
 	private lateinit var symSpell: SymSpell
 	private lateinit var stringDistance: StringDistance
 
@@ -33,10 +33,10 @@ class SymSpellTestSmall {
 		)
 
 		stringDistance = LevenshteinDistance()
-		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
+		dictionaryHolder = InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
 
 		symSpell = SymSpell(
-			dataHolder = dataHolder,
+			dictionaryHolder = dictionaryHolder,
 			stringDistance = stringDistance,
 			spellCheckSettings = spellCheckSettings,
 		)
@@ -44,7 +44,7 @@ class SymSpellTestSmall {
 		val br = BufferedReader(FileReader(file))
 		br.forEachLine { line ->
 			val arr = line.split("\\s+".toRegex())
-			dataHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
+			dictionaryHolder.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
 		}
 	}
 

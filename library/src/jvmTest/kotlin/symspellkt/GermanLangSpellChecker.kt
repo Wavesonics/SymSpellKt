@@ -1,10 +1,10 @@
 package symspellkt
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Assert
 import org.junit.Before
@@ -17,8 +17,8 @@ import java.util.*
 
 class GermanLangSpellChecker {
 
-	lateinit var dataHolder1: DataHolder
-	lateinit var dataHolder2: DataHolder
+	lateinit var dictionaryHolder1: DictionaryHolder
+	lateinit var dictionaryHolder2: DictionaryHolder
 	lateinit var symSpell: SymSpell
 	lateinit var damerauLevenshteinDistance: DamerauLevenshteinDistance
 
@@ -37,11 +37,11 @@ class GermanLangSpellChecker {
 
 		damerauLevenshteinDistance = DamerauLevenshteinDistance()
 
-		dataHolder1 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
-		dataHolder2 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
+		dictionaryHolder1 = InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
+		dictionaryHolder2 = InMemoryDictionaryHolder(spellCheckSettings, Murmur3HashFunction())
 
 		symSpell = SymSpell(
-			dataHolder = dataHolder1,
+			dictionaryHolder = dictionaryHolder1,
 			stringDistance = damerauLevenshteinDistance,
 			spellCheckSettings = spellCheckSettings
 		)
@@ -74,8 +74,8 @@ class GermanLangSpellChecker {
 		val br = BufferedReader(FileReader(file))
 		br.forEachLine { line ->
 			val arr = line.split("\\s+".toRegex())
-			dataHolder1.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
-			dataHolder2.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
+			dictionaryHolder1.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
+			dictionaryHolder2.addItem(DictionaryItem(arr[0], arr[1].toDouble(), -1.0))
 		}
 	}
 

@@ -1,13 +1,13 @@
 package symspellkt.benchmark
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
@@ -47,13 +47,13 @@ class SymSpellIndexBenchMark {
 			maxEditDistance = maxEditDistance
 		)
 
-		val dataHolder: DataHolder = InMemoryDataHolder(
+		val dictionaryHolder: DictionaryHolder = InMemoryDictionaryHolder(
 			spellCheckSettings,
 			Murmur3HashFunction()
 		)
 
 		spellChecker = SymSpell(
-			dataHolder = dataHolder,
+			dictionaryHolder = dictionaryHolder,
 			stringDistance = DamerauLevenshteinDistance(),
 			spellCheckSettings = spellCheckSettings,
 		)
@@ -67,8 +67,8 @@ class SymSpellIndexBenchMark {
 		SpellCheckException::class, IOException::class, InterruptedException::class
 	)
 	fun searchBenchmark() {
-		indexData(dataFile, spellChecker.dataHolder)
-		println(" DataHolder Indexed Size " + spellChecker.dataHolder.size)
+		indexData(dataFile, spellChecker.dictionary)
+		println(" DataHolder Indexed Size " + spellChecker.dictionary.wordCount)
 		Thread.sleep(10000)
 	}
 
@@ -77,14 +77,14 @@ class SymSpellIndexBenchMark {
 	}
 
 	@Throws(IOException::class, SpellCheckException::class)
-	private fun indexData(dataResourceName: String?, dataHolder: DataHolder) {
+	private fun indexData(dataResourceName: String?, dictionaryHolder: DictionaryHolder) {
 		val resourceUrl = this.javaClass.classLoader.getResource(dataResourceName)
 		val parser: CSVParser = CSVParser
 			.parse(resourceUrl, Charset.forName("UTF-8"), CSVFormat.DEFAULT.withDelimiter(' '))
 		val csvIterator: Iterator<CSVRecord> = parser.iterator()
 		while (csvIterator.hasNext()) {
 			val csvRecord: CSVRecord = csvIterator.next()
-			dataHolder
+			dictionaryHolder
 				.addItem(DictionaryItem(csvRecord.get(0), csvRecord.get(1).toDouble(), 0.0))
 		}
 	}

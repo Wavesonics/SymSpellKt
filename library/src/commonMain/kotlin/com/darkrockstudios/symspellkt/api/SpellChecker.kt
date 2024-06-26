@@ -10,9 +10,9 @@ import com.darkrockstudios.symspellkt.exception.SpellCheckException
  * Abstract class for the Spell Correction
  */
 abstract class SpellChecker(
-	var dataHolder: DataHolder,
-	var stringDistance: StringDistance,
-	var spellCheckSettings: SpellCheckSettings,
+	val dictionary: DictionaryHolder,
+	protected val stringDistance: StringDistance,
+	protected val spellCheckSettings: SpellCheckSettings,
 ) {
 	@Throws(SpellCheckException::class)
 	abstract fun lookup(
@@ -25,7 +25,7 @@ abstract class SpellChecker(
 	abstract fun lookupCompound(
 		word: String,
 		editDistance: Double = spellCheckSettings.maxEditDistance,
-		tokenizeOnWhiteSpace: Boolean = true
+		tokenizeOnWhiteSpace: Boolean = true,
 	): List<SuggestionItem>
 
 	@Throws(SpellCheckException::class)
@@ -34,4 +34,7 @@ abstract class SpellChecker(
 		maxSegmentationWordLength: Int = spellCheckSettings.prefixLength,
 		maxEditDistance: Double = spellCheckSettings.maxEditDistance,
 	): Composition
+
+	abstract fun createDictionaryEntry(word: String, frequency: Int): Boolean
+	abstract fun createDictionaryEntry(word: String, frequency: Double): Boolean
 }

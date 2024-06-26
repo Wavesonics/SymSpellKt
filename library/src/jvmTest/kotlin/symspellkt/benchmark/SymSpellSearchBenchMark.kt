@@ -1,11 +1,11 @@
 package symspellkt.benchmark
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
@@ -50,19 +50,19 @@ class SymSpellSearchBenchMark {
 			maxEditDistance = maxEditDistance
 		)
 
-		val dataHolder: DataHolder = InMemoryDataHolder(
+		val dictionaryHolder: DictionaryHolder = InMemoryDictionaryHolder(
 			spellCheckSettings,
 			Murmur3HashFunction()
 		)
 
 		spellChecker = SymSpell(
-			dataHolder = dataHolder,
+			dictionaryHolder = dictionaryHolder,
 			stringDistance = DamerauLevenshteinDistance(),
 			spellCheckSettings = spellCheckSettings,
 		)
-		indexData(dataFile, dataHolder)
+		indexData(dataFile, dictionaryHolder)
 		println(
-			" DataHolder Indexed Size " + dataHolder.size
+			" DataHolder Indexed Size " + dictionaryHolder.wordCount
 		)
 	}
 
@@ -86,14 +86,14 @@ class SymSpellSearchBenchMark {
 	}
 
 	@Throws(IOException::class, SpellCheckException::class)
-	private fun indexData(dataResourceName: String?, dataHolder: DataHolder) {
+	private fun indexData(dataResourceName: String?, dictionaryHolder: DictionaryHolder) {
 		val resourceUrl = this.javaClass.classLoader.getResource(dataResourceName)
 		val parser: CSVParser = CSVParser
 			.parse(resourceUrl, Charset.forName("UTF-8"), CSVFormat.DEFAULT.withDelimiter(' '))
 		val csvIterator: Iterator<CSVRecord> = parser.iterator()
 		while (csvIterator.hasNext()) {
 			val csvRecord: CSVRecord = csvIterator.next()
-			dataHolder
+			dictionaryHolder
 				.addItem(DictionaryItem(csvRecord.get(0), csvRecord.get(1).toDouble(), 0.0))
 		}
 	}

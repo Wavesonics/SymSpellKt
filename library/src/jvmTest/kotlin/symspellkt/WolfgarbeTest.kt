@@ -1,6 +1,5 @@
 package symspellkt
 
-import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.Verbosity
 import com.darkrockstudios.symspellkt.impl.SymSpell
@@ -22,8 +21,8 @@ class WolfgarbeTest {
 				prefixLength = 3
 			)
 		)
-		symSpell.dataHolder.addItem(DictionaryItem("pipe", 5.0, -1.0))
-		symSpell.dataHolder.addItem(DictionaryItem("pips", 10.0, -1.0))
+		symSpell.createDictionaryEntry("pipe", 5.0)
+		symSpell.createDictionaryEntry("pips", 10.0)
 
 		var result = symSpell.lookup("pipe", Verbosity.ALL, 1.0)
 		assertEquals(2, result.size)
@@ -51,18 +50,18 @@ class WolfgarbeTest {
 	fun addAdditionalCountsShouldNotAddWordAgain() {
 		val symSpell = SymSpell()
 		val word = "hello"
-		symSpell.dataHolder.addItem(DictionaryItem(word, 11.0))
-		assertEquals(1, symSpell.dataHolder.size)
+		symSpell.createDictionaryEntry(word, 11.0)
+		assertEquals(1, symSpell.dictionary.wordCount)
 
-		symSpell.dataHolder.addItem(DictionaryItem(word, 3.0))
-		assertEquals(1, symSpell.dataHolder.size)
+		symSpell.createDictionaryEntry(word, 3.0)
+		assertEquals(1, symSpell.dictionary.wordCount)
 	}
 
 	@Test
 	fun addAdditionalCountsShouldNotOverflow() {
 		val symSpell = SymSpell()
 		val word = "hello"
-		symSpell.dataHolder.addItem(DictionaryItem(word, Double.MAX_VALUE - 10.0))
+		symSpell.createDictionaryEntry(word, Double.MAX_VALUE - 10.0)
 		var result = symSpell.lookup(word, Verbosity.TOP)
 		var count = if (result.isNotEmpty()) result[0].frequency else 0
 		assertEquals((Double.MAX_VALUE - 10.0), count)

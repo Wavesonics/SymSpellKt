@@ -1,15 +1,14 @@
 package symspellkt
 
-import com.darkrockstudios.symspellkt.api.DataHolder
+import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
-import com.darkrockstudios.symspellkt.common.DictionaryItem
 import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
 import com.darkrockstudios.symspellkt.common.SpellCheckSettings
 import com.darkrockstudios.symspellkt.common.SuggestionItem
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
-import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
+import com.darkrockstudios.symspellkt.impl.InMemoryDictionaryHolder
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
@@ -54,7 +53,7 @@ class AccuracyTest {
 				appendToList(fpCandidates, csvRecord)
 			}
 
-			spellChecker.dataHolder.addItem(DictionaryItem(csvRecord.get(0), 1.0, 0.0))
+			spellChecker.createDictionaryEntry(csvRecord.get(0), 1.0)
 			indexCount++
 		}
 
@@ -171,13 +170,13 @@ class AccuracyTest {
 			prefixLength = 40,
 		)
 
-		var dataHolder: DataHolder = InMemoryDataHolder(
+		var dictionaryHolder: DictionaryHolder = InMemoryDictionaryHolder(
 			spellCheckSettings,
 			Murmur3HashFunction()
 		)
 
 		val spellChecker: SpellChecker = SymSpell(
-			dataHolder = dataHolder,
+			dictionaryHolder = dictionaryHolder,
 			stringDistance = DamerauLevenshteinDistance(),
 			spellCheckSettings = spellCheckSettings,
 		)
@@ -188,12 +187,12 @@ class AccuracyTest {
 			countThreshold = 0,
 			prefixLength = 40,
 		)
-		dataHolder = InMemoryDataHolder(
+		dictionaryHolder = InMemoryDictionaryHolder(
 			spellCheckSettings,
 			Murmur3HashFunction()
 		)
 		val pureLevenshteinSpellChecker: SpellChecker = SymSpell(
-			dataHolder = dataHolder,
+			dictionaryHolder = dictionaryHolder,
 			stringDistance = LevenshteinDistance(),
 			spellCheckSettings = spellCheckSettings
 		)
