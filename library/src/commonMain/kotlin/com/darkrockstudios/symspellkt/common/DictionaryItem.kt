@@ -6,5 +6,5 @@ package com.darkrockstudios.symspellkt.common
 data class DictionaryItem(
 	var term: String,
 	var frequency: Double,
-	var distance: Double,
+	var distance: Double = -1.0,
 )

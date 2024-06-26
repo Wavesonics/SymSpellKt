@@ -89,7 +89,6 @@ object SpellHelper {
 		return !isEqualDouble(d1, d2, threshold) && d1 < d2
 	}
 
-
 	fun isEqualDouble(d1: Double, d2: Double, threshold: Double = EPSILON): Boolean {
 		return abs(d1 - d2) < threshold
 	}

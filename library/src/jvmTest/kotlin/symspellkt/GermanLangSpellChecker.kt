@@ -5,7 +5,7 @@ import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
-import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -19,7 +19,7 @@ class GermanLangSpellChecker {
 
 	lateinit var dataHolder1: DataHolder
 	lateinit var dataHolder2: DataHolder
-	lateinit var symSpellCheck: SymSpellCheck
+	lateinit var symSpell: SymSpell
 	lateinit var damerauLevenshteinDistance: DamerauLevenshteinDistance
 
 	@Before
@@ -40,10 +40,10 @@ class GermanLangSpellChecker {
 		dataHolder1 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 		dataHolder2 = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
-		symSpellCheck = SymSpellCheck(
-			dataHolder1,
-			damerauLevenshteinDistance,
-			spellCheckSettings
+		symSpell = SymSpell(
+			dataHolder = dataHolder1,
+			stringDistance = damerauLevenshteinDistance,
+			spellCheckSettings = spellCheckSettings
 		)
 
 		loadUniGramFile(
@@ -55,14 +55,14 @@ class GermanLangSpellChecker {
 	@Throws(SpellCheckException::class)
 	fun testMultiWordCorrection() {
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"entwick lung".lowercase(Locale.getDefault()),
 			"entwicklung".lowercase(Locale.getDefault()),
 			2.0
 		)
 
 		assertTypoEdAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"nömlich".lowercase(Locale.getDefault()),
 			"nämlich".lowercase(Locale.getDefault()),
 			2.0, 1.0
@@ -82,7 +82,7 @@ class GermanLangSpellChecker {
 	companion object {
 		@Throws(SpellCheckException::class)
 		fun assertTypoAndCorrected(
-			spellCheck: SymSpellCheck, typo: String, correct: String,
+			spellCheck: SymSpell, typo: String, correct: String,
 			maxEd: Double
 		) {
 			val suggestionItems: List<SuggestionItem> = spellCheck
@@ -96,7 +96,7 @@ class GermanLangSpellChecker {
 
 		@Throws(SpellCheckException::class)
 		fun assertTypoEdAndCorrected(
-			spellCheck: SymSpellCheck, typo: String, correct: String,
+			spellCheck: SymSpell, typo: String, correct: String,
 			maxEd: Double, expED: Double
 		) {
 			val suggestionItems: List<SuggestionItem> = spellCheck

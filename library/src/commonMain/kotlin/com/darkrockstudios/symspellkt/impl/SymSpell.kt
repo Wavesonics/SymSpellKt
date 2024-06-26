@@ -3,18 +3,30 @@ package com.darkrockstudios.symspellkt.impl
 import com.darkrockstudios.symspellkt.api.DataHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
 import com.darkrockstudios.symspellkt.api.StringDistance
-import com.darkrockstudios.symspellkt.common.*
+import com.darkrockstudios.symspellkt.common.Composition
+import com.darkrockstudios.symspellkt.common.DictionaryItem
+import com.darkrockstudios.symspellkt.common.Murmur3HashFunction
+import com.darkrockstudios.symspellkt.common.SpellCheckSettings
+import com.darkrockstudios.symspellkt.common.SpellHelper
+import com.darkrockstudios.symspellkt.common.SuggestionItem
+import com.darkrockstudios.symspellkt.common.Verbosity
+import com.darkrockstudios.symspellkt.common.addItemSorted
+import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.exception.SpellCheckExceptionCode
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
 
 /**
  * Symspell variant of the Spellchecker
  */
-class SymSpellCheck(
-	dataHolder: DataHolder,
-	stringDistance: StringDistance,
-	spellCheckSettings: SpellCheckSettings,
+class SymSpell(
+	spellCheckSettings: SpellCheckSettings = SpellCheckSettings(),
+	stringDistance: StringDistance = DamerauLevenshteinDistance(),
+	dataHolder: DataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction()),
 ) : SpellChecker(dataHolder, stringDistance, spellCheckSettings) {
 	/**
 	 * supports compound aware automatic spelling correction of multi-word input strings with three
@@ -759,6 +771,13 @@ class SymSpellCheck(
 		return compositions[circularIndex]!!
 	}
 
+	fun createDictionaryEntry(word: String, frequency: Int) {
+		createDictionaryEntry(word, frequency.toDouble())
+	}
+
+	fun createDictionaryEntry(word: String, frequency: Double) {
+		dataHolder.addItem(DictionaryItem(word, frequency))
+	}
 
 	companion object {
 		//N equals the sum of all counts c in the dictionary only if the dictionary is complete,

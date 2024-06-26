@@ -9,7 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.darkrockstudios.samplecompose.generated.resources.Res
 import com.darkrockstudios.symspellkt.api.SpellChecker
-import com.darkrockstudios.symspellkt.impl.createSymSpellChecker
+import com.darkrockstudios.symspellkt.impl.SymSpell
 import com.darkrockstudios.symspellkt.impl.loadBiGramLine
 import com.darkrockstudios.symspellkt.impl.loadUniGramLine
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ fun rememberSpellChecker(): SpellChecker? {
 
 	LaunchedEffect(Unit) {
 		scope.launch(Dispatchers.Default) {
-			val checker = createSymSpellChecker()
+			val checker = SymSpell()
 
 			val mills = measureMillsTimeAsync {
 				Res.readBytes("files/en-80k.txt")

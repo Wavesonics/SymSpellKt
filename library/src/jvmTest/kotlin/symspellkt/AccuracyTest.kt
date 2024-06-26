@@ -10,7 +10,7 @@ import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDi
 import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
-import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -101,7 +101,8 @@ class AccuracyTest {
 		}
 
 		for (candidate in fpCandidates.entries) {
-			val results: MutableList<SuggestionItem> = spellChecker.lookupCompound(candidate.key).toMutableList()
+			val results: MutableList<SuggestionItem> =
+				spellChecker.lookupCompound(candidate.key).toMutableList()
 			// first or second match count as success
 			if (isMatch(candidate, results) && (candidate.key != results[0].term)) {
 				fail++
@@ -129,11 +130,17 @@ class AccuracyTest {
 		println("$count searches")
 		println(
 			"${stopWatch.getTime()}ms => "
-					+ String.format("%1$.3f searches/ms", (count.toDouble() / (stopWatch.getTime())))
+					+ String.format(
+				"%1$.3f searches/ms",
+				(count.toDouble() / (stopWatch.getTime()))
+			)
 		)
 		println()
 		println(
-			success.toString() + " success / accuracy => " + String.format("%.2f%%", (100.0 * success / count))
+			success.toString() + " success / accuracy => " + String.format(
+				"%.2f%%",
+				(100.0 * success / count)
+			)
 		)
 		println("$truePositives true-positives")
 		println("$trueNegatives true-negatives (?)")
@@ -169,10 +176,10 @@ class AccuracyTest {
 			Murmur3HashFunction()
 		)
 
-		val spellChecker: SpellChecker = SymSpellCheck(
-			dataHolder,
-			DamerauLevenshteinDistance(),
-			spellCheckSettings
+		val spellChecker: SpellChecker = SymSpell(
+			dataHolder = dataHolder,
+			stringDistance = DamerauLevenshteinDistance(),
+			spellCheckSettings = spellCheckSettings,
 		)
 		accuracyTest.run(spellChecker)
 
@@ -185,10 +192,10 @@ class AccuracyTest {
 			spellCheckSettings,
 			Murmur3HashFunction()
 		)
-		val pureLevenshteinSpellChecker: SpellChecker = SymSpellCheck(
-			dataHolder,
-			LevenshteinDistance(),
-			spellCheckSettings
+		val pureLevenshteinSpellChecker: SpellChecker = SymSpell(
+			dataHolder = dataHolder,
+			stringDistance = LevenshteinDistance(),
+			spellCheckSettings = spellCheckSettings
 		)
 		accuracyTest.run(pureLevenshteinSpellChecker)
 		println("==================================================")
@@ -203,7 +210,10 @@ class AccuracyTest {
 
 		private const val acceptSecondHitAsSuccess = false
 
-		private fun isMatch(candidate: Map.Entry<String, String>, results: List<SuggestionItem>): Boolean {
+		private fun isMatch(
+			candidate: Map.Entry<String, String>,
+			results: List<SuggestionItem>
+		): Boolean {
 			return ((results.isNotEmpty() && results[0].term.trim() == candidate.value)
 					|| (results.isNotEmpty() && results[0].term.trim() == candidate.key)
 					|| (acceptSecondHitAsSuccess && results.size > 1 && results[1].term == candidate.value))

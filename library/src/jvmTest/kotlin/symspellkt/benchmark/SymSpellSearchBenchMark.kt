@@ -6,7 +6,7 @@ import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
-import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -55,10 +55,10 @@ class SymSpellSearchBenchMark {
 			Murmur3HashFunction()
 		)
 
-		spellChecker = SymSpellCheck(
-			dataHolder,
-			DamerauLevenshteinDistance(),
-			spellCheckSettings
+		spellChecker = SymSpell(
+			dataHolder = dataHolder,
+			stringDistance = DamerauLevenshteinDistance(),
+			spellCheckSettings = spellCheckSettings,
 		)
 		indexData(dataFile, dataHolder)
 		println(

@@ -5,7 +5,7 @@ import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.DamerauLevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
-import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -17,7 +17,7 @@ import java.util.*
 
 class SymSpellTest {
 	private lateinit var dataHolder: DataHolder
-	private lateinit var symSpellCheck: SymSpellCheck
+	private lateinit var symSpell: SymSpell
 	private lateinit var damerauLevenshteinDistance: DamerauLevenshteinDistance
 
 	@Before
@@ -36,10 +36,10 @@ class SymSpellTest {
 		damerauLevenshteinDistance = DamerauLevenshteinDistance()
 		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
-		symSpellCheck = SymSpellCheck(
-			dataHolder,
-			damerauLevenshteinDistance,
-			spellCheckSettings
+		symSpell = SymSpell(
+			dataHolder = dataHolder,
+			stringDistance = damerauLevenshteinDistance,
+			spellCheckSettings = spellCheckSettings,
 		)
 
 		loadUniGramFile(
@@ -54,14 +54,14 @@ class SymSpellTest {
 	@Throws(SpellCheckException::class)
 	fun testMultiWordCorrection() {
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"theq uick brown f ox jumps over the lazy dog",
 			"the quick brown fox jumps over the lazy dog",
 			2.0
 		)
 
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"Whereis th elove hehaD Dated FOREEVER forImuch of thepast who couqdn'tread in sixthgrade AND ins pired him",
 			"where is the love he had dated forever for much of the past who couldn't read in sixth grade and inspired him",
 			2.0
@@ -72,7 +72,7 @@ class SymSpellTest {
 	@Throws(SpellCheckException::class)
 	fun testMultiWordCorrection2() {
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"Whereis th elove hehaD",
 			"where is the love he had",
 			2.0
@@ -83,27 +83,27 @@ class SymSpellTest {
 	@Throws(SpellCheckException::class)
 	fun testSingleWordCorrection() {
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"bigjest", "biggest", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"playrs", "players", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"slatew", "slate", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"ith", "with", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"plety", "plenty", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"funn", "fun", 2.0
 		)
 	}
@@ -113,7 +113,7 @@ class SymSpellTest {
 	fun testDoubleWordCorrection() {
 		val testPhrase = "couqdn'tread".lowercase(Locale.getDefault())
 		val correctedPhrase = "couldn't read"
-		val suggestionItems: List<SuggestionItem> = symSpellCheck
+		val suggestionItems: List<SuggestionItem> = symSpell
 			.lookupCompound(testPhrase.lowercase(Locale.getDefault()), 2.0)
 
 		Assert.assertTrue(suggestionItems.isNotEmpty())
@@ -130,15 +130,15 @@ class SymSpellTest {
 	@Test(expected = SpellCheckException::class)
 	@Throws(SpellCheckException::class)
 	fun testEdgeCases2() {
-		val suggestionItems: List<SuggestionItem> = symSpellCheck
+		val suggestionItems: List<SuggestionItem> = symSpell
 			.lookupCompound("tes", 5.0)
 		Assert.assertNotNull(suggestionItems)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"", "with", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"", "with", 3.0
 		)
 	}
@@ -146,15 +146,15 @@ class SymSpellTest {
 	@Test(expected = SpellCheckException::class)
 	@Throws(SpellCheckException::class)
 	fun testEdgeCases3() {
-		val suggestionItems: List<SuggestionItem> = symSpellCheck
+		val suggestionItems: List<SuggestionItem> = symSpell
 			.lookupCompound("a", 5.0)
 		Assert.assertNotNull(suggestionItems)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"", "with", 2.0
 		)
 		assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"", "with", 3.0
 		)
 	}
@@ -162,19 +162,19 @@ class SymSpellTest {
 	@Test
 	@Throws(SpellCheckException::class)
 	fun testLookup() {
-		var suggestionItems = symSpellCheck.lookup("hel")
+		var suggestionItems = symSpell.lookup("hel")
 		Assert.assertNotNull(suggestionItems)
 		Assert.assertTrue(suggestionItems.size > 0)
 		Assert.assertEquals(78, suggestionItems.size)
 
-		suggestionItems = symSpellCheck.lookup("hel", Verbosity.ALL)
+		suggestionItems = symSpell.lookup("hel", Verbosity.ALL)
 		Assert.assertEquals(78, suggestionItems.size)
 	}
 
 	@Test
 	@Throws(SpellCheckException::class)
 	fun testLookupCloset() {
-		val suggestionItems: List<SuggestionItem> = symSpellCheck.lookup("resial", Verbosity.CLOSEST)
+		val suggestionItems: List<SuggestionItem> = symSpell.lookup("resial", Verbosity.CLOSEST)
 		Assert.assertNotNull(suggestionItems)
 		Assert.assertTrue(suggestionItems.isNotEmpty())
 		Assert.assertEquals(3, suggestionItems.size)
@@ -183,7 +183,7 @@ class SymSpellTest {
 	@Test
 	@Throws(Exception::class)
 	fun testWordBreak() {
-		val suggestionItems: Composition = symSpellCheck
+		val suggestionItems: Composition = symSpell
 			.wordBreakSegmentation(
 				"itwasabrightcolddayinaprilandtheclockswerestrikingthirteen", 10,
 				2.0
@@ -217,7 +217,7 @@ class SymSpellTest {
 	companion object {
 		@Throws(SpellCheckException::class)
 		fun assertTypoAndCorrected(
-			spellCheck: SymSpellCheck, typo: String, correct: String,
+			spellCheck: SymSpell, typo: String, correct: String,
 			maxEd: Double
 		) {
 			val suggestionItems: List<SuggestionItem> = spellCheck

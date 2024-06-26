@@ -6,7 +6,7 @@ import com.darkrockstudios.symspellkt.common.*
 import com.darkrockstudios.symspellkt.common.stringdistance.LevenshteinDistance
 import com.darkrockstudios.symspellkt.exception.SpellCheckException
 import com.darkrockstudios.symspellkt.impl.InMemoryDataHolder
-import com.darkrockstudios.symspellkt.impl.SymSpellCheck
+import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.junit.Before
 import org.junit.Test
 import java.io.BufferedReader
@@ -16,7 +16,7 @@ import java.io.IOException
 
 class SymSpellTestSmall {
 	private lateinit var dataHolder: DataHolder
-	private lateinit var symSpellCheck: SymSpellCheck
+	private lateinit var symSpell: SymSpell
 	private lateinit var stringDistance: StringDistance
 
 	@Before
@@ -35,10 +35,10 @@ class SymSpellTestSmall {
 		stringDistance = LevenshteinDistance()
 		dataHolder = InMemoryDataHolder(spellCheckSettings, Murmur3HashFunction())
 
-		symSpellCheck = SymSpellCheck(
-			dataHolder,
-			stringDistance,
-			spellCheckSettings
+		symSpell = SymSpell(
+			dataHolder = dataHolder,
+			stringDistance = stringDistance,
+			spellCheckSettings = spellCheckSettings,
 		)
 		val file = File(classLoader.getResource("frequency_dictionary_en_82_765.txt")!!.file)
 		val br = BufferedReader(FileReader(file))
@@ -52,31 +52,31 @@ class SymSpellTestSmall {
 	@Throws(SpellCheckException::class)
 	fun testSingleWordCorrection() {
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"uick", "quick", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"bigjest", "biggest", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"playrs", "players", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"slatew", "slate", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"ith", "with", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"plety", "plenty", 2.0
 		)
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"funn", "fun", 2.0
 		)
 	}
@@ -85,7 +85,7 @@ class SymSpellTestSmall {
 	@Throws(SpellCheckException::class)
 	fun testDoubleWordCorrection() {
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"theq uick brown f ox jumps over the lazy dog",
 			"the quick brown fox jumps over the lazy dog",
 			2.0
@@ -96,7 +96,7 @@ class SymSpellTestSmall {
 	@Throws(SpellCheckException::class)
 	fun testMultiWordCorrection() {
 		SymSpellTest.assertTypoAndCorrected(
-			symSpellCheck,
+			symSpell,
 			"theq uick brown f ox jumps over the lazy dog",
 			"the quick brown fox jumps over the lazy dog",
 			2.0

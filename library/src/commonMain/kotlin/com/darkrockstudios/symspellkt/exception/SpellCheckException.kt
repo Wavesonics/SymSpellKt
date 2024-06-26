@@ -1,7 +1,7 @@
 package com.darkrockstudios.symspellkt.exception
 
 /**
- * Exception for SPellcheck
+ * Exception for Spellcheck
  * @param message
  * @param cause
  * @param code
