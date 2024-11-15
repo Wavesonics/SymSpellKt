@@ -31,7 +31,15 @@ jobs:
     strategy:
       matrix:
         include:
+          - target: publishIosX64PublicationToSonatypeRepository
+            os: macos-latest
           - target: publishIosArm64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: publishIosSimulatorArm64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: publishMacosX64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: publishMacosArm64PublicationToSonatypeRepository
             os: macos-latest
           - target: publishAndroidReleasePublicationToSonatypeRepository
             os: ubuntu-latest
@@ -80,4 +88,3 @@ jobs:
           -Psigning.gnupg.passphrase='${{secrets.SIGNING_PASSWORD}}'
           -PsonatypeUsername='${{secrets.OSSRH_USERNAME}}'
           -PsonatypePassword='${{secrets.OSSRH_PASSWORD}}'
-
