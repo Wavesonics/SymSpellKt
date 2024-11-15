@@ -15,7 +15,7 @@ algorithm. It has been ported from this [Java implementation](https://github.com
 
 ## Dependency
 
-`implementation("com.darkrockstudios:symspellkt:2.0.0")`
+`implementation("com.darkrockstudios:symspellkt:2.1.0")`
 
 ## Sample
 

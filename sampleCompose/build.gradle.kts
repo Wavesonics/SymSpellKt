@@ -32,7 +32,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":library"))
+                implementation(project(":SymSpellKt"))
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -57,7 +57,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.darkrockstudios.symspellkt.sample"
-            packageVersion = "2.0.0"
+            packageVersion = "2.1.0"
         }
     }
 }

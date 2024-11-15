@@ -16,4 +16,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":library", ":sampleCompose")
+include(":SymSpellKt", ":sampleCompose")
