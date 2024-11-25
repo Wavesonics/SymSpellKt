@@ -76,8 +76,8 @@ class SymSpell(
 		var isLastCombi = false
 
 		/*
-	      Early exit when in exclusion list
-	     */
+		  Early exit when in exclusion list
+		 */
 		if (dictionary.getExclusionItem(runningPhrase)?.isNotEmpty() == true) {
 			return SpellHelper
 				.earlyExit(
@@ -329,8 +329,8 @@ class SymSpell(
 		val suggestionItems: MutableList<SuggestionItem> = ArrayList(spellCheckSettings.topK)
 
 		/*
-	      Early exit when in exclusion list
-	     */
+		  Early exit when in exclusion list
+		 */
 		val exclusionItem = dictionary.getExclusionItem(curPhrase)
 		if (!exclusionItem.isNullOrEmpty()) {
 			return SpellHelper
@@ -344,8 +344,8 @@ class SymSpell(
 		}
 
 		/*
-	    Early exit when word is too big
-	     */
+		Early exit when word is too big
+		 */
 		if ((phraseLen - maxEditDistance) > spellCheckSettings.maxLength) {
 			return SpellHelper.earlyExit(
 				suggestionItems,
@@ -400,9 +400,9 @@ class SymSpell(
 			}
 
 			/*
-      early termination: if candidate distance is already higher than suggestion distance,
-      than there are no better suggestions to be expected
-       */
+	  early termination: if candidate distance is already higher than suggestion distance,
+	  than there are no better suggestions to be expected
+	   */
 			if (lenDiff > maxEditDistance2) {
 				if (verbosity == Verbosity.All) {
 					continue
@@ -412,8 +412,8 @@ class SymSpell(
 
 
 			/*
-      read candidate entry from dictionary
-       */
+	  read candidate entry from dictionary
+	   */
 			val deletes = dictionary.getDeletes(candidate)
 			if (deletes != null && deletes.size > 0) {
 				for (suggestion in deletes) {
@@ -427,48 +427,49 @@ class SymSpell(
 						continue
 					}
 					/*
-            True Damerau-Levenshtein Edit Distance: adjust
-                    distance, if both distances>0
-                    We allow simultaneous edits (deletes) of
-                    max_edit_distance on on both the dictionary and
-                    the phrase term. For replaces and adjacent
-                    transposes the resulting edit distance stays
-                    <= max_edit_distance. For inserts and deletes the
-                    resulting edit distance might exceed
-                    max_edit_distance. To prevent suggestions of a
-                    higher edit distance, we need to calculate the
-                    resulting edit distance, if there are
-                    simultaneous edits on both sides.
-                    Example: (bank==bnak and bank==bink, but
-                    bank!=kanb and bank!=xban and bank!=baxn for
-                    max_edit_distance=1). Two deletes on each side of
-                    a pair makes them all equal, but the first two
-                    pairs have edit distance=1, the others edit
-                    distance=2.
-          */
+			True Damerau-Levenshtein Edit Distance: adjust
+					distance, if both distances>0
+					We allow simultaneous edits (deletes) of
+					max_edit_distance on on both the dictionary and
+					the phrase term. For replaces and adjacent
+					transposes the resulting edit distance stays
+					<= max_edit_distance. For inserts and deletes the
+					resulting edit distance might exceed
+					max_edit_distance. To prevent suggestions of a
+					higher edit distance, we need to calculate the
+					resulting edit distance, if there are
+					simultaneous edits on both sides.
+					Example: (bank==bnak and bank==bink, but
+					bank!=kanb and bank!=xban and bank!=baxn for
+					max_edit_distance=1). Two deletes on each side of
+					a pair makes them all equal, but the first two
+					pairs have edit distance=1, the others edit
+					distance=2.
+		  */
 					var distance: Double
 					var minDistance: Int
 
 					if (candidateLen == 0) {
 						/*
-              suggestions which have no common chars with
-                        phrase (phrase_len<=max_edit_distance &&
-                        suggestion_len<=max_edit_distance)
-            */
+			  suggestions which have no common chars with
+						phrase (phrase_len<=max_edit_distance &&
+						suggestion_len<=max_edit_distance)
+			*/
 						distance = max(phraseLen.toDouble(), suggestion.length.toDouble())
 						if (distance > maxEditDistance2 || !consideredSuggestions.add(suggestion)) {
 							continue
 						}
 					} else if (suggestion.length == 1) {
-						distance = (if (curPhrase.indexOf(suggestion[0]) < 0) phraseLen else phraseLen - 1).toDouble()
+						distance =
+							(if (curPhrase.indexOf(suggestion[0]) < 0) phraseLen else phraseLen - 1).toDouble()
 						if (distance > maxEditDistance2 || !consideredSuggestions.add(suggestion)) {
 							continue
 						}
 					} else {
 						/*
-              handles the shortcircuit of min_distance assignment when first boolean expression
-              evaluates to False
-             */
+			  handles the shortcircuit of min_distance assignment when first boolean expression
+			  evaluates to False
+			 */
 
 						minDistance = getMinDistanceOnPrefixbasis(
 							maxEditDistance, candidate,
@@ -491,7 +492,8 @@ class SymSpell(
 							) {
 								continue
 							}
-							distance = stringDistance.getDistance(curPhrase, suggestion, maxEditDistance2)
+							distance =
+								stringDistance.getDistance(curPhrase, suggestion, maxEditDistance2)
 							if (distance < 0) {
 								continue
 							}
@@ -529,7 +531,8 @@ class SymSpell(
 				}
 
 				for (i in 0 until candidateLen) {
-					val delete = candidate.substring(0, i) + candidate.substring(i + 1, candidateLen)
+					val delete =
+						candidate.substring(0, i) + candidate.substring(i + 1, candidateLen)
 					if (consideredDeletes.add(delete)) {
 						candidates.add(delete)
 					}
@@ -647,13 +650,13 @@ class SymSpell(
 		maxEditDistance: Double
 	): Composition {
 		/*
-	    number of all words in the corpus used to generate the
-	        frequency dictionary. This is used to calculate the word
-	        occurrence probability p from word counts c : p=c/nMax. nMax equals
-	        the sum of all counts c in the dictionary only if the
-	        dictionary is complete, but not if the dictionary is
-	        truncated or filtered
-	     */
+		number of all words in the corpus used to generate the
+			frequency dictionary. This is used to calculate the word
+			occurrence probability p from word counts c : p=c/nMax. nMax equals
+			the sum of all counts c in the dictionary only if the
+			dictionary is complete, but not if the dictionary is
+			truncated or filtered
+		 */
 
 		var curPhrase = phrase
 		if (curPhrase.isEmpty()) {
@@ -664,14 +667,15 @@ class SymSpell(
 		}
 
 		/*
-	      Early exit when in exclusion list
-	     */
+		  Early exit when in exclusion list
+		 */
 		val exclusion = dictionary.getExclusionItem(curPhrase)
 		if (!exclusion.isNullOrEmpty()) {
 			return Composition(curPhrase, dictionary.getExclusionItem(curPhrase))
 		}
 
-		val arraySize = min(maxSegmentationWordLength.toDouble(), curPhrase.length.toDouble()).toInt()
+		val arraySize =
+			min(maxSegmentationWordLength.toDouble(), curPhrase.length.toDouble()).toInt()
 		val compositions: Array<Composition?> = arrayOfNulls<Composition>(arraySize)
 		for (i in 0 until arraySize) {
 			compositions[i] = Composition()
@@ -733,7 +737,8 @@ class SymSpell(
 				val destinationIndex = ((i + circularIndex) % arraySize)
 
 				val destComp =
-					compositions[destinationIndex] ?: error("Failed to find destinationIndex: $destinationIndex")
+					compositions[destinationIndex]
+						?: error("Failed to find destinationIndex: $destinationIndex")
 
 				//set values in first loop
 				if (j == 0) {
@@ -745,7 +750,8 @@ class SymSpell(
 					}
 				} else {
 					val circularComp =
-						compositions[circularIndex] ?: error("Failed to find circularIndex: $circularIndex")
+						compositions[circularIndex]
+							?: error("Failed to find circularIndex: $circularIndex")
 
 					if ((i == maxSegmentationWordLength) //replace values if better probabilityLogSum, if same edit distance OR one
 						// space difference
