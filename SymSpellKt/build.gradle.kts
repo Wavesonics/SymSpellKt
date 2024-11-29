@@ -6,6 +6,7 @@ plugins {
 	alias(libs.plugins.kotlin.powerassert)
 	alias(libs.plugins.android.library)
 	id("module.publication")
+	id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
 }
 
 @OptIn(ExperimentalWasmDsl::class)
@@ -62,8 +63,7 @@ kotlin {
 				implementation(libs.kotlin.test)
 				implementation(libs.junit4)
 				implementation(libs.cvsparser)
-				implementation(libs.jmh)
-				//configurations["kapt"].dependencies.add(libs.jmh.annprocess.get())
+				implementation(libs.kotlinx.serialization.json)
 			}
 		}
 	}

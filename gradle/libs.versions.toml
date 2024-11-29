@@ -2,6 +2,7 @@
 jvm = "17"
 agp = "8.5.2"
 kotlin = "2.0.0"
+kotlinxSerializationJson = "1.7.3"
 nexus-publish = "2.0.0"
 android-minSdk = "26"
 android-compileSdk = "34"
@@ -10,16 +11,14 @@ compose = "1.7.1"
 murmurhash = "0.4.0"
 cvsparser = "1.10.0"
 junit = "4.13.2"
-jmh = "1.37"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.gradle-nexus.publish-plugin.gradle.plugin", version.ref = "nexus-publish" }
 murmurhash = { module = "com.goncalossilva:murmurhash", version.ref = "murmurhash" }
 cvsparser = { module = "org.apache.commons:commons-csv", version.ref = "cvsparser" }
 junit4 = { module = "junit:junit", version.ref = "junit" }
-jmh = { module = "org.openjdk.jmh:jmh-core-benchmarks", version.ref = "jmh" }
-jmh-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

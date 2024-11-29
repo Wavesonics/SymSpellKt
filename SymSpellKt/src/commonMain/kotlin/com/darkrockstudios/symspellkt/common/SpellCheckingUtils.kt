@@ -1,8 +1,8 @@
 package com.darkrockstudios.symspellkt.common
 
-fun String.applyCapitalizationStrategy(from: String): String {
-    return applyCapitalizationStrategy(from, this)
-}
+//fun String.applyCapitalizationStrategy(from: String): String {
+//    return applyCapitalizationStrategy(from, this)
+//}
 
 internal fun applyCapitalizationStrategy(source: String, target: String): String {
     fun isAllUpperCase(str: String): Boolean = str.all { it.isUpperCase() || !it.isLetter() }

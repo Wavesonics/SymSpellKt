@@ -1,44 +1,25 @@
 package symspellkt.benchmark
 
-import org.openjdk.jmh.infra.BenchmarkParams
-import org.openjdk.jmh.infra.IterationParams
-import org.openjdk.jmh.profile.InternalProfiler
-import org.openjdk.jmh.results.AggregationPolicy
-import org.openjdk.jmh.results.IterationResult
-import org.openjdk.jmh.results.Result
-import org.openjdk.jmh.results.ScalarResult
-import org.openjdk.jmh.runner.Defaults
 import java.lang.management.ManagementFactory
 
-class MemoryProfiler : InternalProfiler {
-	override fun getDescription(): String {
-		return "memory heap profiler"
+class MemoryProfiler {
+	private val memoryBean = ManagementFactory.getMemoryMXBean()
+	var lastHeapUsageMB: Double = 0.0
+		private set
+	var lastNonHeapUsageMB: Double = 0.0
+		private set
+
+	fun beforeIteration() {
+		System.gc() // Optional: force GC before measurement
 	}
 
-	override fun beforeIteration(benchmarkParams: BenchmarkParams?, iterationParams: IterationParams?) {
-	}
+	fun afterIteration(): Pair<Double, Double> {
+		val heapUsage = memoryBean.heapMemoryUsage
+		val nonHeapUsage = memoryBean.nonHeapMemoryUsage
 
-	override fun afterIteration(
-		bp: BenchmarkParams?, ip: IterationParams?,
-		result: IterationResult?
-	): Collection<Result<*>?> {
-		val heapUsage = ManagementFactory.getMemoryMXBean().heapMemoryUsage
-		val nonheapUsage = ManagementFactory.getMemoryMXBean().nonHeapMemoryUsage
+		lastHeapUsageMB = heapUsage.used / (1024.0 * 1024.0)
+		lastNonHeapUsageMB = nonHeapUsage.used / (1024.0 * 1024.0)
 
-		val results: MutableCollection<ScalarResult?> = ArrayList<ScalarResult?>()
-		results.add(
-			ScalarResult(
-				Defaults.RESULT_FILE_PREFIX + "mem.heap", heapUsage.used / (1024 * 1024.0), "MB",
-				AggregationPolicy.MAX
-			)
-		)
-		results.add(
-			ScalarResult(
-				Defaults.RESULT_FILE_PREFIX + "mem.nonheap", nonheapUsage.used / (1024 * 1024.0), "MB",
-				AggregationPolicy.MAX
-			)
-		)
-
-		return results
+		return lastHeapUsageMB to lastNonHeapUsageMB
 	}
 }
