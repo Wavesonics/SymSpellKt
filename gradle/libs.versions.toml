@@ -1,6 +1,7 @@
 [versions]
 jvm = "17"
 agp = "8.5.2"
+korgeCore = "5.4.0"
 kotlin = "2.0.0"
 kotlinxSerializationJson = "1.7.3"
 nexus-publish = "2.0.0"
@@ -11,14 +12,17 @@ compose = "1.7.1"
 murmurhash = "0.4.0"
 cvsparser = "1.10.0"
 junit = "4.13.2"
+okio = "3.9.1"
 
 [libraries]
+korge-core = { module = "com.soywiz.korge:korge-core", version.ref = "korgeCore" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.gradle-nexus.publish-plugin.gradle.plugin", version.ref = "nexus-publish" }
 murmurhash = { module = "com.goncalossilva:murmurhash", version.ref = "murmurhash" }
 cvsparser = { module = "org.apache.commons:commons-csv", version.ref = "cvsparser" }
 junit4 = { module = "junit:junit", version.ref = "junit" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
