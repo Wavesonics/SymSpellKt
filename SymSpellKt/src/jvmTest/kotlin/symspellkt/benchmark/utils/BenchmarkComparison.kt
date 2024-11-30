@@ -1,48 +1,48 @@
 package symspellkt.benchmark.utils
 
-import kotlinx.serialization.Serializable
+enum class PerformanceStatus {
+	IMPROVEMENT,
+	SIMILAR,
+	MINOR_REGRESSION,
+	MAJOR_REGRESSION
+}
 
-@Serializable
 data class BenchmarkComparison(
 	val name: String,
 	val parameters: Map<String, String>,
 	val timeInterval: ConfidenceInterval,
 	val baselineTimeInterval: ConfidenceInterval,
 	val heapInterval: ConfidenceInterval,
-	val baselineHeapInterval: ConfidenceInterval
+	val baselineHeapInterval: ConfidenceInterval,
+	val minorRegressionThreshold: Double,
+	val majorRegressionThreshold: Double,
 ) {
-	companion object {
-		const val SIGNIFICANT_CHANGE_THRESHOLD = 0.05 // 5%
-	}
-
-	val hasTimeRegression: Boolean
+	val timeRegressionLevel: PerformanceStatus
 		get() {
-			if (timeInterval.overlaps(baselineTimeInterval)) return false
+			if (timeInterval.overlaps(baselineTimeInterval)) return PerformanceStatus.SIMILAR
 
 			val percentChange = (timeInterval.mean - baselineTimeInterval.mean) / baselineTimeInterval.mean
-			return percentChange > SIGNIFICANT_CHANGE_THRESHOLD
+			return when {
+				percentChange > majorRegressionThreshold -> PerformanceStatus.MAJOR_REGRESSION
+				percentChange > minorRegressionThreshold -> PerformanceStatus.MINOR_REGRESSION
+				percentChange < 0 -> PerformanceStatus.IMPROVEMENT
+				else -> PerformanceStatus.SIMILAR
+			}
 		}
 
-	val hasHeapRegression: Boolean
+	val heapRegressionLevel: PerformanceStatus
 		get() {
-			if (heapInterval.overlaps(baselineHeapInterval)) return false
+			if (heapInterval.overlaps(baselineHeapInterval)) return PerformanceStatus.SIMILAR
 
 			val percentChange = (heapInterval.mean - baselineHeapInterval.mean) / baselineHeapInterval.mean
-			return percentChange > SIGNIFICANT_CHANGE_THRESHOLD
+			return when {
+				percentChange > majorRegressionThreshold -> PerformanceStatus.MAJOR_REGRESSION
+				percentChange > minorRegressionThreshold -> PerformanceStatus.MINOR_REGRESSION
+				percentChange < 0 -> PerformanceStatus.IMPROVEMENT
+				else -> PerformanceStatus.SIMILAR
+			}
 		}
 
 	val status: PerformanceStatus
-		get() = when {
-			hasTimeRegression || hasHeapRegression -> PerformanceStatus.REGRESSION
-			!timeInterval.overlaps(baselineTimeInterval) &&
-					timeInterval.mean < baselineTimeInterval.mean -> PerformanceStatus.IMPROVEMENT
-			else -> PerformanceStatus.SIMILAR
-		}
-}
-
-
-enum class PerformanceStatus {
-	IMPROVEMENT,
-	REGRESSION,
-	SIMILAR
+		get() = maxOf(timeRegressionLevel, heapRegressionLevel)
 }

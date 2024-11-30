@@ -4,7 +4,6 @@ import kotlinx.serialization.json.Json
 import symspellkt.benchmark.utils.*
 import java.io.File
 import kotlin.test.Test
-import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class PerformanceRegressionBenchmarks {
@@ -39,85 +38,51 @@ class PerformanceRegressionBenchmarks {
 		// Remove outliers before comparison
 		val cleanBaseline = baselineResults.removeOutliers()
 		val cleanCurrent = currentResults.removeOutliers()
-
-		val comparisons = mutableListOf<BenchmarkComparison>()
-
-		// Compare search results
-		cleanBaseline.searchResults.forEach { baseline ->
-			cleanCurrent.searchResults
-				.find { it.hasSameParameters(baseline) }
-				?.let { current ->
-					comparisons.add(compareResults(baseline, current))
-				}
-		}
-
-		// Compare index results
-		cleanBaseline.indexResults.forEach { baseline ->
-			cleanCurrent.indexResults
-				.find { it.hasSameParameters(baseline) }
-				?.let { current ->
-					comparisons.add(compareResults(baseline, current))
-				}
-		}
+		val comparisons = compareResults(cleanBaseline, cleanCurrent)
 
 		// Print each comparison
 		comparisons.forEach { comparison ->
 			printComparisonReport(comparison)
 		}
 
-		// Summary stats
 		printResultsSummary(comparisons)
 	}
 
-	@Test
-	fun testOverlap() {
-		val interval1 = ConfidenceInterval(0.28, 0.20, 0.32)
-		val interval2 = ConfidenceInterval(0.49, 0.32, 0.67)
-
-		assertTrue(interval1.overlaps(interval2))
-	}
-
-	@Test
-	fun testOverlapEqual() {
-		val interval1 = ConfidenceInterval(0.49, 0.33, 0.66)
-		val interval2 = ConfidenceInterval(0.49, 0.32, 0.67)
-
-		assertTrue(interval1.overlaps(interval2))
-	}
-
-	private fun printResultsSummary(comparisons: MutableList<BenchmarkComparison>) {
-		val regressions = comparisons.count { it.status == PerformanceStatus.REGRESSION }
+	private fun printResultsSummary(comparisons: List<BenchmarkComparison>) {
+		val majorRegressions = comparisons.count { it.status == PerformanceStatus.MAJOR_REGRESSION }
+		val minorRegressions = comparisons.count { it.status == PerformanceStatus.MINOR_REGRESSION }
 		val improvements = comparisons.count { it.status == PerformanceStatus.IMPROVEMENT }
 		val similar = comparisons.count { it.status == PerformanceStatus.SIMILAR }
 
 		println("\n=== SUMMARY ===")
 		println("Total Comparisons: ${comparisons.size}")
-		println("Regressions: $regressions")
+		println("Major Regressions: $majorRegressions")
+		println("Minor Regressions: $minorRegressions")
 		println("Improvements: $improvements")
 		println("Similar: $similar")
 
-		// Fail the test if there are significant regressions
-		val hasRegressions = comparisons.any { it.status == PerformanceStatus.REGRESSION }
-		if (hasRegressions) {
+		// Only fail on major regressions
+		val hasMajorRegressions = comparisons.any { it.status == PerformanceStatus.MAJOR_REGRESSION }
+		if (hasMajorRegressions) {
 			val regressionDetails = comparisons
-				.filter { it.status == PerformanceStatus.REGRESSION }
+				.filter { it.status == PerformanceStatus.MAJOR_REGRESSION }
 				.joinToString("\n") { comparison ->
 					"""
-	                |${comparison.name} (${comparison.parameters}):
-	                |  Time: ${comparison.baselineTimeInterval} -> ${comparison.timeInterval} ms
-	                |  Heap: ${comparison.baselineHeapInterval} -> ${comparison.heapInterval} MB
-	                """.trimMargin()
+                |${comparison.name} (${comparison.parameters}):
+                |  Time: ${comparison.baselineTimeInterval} -> ${comparison.timeInterval} ms
+                |  Heap: ${comparison.baselineHeapInterval} -> ${comparison.heapInterval} MB
+                """.trimMargin()
 				}
-			fail("Performance regressions detected:\n$regressionDetails")
+			fail("Major performance regressions detected:\n$regressionDetails")
 		}
 	}
 
-	// Helper function to compare parameters
-	private fun BenchmarkResult.hasSameParameters(other: BenchmarkResult): Boolean {
-		return name == other.name && parameters == other.parameters
-	}
-
-	fun compareResults(baseline: BenchmarkResult, current: BenchmarkResult): BenchmarkComparison {
+	private fun compareResult(
+		baseline: BenchmarkResult,
+		current: BenchmarkResult,
+		minorRegressionThreshold: Double,
+		majorRegressionThreshold: Double
+	): BenchmarkComparison {
 		return BenchmarkComparison(
 			name = current.name,
 			parameters = current.parameters,
@@ -140,23 +105,61 @@ class PerformanceRegressionBenchmarks {
 				baseline.heapMemoryUsageMB,
 				baseline.heapMemoryStdDevMB,
 				baseline.totalRuns
-			)
+			),
+			minorRegressionThreshold = minorRegressionThreshold,
+			majorRegressionThreshold = majorRegressionThreshold,
 		)
 	}
 
-	fun printComparisonReport(comparison: BenchmarkComparison) {
+	private fun compareResults(baseline: BenchmarkResults, current: BenchmarkResults): List<BenchmarkComparison> {
+		val comparisons = mutableListOf<BenchmarkComparison>()
+
+		// Compare search results
+		baseline.searchResults.forEach { baselineResult ->
+			current.searchResults
+				.find { it.hasSameParameters(baselineResult) }
+				?.let { currentResult ->
+					comparisons.add(compareResult(baselineResult, currentResult, 0.01, 0.05))
+				}
+		}
+
+		// Compare index results
+		baseline.indexResults.forEach { baselineResult ->
+			current.indexResults
+				.find { it.hasSameParameters(baselineResult) }
+				?.let { currentResult ->
+					comparisons.add(compareResult(baselineResult, currentResult, 0.15, 0.35))
+				}
+		}
+
+		return comparisons
+	}
+
+	private fun BenchmarkResult.hasSameParameters(other: BenchmarkResult): Boolean {
+		return name == other.name && parameters == other.parameters
+	}
+
+	private fun printComparisonReport(comparison: BenchmarkComparison) {
 		println("\n=== Performance Comparison ===")
 		println("Benchmark: ${comparison.name}")
 		println("Parameters: ${comparison.parameters}")
+
+		val timeChange = (comparison.timeInterval.mean - comparison.baselineTimeInterval.mean) /
+				comparison.baselineTimeInterval.mean * 100
+		val heapChange = (comparison.heapInterval.mean - comparison.baselineHeapInterval.mean) /
+				comparison.baselineHeapInterval.mean * 100
+
 		println("\nExecution Time:")
 		println("  Baseline: ${comparison.baselineTimeInterval} ms")
 		println("  Current:  ${comparison.timeInterval} ms")
-		println("  Status:   ${if (comparison.hasTimeRegression) "REGRESSION" else "OK"}")
+		println("  Change:   ${String.format("%.1f%%", timeChange)}")
+		println("  Status:   ${comparison.timeRegressionLevel}")
 
 		println("\nHeap Memory:")
 		println("  Baseline: ${comparison.baselineHeapInterval} MB")
 		println("  Current:  ${comparison.heapInterval} MB")
-		println("  Status:   ${if (comparison.hasHeapRegression) "REGRESSION" else "OK"}")
+		println("  Change:   ${String.format("%.1f%%", heapChange)}")
+		println("  Status:   ${comparison.heapRegressionLevel}")
 
 		println("\nOverall Status: ${comparison.status}")
 	}

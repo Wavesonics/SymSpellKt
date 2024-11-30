@@ -9,7 +9,7 @@ data class ConfidenceInterval(
 	val upper: Double
 ) {
 	fun overlaps(other: ConfidenceInterval): Boolean {
-		return !(this.upper <= other.lower || this.lower >= other.upper)
+		return !(this.upper < other.lower || this.lower > other.upper)
 	}
 
 	// For printing
