@@ -13,7 +13,9 @@ import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
+import java.io.ByteArrayInputStream
 import java.io.IOException
+import java.io.InputStream
 import java.nio.charset.Charset
 
 class SymSpellBenchmarks {
@@ -70,6 +72,12 @@ class SymSpellBenchmarks {
 			"dictionaryFile" to dictionaryFile
 		)
 
+		// Load it all into memory before we start
+		// hopefully this helps reduce variability
+		val inputStream = this.javaClass.classLoader.getResourceAsStream(dictionaryFile)//.fullyBuffered()
+		val parser: CSVParser = CSVParser
+			.parse(inputStream, Charset.forName("UTF-8"), CSVFormat.DEFAULT.withDelimiter(' '))
+
 		val result = benchmarkRunner.runBenchmark(
 			name = "SymSpellIndex | [MED:$maxEditDistance]",
 			iterations = iterations,
@@ -77,7 +85,7 @@ class SymSpellBenchmarks {
 			parameters = params
 		) {
 			val spellChecker = createSpellChecker(maxEditDistance)
-			indexData(dictionaryFile, spellChecker.dictionary)
+			indexData(parser, spellChecker.dictionary)
 			println("DataHolder Indexed Size: ${spellChecker.dictionary.wordCount}")
 		}
 		indexResults.add(result)
@@ -114,10 +122,7 @@ class SymSpellBenchmarks {
 	}
 
 	@Throws(IOException::class, SpellCheckException::class)
-	private fun indexData(dataResourceName: String?, dictionaryHolder: DictionaryHolder) {
-		val resourceUrl = this.javaClass.classLoader.getResource(dataResourceName)
-		val parser: CSVParser = CSVParser
-			.parse(resourceUrl, Charset.forName("UTF-8"), CSVFormat.DEFAULT.withDelimiter(' '))
+	private fun indexData(parser: CSVParser, dictionaryHolder: DictionaryHolder) {
 		val csvIterator: Iterator<CSVRecord> = parser.iterator()
 		while (csvIterator.hasNext()) {
 			val csvRecord: CSVRecord = csvIterator.next()
@@ -133,3 +138,5 @@ class SymSpellBenchmarks {
 		)
 	}
 }
+
+fun InputStream.fullyBuffered(): InputStream = ByteArrayInputStream(this.readBytes())

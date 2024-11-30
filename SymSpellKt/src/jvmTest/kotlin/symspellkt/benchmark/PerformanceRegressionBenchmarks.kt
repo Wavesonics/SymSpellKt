@@ -3,6 +3,7 @@ package symspellkt.benchmark
 import kotlinx.serialization.json.Json
 import symspellkt.benchmark.utils.*
 import java.io.File
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -19,6 +20,7 @@ class PerformanceRegressionBenchmarks {
 	 * Of course this is wildly dependent on the particular machine and conditions the report was generated under,
 	 * for the comparison to have any relevance.
 	 */
+	//@Ignore("Run this manually")
 	@Test
 	fun compareToBaseline() {
 		val baselineFile = File("benchmark_results/baseline-benchmark.json")
@@ -67,15 +69,24 @@ class PerformanceRegressionBenchmarks {
 			val regressionDetails = comparisons
 				.filter { it.status == PerformanceStatus.MAJOR_REGRESSION }
 				.joinToString("\n") { comparison ->
+					val timeChange = (comparison.timeInterval.mean - comparison.baselineTimeInterval.mean) /
+							comparison.baselineTimeInterval.mean * 100
+					val heapChange = (comparison.heapInterval.mean - comparison.baselineHeapInterval.mean) /
+							comparison.baselineHeapInterval.mean * 100
+
 					"""
                 |${comparison.name} (${comparison.parameters}):
                 |  Time: ${comparison.baselineTimeInterval} -> ${comparison.timeInterval} ms
+				|  Change: ${sign(timeChange)}${String.format("%.1f%%", timeChange)}
                 |  Heap: ${comparison.baselineHeapInterval} -> ${comparison.heapInterval} MB
+				|  Change: ${sign(heapChange)}${String.format("%.1f%%", heapChange)}
                 """.trimMargin()
 				}
 			fail("Major performance regressions detected:\n$regressionDetails")
 		}
 	}
+
+	private fun sign(percent: Double): String = if(percent >= 0.0) "+" else ""
 
 	private fun compareResult(
 		baseline: BenchmarkResult,
@@ -128,7 +139,7 @@ class PerformanceRegressionBenchmarks {
 			current.indexResults
 				.find { it.hasSameParameters(baselineResult) }
 				?.let { currentResult ->
-					comparisons.add(compareResult(baselineResult, currentResult, 0.15, 0.35))
+					comparisons.add(compareResult(baselineResult, currentResult, 0.10, 0.25))
 				}
 		}
 
@@ -152,13 +163,13 @@ class PerformanceRegressionBenchmarks {
 		println("\nExecution Time:")
 		println("  Baseline: ${comparison.baselineTimeInterval} ms")
 		println("  Current:  ${comparison.timeInterval} ms")
-		println("  Change:   ${String.format("%.1f%%", timeChange)}")
+		println("  Change:   ${sign(timeChange)}${String.format("%.1f%%", timeChange)}")
 		println("  Status:   ${comparison.timeRegressionLevel}")
 
 		println("\nHeap Memory:")
 		println("  Baseline: ${comparison.baselineHeapInterval} MB")
 		println("  Current:  ${comparison.heapInterval} MB")
-		println("  Change:   ${String.format("%.1f%%", heapChange)}")
+		println("  Change:   ${sign(timeChange)}${String.format("%.1f%%", heapChange)}")
 		println("  Status:   ${comparison.heapRegressionLevel}")
 
 		println("\nOverall Status: ${comparison.status}")
