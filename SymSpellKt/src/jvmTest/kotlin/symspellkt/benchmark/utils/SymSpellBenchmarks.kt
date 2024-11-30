@@ -1,4 +1,4 @@
-package symspellkt.benchmark
+package symspellkt.benchmark.utils
 
 import com.darkrockstudios.symspellkt.api.DictionaryHolder
 import com.darkrockstudios.symspellkt.api.SpellChecker
@@ -26,7 +26,9 @@ class SymSpellBenchmarks {
 		verbosity: Verbosity,
 		maxEditDistance: Double,
 		dictionaryFile: String,
-		queryFile: String = "noisy_query_en_1000.txt"
+		queryFile: String = "noisy_query_en_1000.txt",
+		iterations: Int,
+		warmupIterations: Int,
 	) {
 		val params = mapOf(
 			"verbosity" to verbosity.name,
@@ -40,8 +42,8 @@ class SymSpellBenchmarks {
 
 		val result = benchmarkRunner.runBenchmark(
 			name = "SymSpellSearch | [${verbosity.name}][MED $maxEditDistance]",
-			iterations = 3,
-			warmupIterations = 2,
+			iterations = iterations,
+			warmupIterations = warmupIterations,
 			parameters = params
 		) {
 			var totalMatches = 0L
@@ -59,7 +61,9 @@ class SymSpellBenchmarks {
 
 	fun runIndexBenchmark(
 		maxEditDistance: Double,
-		dictionaryFile: String
+		dictionaryFile: String,
+		iterations: Int,
+		warmupIterations: Int,
 	) {
 		val params = mapOf(
 			"maxEditDistance" to maxEditDistance.toString(),
@@ -68,8 +72,8 @@ class SymSpellBenchmarks {
 
 		val result = benchmarkRunner.runBenchmark(
 			name = "SymSpellIndex | [MED:$maxEditDistance]",
-			iterations = 3,
-			warmupIterations = 2,
+			iterations = iterations,
+			warmupIterations = warmupIterations,
 			parameters = params
 		) {
 			val spellChecker = createSpellChecker(maxEditDistance)

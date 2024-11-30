@@ -1,4 +1,4 @@
-package symspellkt.benchmark
+package symspellkt.benchmark.utils
 
 class BenchmarkRunner {
 	private val stopWatch = StopWatch()
@@ -6,8 +6,8 @@ class BenchmarkRunner {
 
 	fun runBenchmark(
 		name: String,
-		iterations: Int = 1,
-		warmupIterations: Int = 0,
+		iterations: Int,
+		warmupIterations: Int,
 		parameters: Map<String, String> = emptyMap(),
 		benchmark: () -> Unit
 	): BenchmarkResult {
@@ -31,6 +31,7 @@ class BenchmarkRunner {
 		repeat(iterations) {
 			println("Executing benchmark run ${it + 1}/$iterations...")
 
+			// Trigger and GC and let things settle
 			System.gc()
 			Thread.sleep(100)
 

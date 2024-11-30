@@ -1,4 +1,4 @@
-package symspellkt.benchmark
+package symspellkt.benchmark.utils
 
 import kotlinx.serialization.Serializable
 

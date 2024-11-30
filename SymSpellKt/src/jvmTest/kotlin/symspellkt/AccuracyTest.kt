@@ -12,7 +12,7 @@ import com.darkrockstudios.symspellkt.impl.SymSpell
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
-import symspellkt.benchmark.StopWatch
+import symspellkt.benchmark.utils.StopWatch
 import java.io.IOException
 import java.nio.charset.Charset
 import kotlin.test.Test
@@ -57,7 +57,7 @@ class AccuracyTest {
 		}
 
 		stopWatch.stop()
-		val indexTime: Long = stopWatch.getTime()
+		val indexTime: Double = stopWatch.getTime()
 
 		stopWatch.reset()
 		stopWatch.start()

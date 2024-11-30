@@ -1,4 +1,6 @@
-package symspellkt.benchmark
+package symspellkt.benchmark.utils
+
+import kotlin.math.sqrt
 
 fun BenchmarkResult.prettyPrint() {
 	val divider = "=".repeat(100)
@@ -54,7 +56,7 @@ fun List<BenchmarkResult>.prettyPrintAll() {
 	println("=".repeat(140))
 }
 
-private fun printf(format: String, vararg args: Any) {
+internal fun printf(format: String, vararg args: Any) {
 	println(String.format(format, *args))
 }
 
@@ -62,5 +64,5 @@ private fun printf(format: String, vararg args: Any) {
 internal fun List<Double>.standardDeviation(): Double {
 	val mean = this.average()
 	val variance = this.map { (it - mean) * (it - mean) }.average()
-	return kotlin.math.sqrt(variance)
+	return sqrt(variance)
 }
