@@ -21,6 +21,6 @@ class PerformanceBenchmarks {
 		val results = runFullBenchmarkSuite()
 		results.prettyPrint()
 
-		results.writeResultsToFile("benchmark_results/baseline-benchmark")
+		results.writeResultsToFile("benchmark_results/baseline-benchmark.json")
 	}
 }

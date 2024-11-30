@@ -20,7 +20,6 @@ class PerformanceRegressionBenchmarks {
 	 * Of course this is wildly dependent on the particular machine and conditions the report was generated under,
 	 * for the comparison to have any relevance.
 	 */
-	//@Ignore("Run this manually")
 	@Test
 	fun compareToBaseline() {
 		val baselineFile = File("benchmark_results/baseline-benchmark.json")
