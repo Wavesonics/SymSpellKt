@@ -81,7 +81,7 @@ fun SingleWordCorrectionUi(spellChecker: SpellChecker?) {
 						val mills = measureMillsTime {
 							items = lookup(
 								it,
-								Verbosity.All,
+								Verbosity.Closest,
 								2.0
 							)
 						}
