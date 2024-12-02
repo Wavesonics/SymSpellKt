@@ -2,7 +2,7 @@
 jvm = "17"
 agp = "8.5.2"
 korgeCore = "5.4.0"
-kotlin = "2.0.0"
+kotlin = "2.0.21"
 kotlinxSerializationJson = "1.7.3"
 nexus-publish = "2.0.0"
 android-minSdk = "26"
