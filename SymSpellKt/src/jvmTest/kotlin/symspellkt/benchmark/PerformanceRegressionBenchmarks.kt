@@ -55,7 +55,7 @@ class PerformanceRegressionBenchmarks {
 	}
 
 	private fun writeResultsToFile(comparisonReports: String, summary: String, outputPath: String) {
-		StringBuilder(comparisonReports.length + summary.length + 1)
+		val text = StringBuilder(comparisonReports.length + summary.length + 1)
 			.append(comparisonReports)
 			.append('\n')
 			.append(summary)
@@ -63,26 +63,35 @@ class PerformanceRegressionBenchmarks {
 
 		val outFile = File(outputPath)
 		outFile.parentFile.mkdirs()
-		outFile.writeText(outputPath)
+		outFile.writeText(text)
 		println("Benchmark Comparison results written to ${outFile.absolutePath}")
 	}
 
 	private fun buildResultsSummary(comparisons: List<BenchmarkComparison>): String {
 		val sb = StringBuilder()
 
-		// Pre-calculate counts
-		val majorRegressions = comparisons.count { it.status == PerformanceStatus.MAJOR_REGRESSION }
-		val minorRegressions = comparisons.count { it.status == PerformanceStatus.MINOR_REGRESSION }
-		val improvements = comparisons.count { it.status == PerformanceStatus.IMPROVEMENT }
-		val similar = comparisons.count { it.status == PerformanceStatus.SIMILAR }
+		val majorTimeRegressions = comparisons.count { it.timeRegressionLevel == PerformanceStatus.MAJOR_REGRESSION }
+		val minorTimeRegressions = comparisons.count { it.timeRegressionLevel == PerformanceStatus.MINOR_REGRESSION }
+		val timeImprovements = comparisons.count { it.timeRegressionLevel == PerformanceStatus.IMPROVEMENT }
+		val timeSimilar = comparisons.count { it.timeRegressionLevel == PerformanceStatus.SIMILAR }
 
-		// Build summary section
+		val majorHeapRegressions = comparisons.count { it.heapRegressionLevel == PerformanceStatus.MAJOR_REGRESSION }
+		val minorHeapRegressions = comparisons.count { it.heapRegressionLevel == PerformanceStatus.MINOR_REGRESSION }
+		val heapImprovements = comparisons.count { it.heapRegressionLevel == PerformanceStatus.IMPROVEMENT }
+		val heapSimilar = comparisons.count { it.heapRegressionLevel == PerformanceStatus.SIMILAR }
+
 		sb.append("\n=== SUMMARY ===\n")
-			.append("Total Comparisons: ").append(comparisons.size).append('\n')
-			.append("Major Regressions: ").append(majorRegressions).append('\n')
-			.append("Minor Regressions: ").append(minorRegressions).append('\n')
-			.append("Improvements: ").append(improvements).append('\n')
-			.append("Similar: ").append(similar)
+			.append("Total Comparisons: ").append(comparisons.size).append("\n\n")
+			.append("Time Performance:\n")
+			.append("  Major Regressions: ").append(majorTimeRegressions).append('\n')
+			.append("  Minor Regressions: ").append(minorTimeRegressions).append('\n')
+			.append("  Improvements: ").append(timeImprovements).append('\n')
+			.append("  Similar: ").append(timeSimilar).append("\n\n")
+			.append("Heap Performance:\n")
+			.append("  Major Regressions: ").append(majorHeapRegressions).append('\n')
+			.append("  Minor Regressions: ").append(minorHeapRegressions).append('\n')
+			.append("  Improvements: ").append(heapImprovements).append('\n')
+			.append("  Similar: ").append(heapSimilar)
 
 		// Handle major regressions
 		val hasMajorRegressions = comparisons.any { it.status == PerformanceStatus.MAJOR_REGRESSION }
