@@ -3,6 +3,7 @@ package symspellkt.benchmark
 import kotlinx.serialization.json.Json
 import symspellkt.benchmark.utils.*
 import java.io.File
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -19,7 +20,7 @@ class PerformanceRegressionBenchmarks {
 	 * Of course this is wildly dependent on the particular machine and conditions the report was generated under,
 	 * for the comparison to have any relevance.
 	 */
-	//@Ignore
+	@Ignore
 	@Test
 	fun compareToBaseline() {
 		val baselineFile = File("benchmark_results/baseline-benchmark.json")
