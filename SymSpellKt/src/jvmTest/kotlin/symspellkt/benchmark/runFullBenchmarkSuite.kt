@@ -4,7 +4,7 @@ import com.darkrockstudios.symspellkt.common.Verbosity
 import symspellkt.benchmark.utils.BenchmarkResults
 import symspellkt.benchmark.utils.SymSpellBenchmarks
 
-fun runFullBenchmarkSuite(): BenchmarkResults {
+fun runFullBenchmarkSuite(runSearchTests: Boolean = true, runIndexTests: Boolean = true): BenchmarkResults {
 	val benchmarks = SymSpellBenchmarks()
 
 	val warmupIterations = 2
@@ -19,11 +19,29 @@ fun runFullBenchmarkSuite(): BenchmarkResults {
 		"frequency_dictionary_en_500_000.txt"
 	)
 
-	for (verbosity in verbosities) {
+	if(runSearchTests) {
+		for (verbosity in verbosities) {
+			for (distance in maxEditDistances) {
+				for (dict in dictionaries) {
+					benchmarks.runSearchBenchmark(
+						verbosity = verbosity,
+						maxEditDistance = distance,
+						dictionaryFile = dict,
+						warmupIterations = warmupIterations,
+						iterations = iterations,
+					)
+				}
+			}
+		}
+	} else {
+		println("Search Tests Skipped")
+	}
+
+	// Run index benchmarks
+	if(runIndexTests) {
 		for (distance in maxEditDistances) {
 			for (dict in dictionaries) {
-				benchmarks.runSearchBenchmark(
-					verbosity = verbosity,
+				benchmarks.runIndexBenchmark(
 					maxEditDistance = distance,
 					dictionaryFile = dict,
 					warmupIterations = warmupIterations,
@@ -31,18 +49,8 @@ fun runFullBenchmarkSuite(): BenchmarkResults {
 				)
 			}
 		}
-	}
-
-	// Run index benchmarks
-	for (distance in maxEditDistances) {
-		for (dict in dictionaries) {
-			benchmarks.runIndexBenchmark(
-				maxEditDistance = distance,
-				dictionaryFile = dict,
-				warmupIterations = warmupIterations,
-				iterations = iterations,
-			)
-		}
+	} else {
+		println("Index Tests Skipped")
 	}
 
 	// Get and process results
