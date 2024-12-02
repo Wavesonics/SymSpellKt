@@ -324,7 +324,7 @@ class SymSpell(
 			curPhrase = curPhrase.lowercase()
 		}
 		var suggestionFrequency: Double
-		val consideredDeletes: MutableSet<String> = HashSet()
+		val consideredDeletes: MutableSet<String> = HashSet(phraseLen * 2)
 		val consideredSuggestions: MutableSet<String> = HashSet()
 		val suggestionItems: MutableList<SuggestionItem> = ArrayList(spellCheckSettings.topK)
 
@@ -377,7 +377,7 @@ class SymSpell(
 		consideredSuggestions.add(curPhrase)
 		var maxEditDistance2 = maxEditDistance
 		var phrasePrefixLen: Int = phraseLen
-		val candidates: MutableList<String> = ArrayList()
+		val candidates: MutableList<String> = ArrayDeque<String>(phraseLen)
 
 		if (phraseLen > spellCheckSettings.prefixLength) {
 			phrasePrefixLen = spellCheckSettings.prefixLength
@@ -417,15 +417,24 @@ class SymSpell(
 			val deletes = dictionary.getDeletes(candidate)
 			if (deletes != null && deletes.size > 0) {
 				for (suggestion in deletes) {
+					val suggestionLength = suggestion.length
+
 					if (filterOnEquivalance(suggestion, curPhrase, candidate, maxEditDistance2)
 						||
 						filterOnPrefixLen(
-							suggestion.length, spellCheckSettings.prefixLength,
+							suggestionLength, spellCheckSettings.prefixLength,
 							phrasePrefixLen, candidate.length, maxEditDistance2
 						)
 					) {
 						continue
 					}
+
+					// Early exit before expensive distance calculation
+					// This is an attempt at optimization
+					if (suggestion.length > curPhrase.length + maxEditDistance2) {
+						continue
+					}
+
 					/*
 			True Damerau-Levenshtein Edit Distance: adjust
 					distance, if both distances>0
@@ -455,11 +464,11 @@ class SymSpell(
 						phrase (phrase_len<=max_edit_distance &&
 						suggestion_len<=max_edit_distance)
 			*/
-						distance = max(phraseLen.toDouble(), suggestion.length.toDouble())
+						distance = max(phraseLen.toDouble(), suggestionLength.toDouble())
 						if (distance > maxEditDistance2 || !consideredSuggestions.add(suggestion)) {
 							continue
 						}
-					} else if (suggestion.length == 1) {
+					} else if (suggestionLength == 1) {
 						distance =
 							(if (curPhrase.indexOf(suggestion[0]) < 0) phraseLen else phraseLen - 1).toDouble()
 						if (distance > maxEditDistance2 || !consideredSuggestions.add(suggestion)) {
@@ -486,14 +495,20 @@ class SymSpell(
 							if (verbosity != Verbosity.All
 								&& !deleteInSuggestionPrefix(
 									candidate, candidateLen,
-									suggestion, suggestion.length
+									suggestion, suggestionLength
 								) || !consideredSuggestions
 									.add(suggestion)
 							) {
 								continue
 							}
-							distance =
+							distance = if (maxEditDistance2 <= 2) {
+								// Try quick distance first for small edit distances
+								quickDistance(curPhrase, suggestion)
+									?: stringDistance.getDistance(curPhrase, suggestion, maxEditDistance2)
+							} else {
+								// Fall back to full distance calculation for larger edit distances
 								stringDistance.getDistance(curPhrase, suggestion, maxEditDistance2)
+							}
 							if (distance < 0) {
 								continue
 							}
@@ -531,8 +546,10 @@ class SymSpell(
 				}
 
 				for (i in 0 until candidateLen) {
-					val delete =
-						candidate.substring(0, i) + candidate.substring(i + 1, candidateLen)
+					val delete = StringBuilder(candidateLen - 1)
+						.append(candidate, 0, i)
+						.append(candidate, i + 1, candidateLen)
+						.toString()
 					if (consideredDeletes.add(delete)) {
 						candidates.add(delete)
 					}
@@ -618,10 +635,13 @@ class SymSpell(
 		suggestion: String,
 		candidate: String
 	): Boolean {
-		return (phrase.length - maxEditDistance == candidate.length.toDouble()
+		val suggestionLength = suggestion.length
+		val phraseLength = phrase.length
+
+		return (phraseLength - maxEditDistance == candidate.length.toDouble()
 				&& (min > 1
-				&& phrase.substring(phrase.length + 1 - min) != suggestion.substring(suggestion.length + 1 - min))
-				|| (min > 0 && phrase[phrase.length - min] != suggestion[suggestion.length - min] && phrase[phrase.length - min - 1] != suggestion[suggestion.length - min] && phrase[phrase.length - min] != suggestion[suggestion.length - min - 1]))
+				&& phrase.substring(phraseLength + 1 - min) != suggestion.substring(suggestionLength + 1 - min))
+				|| (min > 0 && phrase[phraseLength - min] != suggestion[suggestionLength - min] && phrase[phraseLength - min - 1] != suggestion[suggestionLength - min] && phrase[phraseLength - min] != suggestion[suggestionLength - min - 1]))
 	}
 
 	/**
@@ -784,6 +804,46 @@ class SymSpell(
 
 	override fun createDictionaryEntry(word: String, frequency: Double): Boolean {
 		return dictionary.addItem(DictionaryItem(word, frequency))
+	}
+
+	/**
+	 * Quick distance calculation for edit distance 1 and 2.
+	 * Returns null if the edit distance is definitely greater than 2,
+	 * otherwise returns the actual edit distance.
+	 */
+	private fun quickDistance(s1: String, s2: String): Double? {
+		val len1 = s1.length
+		val len2 = s2.length
+
+		// If lengths differ by more than 2, edit distance must be > 2
+		if (abs(len1 - len2) > 2) return null
+
+		var diffs = 0
+		val minLen = min(len1, len2)
+		var i = 0
+
+		// Check for character differences
+		while (i < minLen) {
+			if (s1[i] != s2[i]) {
+				diffs++
+				// Try to detect transposition
+				if (i + 1 < minLen &&
+					s1[i] == s2[i + 1] &&
+					s1[i + 1] == s2[i]
+				) {
+					diffs++
+					i += 2
+					continue
+				}
+			}
+			if (diffs > 2) return null
+			i++
+		}
+
+		// Add remaining length difference to diffs
+		diffs += abs(len1 - len2)
+
+		return if (diffs <= 2) diffs.toDouble() else null
 	}
 
 	companion object {
