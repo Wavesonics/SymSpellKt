@@ -34,16 +34,16 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-//    linuxX64()
-//    macosX64()
-//    macosArm64()
-//    mingwX64()
+
+    mingwX64()
+    val nativeTargets = listOf(macosX64(), macosArm64(), linuxX64(), mingwX64())
 
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project(":SymSpellKt"))
                 implementation(libs.okio)
-                implementation(libs.korge.core)
+                //implementation(libs.korge.core)
             }
         }
         val commonTest by getting {
@@ -51,6 +51,8 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+
+        val nativeMain by getting
     }
 }
 

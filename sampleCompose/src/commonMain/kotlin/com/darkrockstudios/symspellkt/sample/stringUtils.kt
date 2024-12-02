@@ -12,6 +12,10 @@ suspend fun <T> Sequence<T>.parallelForEach(block: (T) -> Unit) {
 }
 */
 
+/**
+ * This is here so we can yield, without this
+ * WASM builds were deadlocking the UI thread.
+ */
 suspend fun <T> Sequence<T>.forEachAsync(
 	action: suspend (T) -> Unit
 ) {

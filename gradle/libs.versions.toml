@@ -1,9 +1,11 @@
 [versions]
+clikt = "5.0.1"
 jvm = "17"
 agp = "8.5.2"
 korgeCore = "5.4.0"
 kotlin = "2.0.21"
 kotlinxSerializationJson = "1.7.3"
+mordant = "3.0.1"
 nexus-publish = "2.0.0"
 android-minSdk = "26"
 android-compileSdk = "34"
@@ -15,14 +17,23 @@ junit = "4.13.2"
 okio = "3.9.1"
 
 [libraries]
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+clikt-markdown = { module = "com.github.ajalt.clikt:clikt-markdown", version.ref = "clikt" }
 korge-core = { module = "com.soywiz.korge:korge-core", version.ref = "korgeCore" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+mordant = { module = "com.github.ajalt.mordant:mordant", version.ref = "mordant" }
+mordant-markdown = { module = "com.github.ajalt.mordant:mordant-markdown", version.ref = "mordant" }
+mordant-coroutines = { module = "com.github.ajalt.mordant:mordant-coroutines", version.ref = "mordant" }
 nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.gradle-nexus.publish-plugin.gradle.plugin", version.ref = "nexus-publish" }
 murmurhash = { module = "com.goncalossilva:murmurhash", version.ref = "murmurhash" }
 cvsparser = { module = "org.apache.commons:commons-csv", version.ref = "cvsparser" }
 junit4 = { module = "junit:junit", version.ref = "junit" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+
+[bundles]
+mordant = ["mordant", "mordant-markdown", "mordant-coroutines"]
+clikt = ["clikt", "clikt-markdown"]
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

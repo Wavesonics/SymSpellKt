@@ -6,25 +6,35 @@ plugins {
 }
 
 kotlin {
-    jvm("desktop") {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvm.get()))
+    applyDefaultHierarchyTemplate()
+
+    val nativeTargets = listOf(macosX64(), macosArm64(), linuxX64(), mingwX64())
+    nativeTargets.forEach { target ->
+        target.binaries {
+            executable {
+                entryPoint = "main"
+                baseName = "fdic"
+            }
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                //implementation(project(":Fdic"))
-                implementation(libs.okio)
+                implementation(project(":Fdic"))
+                api(libs.okio)
+                api(libs.bundles.mordant)
+                api(libs.clikt)
             }
         }
 
-        val jvmMain by getting {
+        val nativeMain by getting {
             dependencies {
-                implementation(kotlin("test"))
             }
+        }
+
+        nativeTargets.forEach { target ->
+            getByName("${target.name}Main").dependsOn(nativeMain)
         }
     }
 }
