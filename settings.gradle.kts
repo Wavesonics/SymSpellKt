@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 
 include(":SymSpellKt", ":sampleCompose")
-include(":Fdic", ":FdicCli")//, ":SymSpellKtFdic",
+include(":Fdic", ":FdicCli", ":SymSpellKtFdic")

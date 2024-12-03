@@ -43,6 +43,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.okio)
+                api(project(":SymSpellKt"))
+                api(project(":Fdic"))
             }
         }
         val commonTest by getting {

@@ -29,8 +29,7 @@ kotlin {
         }
         binaries.library()
     }
-
-//    wasmWasi {}
+    wasmWasi {}
     js(IR)
     iosX64()
     iosArm64()
@@ -44,9 +43,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":SymSpellKt"))
-                implementation(libs.okio)
-                //implementation(libs.korge.core)
             }
         }
         val commonTest by getting {
@@ -55,7 +51,39 @@ kotlin {
             }
         }
 
-        val nativeMain by getting
+        val okioMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.okio)
+            }
+        }
+
+        val nativeMain by getting {
+            dependsOn(okioMain)
+        }
+
+        val jvmMain by getting {
+            dependsOn(okioMain)
+        }
+
+        val korgeMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.korge.core)
+            }
+        }
+
+        val jsMain by getting {
+            dependsOn(korgeMain)
+        }
+
+        val wasmWasiMain by getting {
+            dependsOn(korgeMain)
+        }
+
+        val wasmJsMain by getting {
+            dependsOn(korgeMain)
+        }
     }
 }
 

@@ -1,5 +1,6 @@
+import com.darkrockstudios.fdic.FdicException
 import com.darkrockstudios.fdic.FrequencyDictionary
-import com.darkrockstudios.fdic.FrequencyDictionaryEncoder
+import com.darkrockstudios.fdic.FrequencyDictionaryIO
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.terminal
@@ -9,8 +10,10 @@ import com.github.ajalt.clikt.parameters.arguments.convert
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.options.check
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.boolean
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.mordant.animation.coroutines.animateInCoroutine
 import com.github.ajalt.mordant.animation.progress.advance
@@ -41,6 +44,12 @@ class FdicConverter : CliktCommand() {
 			it == 1 || it == 2
 		}
 
+	val locale by option("--locale", "-l").default("en")
+		.help("The locale tag and any qualifiers of this dictionary. This can be any valid Locale tag such as en-US, de and so on")
+		.check("Locale tags and sugtags can not be longer than 32 characters.") {
+			it.length < 32
+		}
+
 	val path by argument(
 		name = "path",
 		help = "Path to the plain text frequency dictionary to be converted"
@@ -59,6 +68,9 @@ class FdicConverter : CliktCommand() {
 		.check("Must be a path") { p ->
 			p.validatePath()
 		}
+
+	val verify by option("--verify", "-v").flag()
+		.help("Read back the dictionary after it is written to validate it is correct")
 
 	override fun run() = runBlocking {
 		val t = Terminal()
@@ -109,7 +121,11 @@ class FdicConverter : CliktCommand() {
 			total = numEntries
 		}
 
-		val dictionary = FrequencyDictionary()
+		val dictionary = FrequencyDictionary(
+			ngrams = n,
+			locale = locale,
+			termCount = numEntries.toInt(),
+		)
 		fs.read(path) {
 			var line = readUtf8Line()
 			while (line != null) {
@@ -128,14 +144,56 @@ class FdicConverter : CliktCommand() {
 			}
 		}
 
-		val encoder = FrequencyDictionaryEncoder()
-
 		val outpath = out ?: getOutPath(path)
-		encoder.writeFdic2Kmp(dictionary, outpath)
+		FrequencyDictionaryIO.writeFdic(dictionary, outpath)
+
+		val outputMetadata = fs.metadata(outpath)
 
 		t.println(" ")
 		t.println(yellow("Wrote encoded dictionary to: ${brightGreen(outpath.toString())}"))
+
+		if (verify) {
+			try {
+				val readBack = FrequencyDictionaryIO.readFdic(outpath)
+				val compression = (outputMetadata.size!! / inputMetadata.size!!.toFloat()) * 100f
+
+				t.println(" ")
+				t.println(
+					table {
+						captionTop("Output Dictionary")
+						body {
+							row("File", outpath.name)
+							row("Version", readBack.formatVersion)
+							row("Entries", readBack.termCount)
+							row("Locale", readBack.locale)
+							row("Ngram", readBack.getNgramName())
+							row("Input Size", inputMetadata.size!!.sizeToKb() + " KB")
+							row("Output Size", outputMetadata.size!!.sizeToKb().toString() + " KB")
+							row("Compression", compression.formatTwoDecimals() + "%")
+							row("Outpath", outpath)
+						}
+					}
+				)
+
+				readBack.validate()
+
+				if (dictionary == readBack) {
+					t.println(green("Dictionary validated successfully!: ${white(outpath.toString())}"))
+				} else {
+					t.println(brightRed("Dictionary failed validation: Contents did not match"))
+				}
+			} catch (e: FdicException) {
+				t.println(brightRed("Dictionary failed validation: ${white(e.message ?: "Unknown error")}"))
+			}
+		}
 	}
+}
+
+private fun Long.sizeToKb(): String = (this.toDouble() / 1024.0).toFloat().formatTwoDecimals().toString()
+
+private fun Float.formatTwoDecimals(): String {
+	val rounded = (this * 100f).toInt() / 100f
+	return rounded.toString()
 }
 
 private fun getOutPath(inPath: Path): Path {
