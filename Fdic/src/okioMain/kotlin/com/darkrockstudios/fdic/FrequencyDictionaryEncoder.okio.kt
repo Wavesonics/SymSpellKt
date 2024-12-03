@@ -5,6 +5,8 @@ import com.darkrockstudios.fdic.FrequencyDictionaryFileFormat.FORMAT_VERSION_SIZ
 import com.darkrockstudios.fdic.FrequencyDictionaryFileFormat.MAGIC_WORD
 import com.darkrockstudios.fdic.FrequencyDictionaryFileFormat.MAGIC_WORD_SIZE
 import com.darkrockstudios.fdic.FrequencyDictionaryFileFormat.UNCOMPRESSED_HEADER_SIZE
+import com.darkrockstudios.fdic.FrequencyDictionaryFileFormat.formatVersion
+import com.darkrockstudios.fdic.FrequencyDictionaryFileFormat.magicWordBytes
 import okio.*
 import okio.ByteString.Companion.toByteString
 import okio.Path.Companion.toPath
@@ -24,17 +26,17 @@ actual object FrequencyDictionaryIO {
 
 		// Write header outside of compressed area
 		val uncompressedSink = fileSystem.sink(path).buffer()
-		uncompressedSink.write(FrequencyDictionaryFileFormat.magicWordBytes())
-		uncompressedSink.write(FrequencyDictionaryFileFormat.formatVersion())
+		uncompressedSink.write(magicWordBytes())
+		uncompressedSink.write(formatVersion())
 
 		GzipSink(uncompressedSink).buffer().use { byteStream ->
 			byteStream.writeVariableLong(dictionary.ngrams.toLong())
 			byteStream.writeVariableLong(dictionary.termCount.toLong())
-			byteStream.writeString(dictionary.locale)
+			byteStream.writeDelimitedString(dictionary.locale)
 
 			dictionary.terms.forEach { (term, frequency) ->
 				byteStream.writeVariableLong(frequency)
-				byteStream.writeString(term)
+				byteStream.writeDelimitedString(term)
 			}
 		}
 	}
@@ -44,19 +46,17 @@ actual object FrequencyDictionaryIO {
 	}
 
 	suspend fun readFdic(path: Path): FrequencyDictionary {
-		return readFdic2Kmp(fileSystem.source(path))
+		return readFdic(fileSystem.source(path))
 	}
 
 	actual suspend fun readFdic(bytes: ByteArray): FrequencyDictionary {
 		val buffer = Buffer().apply {
 			write(bytes)
 		}
-		return readFdic2Kmp(buffer)
+		return readFdic(buffer)
 	}
 
-	fun readFdic2Kmp(inputSource: Source): FrequencyDictionary {
-		val frequencyDict = mutableMapOf<String, Long>()
-
+	fun readFdic(inputSource: Source): FrequencyDictionary {
 		// Read the uncompressed header
 		val headerBuffer = Buffer()
 		inputSource.read(headerBuffer, UNCOMPRESSED_HEADER_SIZE)
@@ -85,16 +85,19 @@ actual object FrequencyDictionaryIO {
 		var termCount: Int = -1
 		var locale: String = ""
 
+		lateinit var frequencyDict: HashMap<String, Long>
 		// Read compressed file
 		GzipSource(inputSource).buffer().use { buffer ->
 			ngrams = buffer.readVariableLong().toInt()
 			termCount = buffer.readVariableLong().toInt()
-			locale = buffer.readString()
+			locale = buffer.readDelimitedString()
+
+			frequencyDict = HashMap<String, Long>(termCount)
 
 			// Read dictionary entries
 			while (!buffer.exhausted()) {
 				val frequency = buffer.readVariableLong()
-				val term = buffer.readString()
+				val term = buffer.readDelimitedString()
 				frequencyDict[term] = frequency
 			}
 		}
@@ -110,9 +113,3 @@ actual object FrequencyDictionaryIO {
 		return dictionary
 	}
 }
-
-private fun ByteArray.toInt(): Int =
-	(this[0].toInt() and 0xFF shl 24) or
-			(this[1].toInt() and 0xFF shl 16) or
-			(this[2].toInt() and 0xFF shl 8) or
-			(this[3].toInt() and 0xFF)

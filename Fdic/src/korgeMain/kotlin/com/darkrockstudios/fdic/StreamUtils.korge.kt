@@ -4,7 +4,7 @@ import korlibs.io.stream.FastByteArrayInputStream
 import korlibs.memory.ByteArrayBuilder
 
 
-suspend fun ByteArrayBuilder.writeStringKmp(str: String) {
+suspend fun ByteArrayBuilder.writeDelimitedString(str: String) {
     append(str.encodeToByteArray())
     append(0) // null terminator
 }

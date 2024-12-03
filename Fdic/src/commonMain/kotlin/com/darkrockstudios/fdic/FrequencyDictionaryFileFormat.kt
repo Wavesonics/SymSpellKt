@@ -14,11 +14,4 @@ object FrequencyDictionaryFileFormat {
 		array[0] = FORMAT_VERSION
 		return array
 	}
-
-	private fun Int.toByteArray(): ByteArray = byteArrayOf(
-		(this shr 24).toByte(),
-		(this shr 16).toByte(),
-		(this shr 8).toByte(),
-		this.toByte()
-	)
 }
