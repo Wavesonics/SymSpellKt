@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
 }
@@ -19,17 +16,12 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val nativeMain by getting {
             dependencies {
                 implementation(project(":Fdic"))
                 api(libs.okio)
                 api(libs.bundles.mordant)
                 api(libs.clikt)
-            }
-        }
-
-        val nativeMain by getting {
-            dependencies {
             }
         }
 

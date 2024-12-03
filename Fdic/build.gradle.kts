@@ -29,6 +29,7 @@ kotlin {
         }
         binaries.library()
     }
+
 //    wasmWasi {}
     js(IR)
     iosX64()
@@ -36,7 +37,9 @@ kotlin {
     iosSimulatorArm64()
 
     mingwX64()
-    val nativeTargets = listOf(macosX64(), macosArm64(), linuxX64(), mingwX64())
+    macosX64()
+    macosArm64()
+    linuxX64()
 
     sourceSets {
         val commonMain by getting {
