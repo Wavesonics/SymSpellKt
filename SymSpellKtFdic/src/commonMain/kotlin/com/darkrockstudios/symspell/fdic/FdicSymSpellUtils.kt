@@ -7,14 +7,12 @@ import com.darkrockstudios.symspellkt.common.DictionaryItem
 import okio.Path
 
 suspend fun DictionaryHolder.loadFdicFile(path: Path) {
-	val encoder = FrequencyDictionaryIO()
-	val dictionary = encoder.readFdic(path.toString())
+	val dictionary = FrequencyDictionaryIO.readFdic(path.toString())
 	addAllToDictionary(dictionary)
 }
 
 suspend fun DictionaryHolder.loadFdicFile(byteArray: ByteArray) {
-	val encoder = FrequencyDictionaryIO()
-	val dictionary = encoder.readFdic(byteArray)
+	val dictionary = FrequencyDictionaryIO.readFdic(byteArray)
 	addAllToDictionary(dictionary)
 }
 
