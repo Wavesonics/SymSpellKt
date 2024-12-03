@@ -13,7 +13,6 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.boolean
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.mordant.animation.coroutines.animateInCoroutine
 import com.github.ajalt.mordant.animation.progress.advance
@@ -30,6 +29,7 @@ import com.github.ajalt.mordant.widgets.Spinner
 import com.github.ajalt.mordant.widgets.Text
 import com.github.ajalt.mordant.widgets.progress.*
 import kotlinx.coroutines.*
+import okio.FileMetadata
 import okio.Path
 import okio.Path.Companion.toPath
 
@@ -153,39 +153,53 @@ class FdicConverter : CliktCommand() {
 		t.println(yellow("Wrote encoded dictionary to: ${brightGreen(outpath.toString())}"))
 
 		if (verify) {
-			try {
-				val readBack = FrequencyDictionaryIO.readFdic(outpath)
-				val compression = (outputMetadata.size!! / inputMetadata.size!!.toFloat()) * 100f
-
-				t.println(" ")
-				t.println(
-					table {
-						captionTop("Output Dictionary")
-						body {
-							row("File", outpath.name)
-							row("Version", readBack.formatVersion)
-							row("Entries", readBack.termCount)
-							row("Locale", readBack.locale)
-							row("Ngram", readBack.getNgramName())
-							row("Input Size", inputMetadata.size!!.sizeToKb() + " KB")
-							row("Output Size", outputMetadata.size!!.sizeToKb().toString() + " KB")
-							row("Compression", compression.formatTwoDecimals() + "%")
-							row("Outpath", outpath)
-						}
-					}
-				)
-
-				readBack.validate()
-
-				if (dictionary == readBack) {
-					t.println(green("Dictionary validated successfully!: ${white(outpath.toString())}"))
-				} else {
-					t.println(brightRed("Dictionary failed validation: Contents did not match"))
-				}
-			} catch (e: FdicException) {
-				t.println(brightRed("Dictionary failed validation: ${white(e.message ?: "Unknown error")}"))
-			}
+			verifyOutput(t, outpath, outputMetadata, inputMetadata, dictionary)
 		}
+	}
+}
+
+private suspend fun verifyOutput(
+	t: Terminal,
+	outpath: Path,
+	outputMetadata: FileMetadata,
+	inputMetadata: FileMetadata,
+	dictionary: FrequencyDictionary
+) {
+	t.println("")
+	t.println("Verifying output...")
+	try {
+		val readBack = FrequencyDictionaryIO.readFdic(outpath)
+		val compression = (outputMetadata.size!! / inputMetadata.size!!.toFloat()) * 100f
+
+		t.println("")
+		t.println("")
+
+		t.println(
+			table {
+				captionTop("Output Dictionary")
+				body {
+					row("File", outpath.name)
+					row("Version", readBack.formatVersion)
+					row("Entries", readBack.termCount)
+					row("Locale", readBack.locale)
+					row("Ngram", readBack.getNgramName())
+					row("Input Size", inputMetadata.size!!.sizeToKb() + " KB")
+					row("Output Size", outputMetadata.size!!.sizeToKb().toString() + " KB")
+					row("Compression", compression.formatTwoDecimals() + "%")
+					row("Outpath", outpath)
+				}
+			}
+		)
+
+		readBack.validate()
+
+		if (dictionary == readBack) {
+			t.println(green("Dictionary validated successfully!: ${white(outpath.toString())}"))
+		} else {
+			t.println(brightRed("Dictionary failed validation: Contents did not match"))
+		}
+	} catch (e: FdicException) {
+		t.println(brightRed("Dictionary failed validation: ${white(e.message ?: "Unknown error")}"))
 	}
 }
 
