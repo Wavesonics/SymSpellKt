@@ -21,7 +21,7 @@ fun rememberSpellChecker(): SpellChecker? {
 
 			val mills = measureMillsTimeAsync {
 				checker.dictionary.loadFdicFile(Res.readBytes("files/en-80k.fdic"))
-				//checker.dictionary.loadTxtFile(Res.readBytes("files/en-80k.txt"))
+				//checker.dictionary.loadUnigramTxtFile(Res.readBytes("files/en-80k.txt"))
 
 				checker.dictionary.loadFdicFile(Res.readBytes("files/frequency_bigramdictionary_en_243_342.fdic"))
 				//checker.dictionary.loadBigramTxtFile(Res.readBytes("files/frequency_bigramdictionary_en_243_342.txt"))
