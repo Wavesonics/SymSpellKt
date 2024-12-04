@@ -66,6 +66,10 @@ kotlin {
             dependsOn(okioMain)
         }
 
+        val androidMain by getting {
+            dependsOn(okioMain)
+        }
+
         val korgeMain by creating {
             dependsOn(commonMain)
             dependencies {

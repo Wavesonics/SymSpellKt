@@ -1,9 +1,17 @@
 package com.darkrockstudios.symspellkt.sample
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.darkrockstudios.samplecompose.generated.resources.Res
 import com.darkrockstudios.symspell.fdic.loadFdicFile
 import com.darkrockstudios.symspellkt.api.SpellChecker
+import com.darkrockstudios.symspellkt.api.loadBigramTxtFile
+import com.darkrockstudios.symspellkt.api.loadUnigramTxtFile
 import com.darkrockstudios.symspellkt.impl.SymSpell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

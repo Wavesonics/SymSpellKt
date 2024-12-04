@@ -15,6 +15,10 @@ murmurhash = "0.4.0"
 cvsparser = "1.10.0"
 junit = "4.13.2"
 okio = "3.9.1"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.9.3"
+composeBom = "2024.11.00"
+activityKtx = "1.9.3"
 
 [libraries]
 clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
@@ -30,6 +34,17 @@ murmurhash = { module = "com.goncalossilva:murmurhash", version.ref = "murmurhas
 cvsparser = { module = "org.apache.commons:commons-csv", version.ref = "cvsparser" }
 junit4 = { module = "junit:junit", version.ref = "junit" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+ui = { group = "androidx.compose.ui", name = "ui" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+material3 = { group = "androidx.compose.material3", name = "material3" }
+activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 
 [bundles]
 mordant = ["mordant", "mordant-markdown", "mordant-coroutines"]
@@ -37,6 +52,7 @@ clikt = ["clikt", "clikt-markdown"]
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }

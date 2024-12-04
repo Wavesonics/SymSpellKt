@@ -6,7 +6,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 class JVMPlatform: Platform {
-	override val name: String = "Java ${System.getProperty("java.version")}"
+	override val name: String = "Android"
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()
