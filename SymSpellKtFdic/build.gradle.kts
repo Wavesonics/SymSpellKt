@@ -29,7 +29,7 @@ kotlin {
         }
         binaries.library()
     }
-    wasmWasi {}
+    //wasmWasi {}
     js(IR)
     iosX64()
     iosArm64()

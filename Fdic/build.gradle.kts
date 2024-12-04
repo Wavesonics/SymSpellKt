@@ -29,7 +29,7 @@ kotlin {
         }
         binaries.library()
     }
-    wasmWasi {}
+    //wasmWasi {}
     js(IR)
     iosX64()
     iosArm64()
@@ -77,9 +77,9 @@ kotlin {
             dependsOn(korgeMain)
         }
 
-        val wasmWasiMain by getting {
-            dependsOn(korgeMain)
-        }
+//        val wasmWasiMain by getting {
+//            dependsOn(korgeMain)
+//        }
 
         val wasmJsMain by getting {
             dependsOn(korgeMain)
