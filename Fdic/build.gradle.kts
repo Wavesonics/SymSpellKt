@@ -98,3 +98,14 @@ android {
         targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get().toInt())
     }
 }
+
+publishing {
+    publications.withType<MavenPublication> {
+        artifactId = "fdic"
+
+        pom {
+            name.set("FDic")
+            description.set("FDic is a binary file format for N-Gram Frequency dictionaries that is compressed and faster to parse.")
+        }
+    }
+}
