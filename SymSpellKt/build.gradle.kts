@@ -88,17 +88,6 @@ android {
 	}
 }
 
-publishing {
-	publications.withType<MavenPublication> {
-		artifactId = "symspellkt"
-
-		pom {
-			name.set("SymSpell Kt")
-			description.set("A Kotlin Multiplatform implementation of the SymSpell Spell Checking algorithm.")
-		}
-	}
-}
-
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 powerAssert {
 	functions = listOf(

@@ -12,8 +12,12 @@ publishing {
             archiveAppendix.set(this@withType.name)
         })
 
+        artifactId = artifactId.lowercase()
+
         // Provide artifacts information required by Maven Central
         pom {
+            name.set("Symspell Kt")
+            description.set("A Kotlin Multiplatform implementation of the SymSpell Spell Checking algorithm.")
             url.set("https://github.com/Wavesonics/SymSpellKt")
 
             licenses {
@@ -22,20 +26,26 @@ publishing {
                     url.set("https://opensource.org/licenses/MIT")
                 }
             }
-            developers {
-                developer {
-                    name.set("Adam Brown")
-                    id.set("Wavesonics")
-                }
+            issueManagement {
+                system.set("Github")
+                url.set("https://github.com/Wavesonics/SymSpellKt/issues")
             }
             scm {
                 connection.set("scm:git:git://github.com/Wavesonics/SymSpellKt.git")
                 developerConnection.set("scm:git:ssh://github.com/Wavesonics/SymSpellKt.git")
                 url.set("https://github.com/Wavesonics/SymSpellKt")
             }
+            developers {
+                developer {
+                    name.set("Adam Brown")
+                    id.set("Wavesonics")
+                    email.set("adamwbrown@gmail.com")
+                }
+            }
         }
     }
 }
+
 
 signing {
     val signingKey: String? = System.getenv("SIGNING_KEY")
@@ -46,4 +56,9 @@ signing {
     } else {
         println("No signing credentials provided. Skipping Signing.")
     }
+}
+
+// TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
+project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
+    dependsOn(project.tasks.withType(Sign::class.java))
 }

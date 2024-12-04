@@ -66,14 +66,3 @@ android {
         targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get().toInt())
     }
 }
-
-publishing {
-    publications.withType<MavenPublication> {
-        artifactId = "symspellkt-fdic"
-
-        pom {
-            name.set("SymSpell Kt - FDic Extensions")
-            description.set("Utility functions to loading FDic files into the SymSpell dictionary at runtime.")
-        }
-    }
-}
