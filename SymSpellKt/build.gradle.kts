@@ -5,11 +5,10 @@ plugins {
 	alias(libs.plugins.kotlin.multiplatform)
 	alias(libs.plugins.kotlin.powerassert)
 	alias(libs.plugins.android.library)
+	alias(libs.plugins.kotlin.serialization)
 	id("module.publication")
-	id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
 }
 
-@OptIn(ExperimentalWasmDsl::class)
 kotlin {
 	applyDefaultHierarchyTemplate()
 	jvm {
@@ -86,6 +85,17 @@ android {
 	compileOptions {
 		sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get().toInt())
 		targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get().toInt())
+	}
+}
+
+publishing {
+	publications.withType<MavenPublication> {
+		artifactId = "symspellkt"
+
+		pom {
+			name.set("SymSpell Kt")
+			description.set("A Kotlin Multiplatform implementation of the SymSpell Spell Checking algorithm.")
+		}
 	}
 }
 

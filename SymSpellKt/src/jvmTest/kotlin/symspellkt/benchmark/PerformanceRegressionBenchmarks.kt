@@ -20,6 +20,7 @@ class PerformanceRegressionBenchmarks {
 	 * Of course this is wildly dependent on the particular machine and conditions the report was generated under,
 	 * for the comparison to have any relevance.
 	 */
+	@Ignore
 	@Test
 	fun compareToBaseline() {
 		val baselineFile = File("benchmark_results/baseline-benchmark.json")
@@ -34,7 +35,7 @@ class PerformanceRegressionBenchmarks {
 		}
 		val baselineResults = json.decodeFromString<BenchmarkResults>(baselineFile.readText())
 
-		val currentResults = runFullBenchmarkSuite()
+		val currentResults = runFullBenchmarkSuite(true, false)
 
 		// Remove outliers before comparison
 		val cleanBaseline = baselineResults.removeOutliers()
@@ -42,47 +43,99 @@ class PerformanceRegressionBenchmarks {
 		val comparisons = compareResults(cleanBaseline, cleanCurrent)
 
 		// Print each comparison
-		comparisons.forEach { comparison ->
-			printComparisonReport(comparison)
+		val comparisonReports: String = comparisons.joinToString { comparison ->
+			buildComparisonReport(comparison)
 		}
 
-		printResultsSummary(comparisons)
+		val summary = buildResultsSummary(comparisons)
+
+		printComparisonReport(comparisonReports, summary)
+
+		val timestamp = System.currentTimeMillis()
+		writeResultsToFile(comparisonReports, summary, "benchmark_results/benchmark-comparison-$timestamp.txt")
 	}
 
-	private fun printResultsSummary(comparisons: List<BenchmarkComparison>) {
-		val majorRegressions = comparisons.count { it.status == PerformanceStatus.MAJOR_REGRESSION }
-		val minorRegressions = comparisons.count { it.status == PerformanceStatus.MINOR_REGRESSION }
-		val improvements = comparisons.count { it.status == PerformanceStatus.IMPROVEMENT }
-		val similar = comparisons.count { it.status == PerformanceStatus.SIMILAR }
+	private fun writeResultsToFile(comparisonReports: String, summary: String, outputPath: String) {
+		val text = StringBuilder(comparisonReports.length + summary.length + 1)
+			.append(comparisonReports)
+			.append('\n')
+			.append(summary)
+			.toString()
 
-		println("\n=== SUMMARY ===")
-		println("Total Comparisons: ${comparisons.size}")
-		println("Major Regressions: $majorRegressions")
-		println("Minor Regressions: $minorRegressions")
-		println("Improvements: $improvements")
-		println("Similar: $similar")
+		val outFile = File(outputPath)
+		outFile.parentFile.mkdirs()
+		outFile.writeText(text)
+		println("Benchmark Comparison results written to ${outFile.absolutePath}")
+	}
 
-		// Only fail on major regressions
+	private fun buildResultsSummary(comparisons: List<BenchmarkComparison>): String {
+		val sb = StringBuilder()
+
+		val majorTimeRegressions = comparisons.count { it.timeRegressionLevel == PerformanceStatus.MAJOR_REGRESSION }
+		val minorTimeRegressions = comparisons.count { it.timeRegressionLevel == PerformanceStatus.MINOR_REGRESSION }
+		val timeImprovements = comparisons.count { it.timeRegressionLevel == PerformanceStatus.IMPROVEMENT }
+		val timeSimilar = comparisons.count { it.timeRegressionLevel == PerformanceStatus.SIMILAR }
+
+		val majorHeapRegressions = comparisons.count { it.heapRegressionLevel == PerformanceStatus.MAJOR_REGRESSION }
+		val minorHeapRegressions = comparisons.count { it.heapRegressionLevel == PerformanceStatus.MINOR_REGRESSION }
+		val heapImprovements = comparisons.count { it.heapRegressionLevel == PerformanceStatus.IMPROVEMENT }
+		val heapSimilar = comparisons.count { it.heapRegressionLevel == PerformanceStatus.SIMILAR }
+
+		sb.append("\n=== SUMMARY ===\n")
+			.append("Total Comparisons: ").append(comparisons.size).append("\n\n")
+			.append("Time Performance:\n")
+			.append("  Major Regressions: ").append(majorTimeRegressions).append('\n')
+			.append("  Minor Regressions: ").append(minorTimeRegressions).append('\n')
+			.append("  Improvements: ").append(timeImprovements).append('\n')
+			.append("  Similar: ").append(timeSimilar).append("\n\n")
+			.append("Heap Performance:\n")
+			.append("  Major Regressions: ").append(majorHeapRegressions).append('\n')
+			.append("  Minor Regressions: ").append(minorHeapRegressions).append('\n')
+			.append("  Improvements: ").append(heapImprovements).append('\n')
+			.append("  Similar: ").append(heapSimilar)
+
+		// Handle major regressions
 		val hasMajorRegressions = comparisons.any { it.status == PerformanceStatus.MAJOR_REGRESSION }
 		if (hasMajorRegressions) {
-			val regressionDetails = comparisons
+			sb.append("\n\nMajor performance regressions detected:\n")
+
+			comparisons
 				.filter { it.status == PerformanceStatus.MAJOR_REGRESSION }
-				.joinToString("\n") { comparison ->
+				.forEach { comparison ->
 					val timeChange = (comparison.timeInterval.mean - comparison.baselineTimeInterval.mean) /
 							comparison.baselineTimeInterval.mean * 100
 					val heapChange = (comparison.heapInterval.mean - comparison.baselineHeapInterval.mean) /
 							comparison.baselineHeapInterval.mean * 100
 
-					"""
-                |${comparison.name} (${comparison.parameters}):
-                |  Time: ${comparison.baselineTimeInterval} -> ${comparison.timeInterval} ms
-				|  Change: ${sign(timeChange)}${String.format("%.1f%%", timeChange)}
-                |  Heap: ${comparison.baselineHeapInterval} -> ${comparison.heapInterval} MB
-				|  Change: ${sign(heapChange)}${String.format("%.1f%%", heapChange)}
-                """.trimMargin()
+					sb.append(comparison.name)
+						.append(" (")
+						.append(comparison.parameters)
+						.append("):\n  Time: ")
+						.append(comparison.baselineTimeInterval)
+						.append(" -> ")
+						.append(comparison.timeInterval)
+						.append(" ms\n  Change: ")
+						.append(sign(timeChange))
+						.append(String.format("%.1f%%", timeChange))
+						.append("\n  Heap: ")
+						.append(comparison.baselineHeapInterval)
+						.append(" -> ")
+						.append(comparison.heapInterval)
+						.append(" MB\n  Change: ")
+						.append(sign(heapChange))
+						.append(String.format("%.1f%%", heapChange))
+						.append('\n')
 				}
-			fail("Major performance regressions detected:\n$regressionDetails")
 		}
+
+		val result = sb.toString()
+
+		// If there are major regressions, throw the failure
+		if (hasMajorRegressions) {
+			fail(result)
+		}
+
+		return result
 	}
 
 	private fun sign(percent: Double): String = if(percent >= 0.0) "+" else ""
@@ -149,28 +202,41 @@ class PerformanceRegressionBenchmarks {
 		return name == other.name && parameters == other.parameters
 	}
 
-	private fun printComparisonReport(comparison: BenchmarkComparison) {
-		println("\n=== Performance Comparison ===")
-		println("Benchmark: ${comparison.name}")
-		println("Parameters: ${comparison.parameters}")
+	private fun buildComparisonReport(comparison: BenchmarkComparison): String {
+		val sb = StringBuilder()
 
+		// Calculate changes
 		val timeChange = (comparison.timeInterval.mean - comparison.baselineTimeInterval.mean) /
 				comparison.baselineTimeInterval.mean * 100
 		val heapChange = (comparison.heapInterval.mean - comparison.baselineHeapInterval.mean) /
 				comparison.baselineHeapInterval.mean * 100
 
-		println("\nExecution Time:")
-		println("  Baseline: ${comparison.baselineTimeInterval} ms")
-		println("  Current:  ${comparison.timeInterval} ms")
-		println("  Change:   ${sign(timeChange)}${String.format("%.1f%%", timeChange)}")
-		println("  Status:   ${comparison.timeRegressionLevel}")
+		// Build report
+		sb.append("\n=== Performance Comparison ===\n")
+			.append("Benchmark: ").append(comparison.name).append('\n')
+			.append("Parameters: ").append(comparison.parameters).append("\n\n")
 
-		println("\nHeap Memory:")
-		println("  Baseline: ${comparison.baselineHeapInterval} MB")
-		println("  Current:  ${comparison.heapInterval} MB")
-		println("  Change:   ${sign(timeChange)}${String.format("%.1f%%", heapChange)}")
-		println("  Status:   ${comparison.heapRegressionLevel}")
+			.append("Execution Time:\n")
+			.append("  Baseline: ").append(comparison.baselineTimeInterval).append(" ms\n")
+			.append("  Current:  ").append(comparison.timeInterval).append(" ms\n")
+			.append("  Change:   ").append(sign(timeChange))
+			.append(String.format("%.1f%%", timeChange)).append('\n')
+			.append("  Status:   ").append(comparison.timeRegressionLevel).append("\n\n")
 
-		println("\nOverall Status: ${comparison.status}")
+			.append("Heap Memory:\n")
+			.append("  Baseline: ").append(comparison.baselineHeapInterval).append(" MB\n")
+			.append("  Current:  ").append(comparison.heapInterval).append(" MB\n")
+			.append("  Change:   ").append(sign(timeChange))
+			.append(String.format("%.1f%%", heapChange)).append('\n')
+			.append("  Status:   ").append(comparison.heapRegressionLevel).append("\n\n")
+
+			.append("Overall Status: ").append(comparison.status).append('\n')
+
+		return sb.toString()
+	}
+
+	private fun printComparisonReport(comparisonReports: String, summary: String) {
+		println(comparisonReports)
+		println(summary)
 	}
 }

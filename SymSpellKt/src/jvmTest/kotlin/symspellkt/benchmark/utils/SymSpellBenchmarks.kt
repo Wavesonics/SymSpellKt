@@ -74,9 +74,7 @@ class SymSpellBenchmarks {
 
 		// Load it all into memory before we start
 		// hopefully this helps reduce variability
-		val inputStream = this.javaClass.classLoader.getResourceAsStream(dictionaryFile)//.fullyBuffered()
-		val parser: CSVParser = CSVParser
-			.parse(inputStream, Charset.forName("UTF-8"), CSVFormat.DEFAULT.withDelimiter(' '))
+		val inputStream = this.javaClass.classLoader.getResourceAsStream(dictionaryFile)!!.fullyBuffered()
 
 		val result = benchmarkRunner.runBenchmark(
 			name = "SymSpellIndex | [MED:$maxEditDistance]",
@@ -84,10 +82,17 @@ class SymSpellBenchmarks {
 			warmupIterations = warmupIterations,
 			parameters = params
 		) {
+			val parser: CSVParser = CSVParser
+				.parse(inputStream, Charset.forName("UTF-8"), CSVFormat.DEFAULT.withDelimiter(' '))
+
 			val spellChecker = createSpellChecker(maxEditDistance)
 			indexData(parser, spellChecker.dictionary)
 			println("DataHolder Indexed Size: ${spellChecker.dictionary.wordCount}")
+
+			inputStream.reset()
 		}
+		inputStream.close()
+
 		indexResults.add(result)
 	}
 

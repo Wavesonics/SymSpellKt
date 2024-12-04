@@ -14,11 +14,7 @@ publishing {
 
         // Provide artifacts information required by Maven Central
         pom {
-            name.set("SymSpell Kt")
-            description.set("A Kotlin Multiplatform implementation of the SymSpell Spell Checking algorithm.")
             url.set("https://github.com/Wavesonics/SymSpellKt")
-
-            artifactId = "symspellkt"
 
             licenses {
                 license {
