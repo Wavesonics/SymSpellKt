@@ -1,5 +1,5 @@
 # SymSpellKt Fdic
-These are sime extension functions for loading [fdic](../Fdic/README.md) dictionary files into a SymSpell spell checker.
+These are some extension functions for loading [fdic](../Fdic/README.md) dictionary files into a SymSpell spell checker.
 
 ## Getting started
 Add to your project from Maven Central:

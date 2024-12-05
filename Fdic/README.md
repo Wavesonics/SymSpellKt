@@ -27,7 +27,7 @@ FrequencyDictionaryIO.writeFdic(dictionary, "en-80k.fdic")
 ```
 
 ## Performance
-Performance varies greatly depending on the combination of machine and dictionary being decoded. But `fdic` always
+Performance varies greatly depending on the combination of machine and dictionary being decoded. But `fdic` is always
 superior in both size and speed to both a plain text dictionary, and a GZIPed text dictionary.
 
 Some Machine/Dictionary combinations show more modest speed improvements, but considering simply GZIPing would have
@@ -58,6 +58,20 @@ fdic was 43.65% of the original size
 ```
 
 ## File Layout
+
+| Field | Size | Description |
+|-------|------|-------------|
+| Magic Number | 4 bytes | Fixed value 0x0F0D010C |
+| Version | 1 byte | File format version |
+| | **--- GZip Compressed Section Begins ---** | |
+| ngram | vlong 1-10 bytes | Value of 1 (unigrams) or 2 (bigrams) |
+| termCount | vlong 1-10 bytes | Number of dictionary entries that follow |
+| locale | nstring len+1 bytes | Language locale of the dictionary |
+| | **--- Dictionary Entries Begin ---** | |
+| | **-- Dictionary Entry --** _(Repeated n times)_ | |
+| frequency | vlong 1-10 bytes | Term Frequency (vlong) |
+| term | nstring len+1 bytes | The dictionary term |
+
 ```mermaid
 flowchart TD
     subgraph header[Uncompressed Header]
@@ -86,9 +100,9 @@ flowchart TD
     
     header --> compressed
 
-    style header fill:#f9f9f9
-    style compressed fill:#e6f3ff
-    style entries fill:#f0f0f0
+    style header fill:#151c3d
+    style compressed fill:#0e2b1e
+    style entries fill:#303030
 ```
 
 ## Variable Length Longs
@@ -106,25 +120,27 @@ By just the 7th term, we're already under the threshold for an unsigned int: `is
 
 It took 11 characters to represent the frequency for `the`, so 8 bytes for a Long was still a savings, but by the time
 we get to `is` it only takes 10 characters, still a savings, but reduced. Meanwhile we only actually need 4 bytes of
-Integer permission to represent the frequency for `is`.
+Integer precision to represent the frequency for `is`.
 
 Pretty quickly the terms require fewer than 8 characters to represent their frequency, so representing it as a binary
-number begins to increase the overall size of each entry.
+number, even a 4 byte Int, begins to increase the overall size of each entry.
 
-To solve this I came up with `Variable Length Longs` which only take as many bytes as necisary, the smallest numbers
+To solve this I came up with `Variable Length Longs` which only take as many bytes as necessary, the smallest numbers
 requiring just 1 byte when encoded.
+
+This results in an average savings of 3-4 bytes per entry.
 
 ### How
 This is achieved by using the **Most Significant Bit** (_MSB_) as a `Continuation Flag` when parsing. This means that each
 encoded byte only represents 7 bits of data, meaning in worst case scenarios we could use up to 10 bytes to represent
 an 8 byte Long. In this use case it never occurs, as term frequencies are never that large.
 
-When we begin reading a `vlong` feild, we mask out the continuation bit, take the 7 data bits, shift them depending on
+When we begin reading a `vlong` field, we mask out the continuation bit, take the 7 data bits, shift them depending on
 how many bytes we've read so far for this vlong, and add that to an accumulator Long.
 
 ```mermaid
 flowchart TD
-    subgraph title[Variable Length Long]
+    subgraph title[Decoding a VLong]
         note["Each byte:<br>┌ MSB = Continuation bit (1=more bytes, 0=last byte)<br>└ Lower 7 bits = Data"]
         
         subgraph example["Example: Large Number Encoding"]
@@ -142,6 +158,6 @@ flowchart TD
         end
     end
 
-    style title fill:#f9f9f9
-    style example fill:#e6f3ff
+    style title fill:#333333
+    style example fill:#0d2236
 ```
