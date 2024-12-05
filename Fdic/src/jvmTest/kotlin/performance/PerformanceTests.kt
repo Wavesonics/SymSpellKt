@@ -2,12 +2,10 @@ package performance
 
 import com.darkrockstudios.fdic.FrequencyDictionary
 import com.darkrockstudios.fdic.FrequencyDictionaryIO
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.buffer
-import org.junit.Before
 import org.junit.Test
 import performance.strategies.fdicGzFile
 import performance.strategies.loadGzDict
