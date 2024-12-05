@@ -44,6 +44,7 @@ Speed:
   gz took 83ms to load
 fdic took 20ms to load
 
+Summary:
 fdic was 57ms (74.03%) faster!
 
 Compression:
@@ -52,6 +53,7 @@ Compression:
   gz size: 592 KB
 fdic size: 580 KB
 
+Summary:
 fdic was 43.65% of the original size
 ```
 

@@ -66,6 +66,13 @@ kotlin {
             dependsOn(okioMain)
         }
 
+        val jvmTest by getting {
+            dependencies {
+                implementation(libs.korge.core)
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
         val androidMain by getting {
             dependsOn(okioMain)
         }

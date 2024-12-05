@@ -4,6 +4,7 @@ jvm = "17"
 agp = "8.5.2"
 korgeCore = "5.4.0"
 kotlin = "2.0.21"
+kotlinxCoroutinesTest = "1.9.0"
 kotlinxSerializationJson = "1.7.3"
 mordant = "3.0.1"
 nexus-publish = "2.0.0"
@@ -25,6 +26,7 @@ clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
 clikt-markdown = { module = "com.github.ajalt.clikt:clikt-markdown", version.ref = "clikt" }
 korge-core = { module = "com.soywiz.korge:korge-core", version.ref = "korgeCore" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 mordant = { module = "com.github.ajalt.mordant:mordant", version.ref = "mordant" }
 mordant-markdown = { module = "com.github.ajalt.mordant:mordant-markdown", version.ref = "mordant" }
