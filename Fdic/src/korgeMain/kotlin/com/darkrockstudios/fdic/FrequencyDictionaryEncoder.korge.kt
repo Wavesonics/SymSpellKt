@@ -20,7 +20,7 @@ actual object FrequencyDictionaryIO {
 
 	actual suspend fun writeFdic(dictionary: FrequencyDictionary, path: String) {
 		// Delete existing file if it exists
-		val file = localCurrentDirVfs[path.toString()]
+		val file = localCurrentDirVfs[path]
 		file.delete()
 
 		val uncompressedSection = ByteArrayBuilder()
@@ -46,12 +46,13 @@ actual object FrequencyDictionaryIO {
 	}
 
 	actual suspend fun readFdic(path: String): FrequencyDictionary {
-		val file = localCurrentDirVfs[path.toString()]
+		val file = localCurrentDirVfs[path]
 		val bytes = file.read()
 		return readFdic(bytes)
 	}
 
 	actual suspend fun readFdic(bytes: ByteArray): FrequencyDictionary {
+		// Read and validate the header first
 		val magicWordBytes = bytes.copyOfRange(0, MAGIC_WORD_SIZE.toInt())
 		val magicWord = magicWordBytes.toInt()
 		if (magicWord != MAGIC_WORD) {
@@ -65,13 +66,19 @@ actual object FrequencyDictionaryIO {
 		}
 
 		// Validate the format version
-		val formatVersionBytes = bytes.copyOfRange(MAGIC_WORD_SIZE.toInt(), FORMAT_VERSION_SIZE.toInt())
+		val formatVersionBytes = bytes.copyOfRange(
+			MAGIC_WORD_SIZE.toInt(),
+			MAGIC_WORD_SIZE.toInt() + FORMAT_VERSION_SIZE.toInt()
+		)
 		val formatVersion = formatVersionBytes[0]
 		if (formatVersion != FORMAT_VERSION) {
 			throw FdicFormatException("Format Version mismatch: was $formatVersion expected $FORMAT_VERSION")
 		}
 
-		val inputStream = bytes.uncompress(GZIP).openFastStream(offset = UNCOMPRESSED_HEADER_SIZE.toInt())
+		// Extract only the compressed portion and decompress it
+		val compressedBytes = bytes.copyOfRange(UNCOMPRESSED_HEADER_SIZE.toInt(), bytes.size)
+		val decompressedBytes = compressedBytes.uncompress(GZIP)
+		val inputStream = decompressedBytes.openFastStream()
 
 		var ngrams = inputStream.readVariableLong().toInt()
 		var termCount = inputStream.readVariableLong().toInt()
