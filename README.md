@@ -46,8 +46,9 @@ Try out the sample desktop application:
 In order to optimize for size on disk, and speed of loading and parsing, I made a little file format to encode the
 common plain text frequency dictionaries use with SymSpell style spell checkers.
 
-[fdic](Fdic/README.md) is both smaller on disk, and faster to load than either plain text or gzipped dictionaries. In some cases being
- 70% faster to load and parse, and more than 40% smaller on disk.
+[fdic](Fdic/README.md) is both smaller on disk, and faster to load than either plain text or gzipped dictionaries. In some cases being:
+- 70% faster to load and parse
+- More than 40% smaller on disk.
 
 There is a [CLI program](FdicCli/README.md) for producing `.fdic` files from a standard plain text frequency dictionary, as well as some 
 extension functions in an [addon library](SymSpellKtFdic/README.md) for loading them into a SymSpellKt SpellChecker object.
