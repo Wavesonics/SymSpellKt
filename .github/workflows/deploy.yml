@@ -52,8 +52,8 @@ jobs:
             os: windows-latest
           - target: :SymSpellKt:publishWasmJsPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: :SymSpellKt:publishWasmWasiPublicationToSonatypeRepository
-            os: ubuntu-latest
+#          - target: :SymSpellKt:publishWasmWasiPublicationToSonatypeRepository
+#            os: ubuntu-latest
           - target: :SymSpellKt:publishJsPublicationToSonatypeRepository
             os: ubuntu-latest
           - target: :SymSpellKt:publishKotlinMultiplatformPublicationToSonatypeRepository
