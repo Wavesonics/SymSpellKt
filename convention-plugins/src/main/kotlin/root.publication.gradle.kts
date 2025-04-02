@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
 	group = "com.darkrockstudios"
-	version = "3.3.1"
+	version = "3.3.2"
 }
 
 nexusPublishing {
