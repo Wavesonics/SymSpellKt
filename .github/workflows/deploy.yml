@@ -80,8 +80,8 @@ jobs:
             os: windows-latest
           - target: :SymSpellKtFdic:publishWasmJsPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: :SymSpellKtFdic:publishWasmWasiPublicationToSonatypeRepository
-            os: ubuntu-latest
+#          - target: :SymSpellKtFdic:publishWasmWasiPublicationToSonatypeRepository
+#            os: ubuntu-latest
           - target: :SymSpellKtFdic:publishJsPublicationToSonatypeRepository
             os: ubuntu-latest
           - target: :SymSpellKtFdic:publishKotlinMultiplatformPublicationToSonatypeRepository
@@ -108,8 +108,8 @@ jobs:
             os: windows-latest
           - target: :Fdic:publishWasmJsPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: :Fdic:publishWasmWasiPublicationToSonatypeRepository
-            os: ubuntu-latest
+#          - target: :Fdic:publishWasmWasiPublicationToSonatypeRepository
+#            os: ubuntu-latest
           - target: :Fdic:publishJsPublicationToSonatypeRepository
             os: ubuntu-latest
           - target: :Fdic:publishKotlinMultiplatformPublicationToSonatypeRepository
