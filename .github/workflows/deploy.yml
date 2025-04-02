@@ -32,31 +32,59 @@ jobs:
       matrix:
         include:
           # SymSpellKt module publications
-          - target: publishIosX64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishIosX64PublicationToSonatypeRepository
             os: macos-latest
-          - target: publishIosArm64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishIosArm64PublicationToSonatypeRepository
             os: macos-latest
-          - target: publishIosSimulatorArm64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishIosSimulatorArm64PublicationToSonatypeRepository
             os: macos-latest
-          - target: publishMacosX64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishMacosX64PublicationToSonatypeRepository
             os: macos-latest
-          - target: publishMacosArm64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishMacosArm64PublicationToSonatypeRepository
             os: macos-latest
-          - target: publishAndroidReleasePublicationToSonatypeRepository
+          - target: SymSpellKt:publishAndroidReleasePublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: publishJvmPublicationToSonatypeRepository
+          - target: SymSpellKt:publishJvmPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: publishLinuxX64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishLinuxX64PublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: publishMingwX64PublicationToSonatypeRepository
+          - target: SymSpellKt:publishMingwX64PublicationToSonatypeRepository
             os: windows-latest
-          - target: publishWasmJsPublicationToSonatypeRepository
+          - target: SymSpellKt:publishWasmJsPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: publishWasmWasiPublicationToSonatypeRepository
+          - target: SymSpellKt:publishWasmWasiPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: publishJsPublicationToSonatypeRepository
+          - target: SymSpellKt:publishJsPublicationToSonatypeRepository
             os: ubuntu-latest
-          - target: publishKotlinMultiplatformPublicationToSonatypeRepository
+          - target: SymSpellKt:publishKotlinMultiplatformPublicationToSonatypeRepository
+            os: ubuntu-latest
+
+          # SymSpellKtFdic module publications
+          - target: SymSpellKtFdic:publishIosX64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: SymSpellKtFdic:publishIosArm64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: SymSpellKtFdic:publishIosSimulatorArm64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: SymSpellKtFdic:publishMacosX64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: SymSpellKtFdic:publishMacosArm64PublicationToSonatypeRepository
+            os: macos-latest
+          - target: SymSpellKtFdic:publishAndroidReleasePublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: SymSpellKtFdic:publishJvmPublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: SymSpellKtFdic:publishLinuxX64PublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: SymSpellKtFdic:publishMingwX64PublicationToSonatypeRepository
+            os: windows-latest
+          - target: SymSpellKtFdic:publishWasmJsPublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: SymSpellKtFdic:publishWasmWasiPublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: SymSpellKtFdic:publishJsPublicationToSonatypeRepository
+            os: ubuntu-latest
+          - target: SymSpellKtFdic:publishKotlinMultiplatformPublicationToSonatypeRepository
             os: ubuntu-latest
 
           # Fdic module publications
