@@ -501,7 +501,7 @@ class SymSpell(
 							) {
 								continue
 							}
-							distance = if (maxEditDistance2 <= 2) {
+							distance = if (spellCheckSettings.preferQuickDistanceOnSmallEditDistance && maxEditDistance2 <= 2) {
 								// Try quick distance first for small edit distances
 								quickDistance(curPhrase, suggestion)
 									?: stringDistance.getDistance(curPhrase, suggestion, maxEditDistance2)

@@ -56,6 +56,12 @@ data class SpellCheckSettings(
 	 */
 	val editFactor: Double = 0.3,
 
+	/**
+	 * As a performance optimization we prefer a quick distance calculation for small maxEditDistances.
+	 * This could lead in some edgecases to a wrong result, but in most cases it leads to better performance.
+	 */
+	val preferQuickDistanceOnSmallEditDistance: Boolean = true,
+
 	val doKeySplit: Boolean = true,
 
 	val keySplitRegex: Regex = "\\s+".toRegex(),
