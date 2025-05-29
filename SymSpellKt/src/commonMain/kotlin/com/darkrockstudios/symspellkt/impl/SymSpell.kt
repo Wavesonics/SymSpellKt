@@ -324,7 +324,7 @@ class SymSpell(
 			curPhrase = curPhrase.lowercase()
 		}
 		var suggestionFrequency: Double
-		val consideredDeletes: MutableSet<String> = HashSet()
+		val consideredDeletes: MutableSet<String> = HashSet(phraseLen * 2)
 		val consideredSuggestions: MutableSet<String> = HashSet()
 		val suggestionItems: MutableList<SuggestionItem> = ArrayList(spellCheckSettings.topK)
 
@@ -377,7 +377,7 @@ class SymSpell(
 		consideredSuggestions.add(curPhrase)
 		var maxEditDistance2 = maxEditDistance
 		var phrasePrefixLen: Int = phraseLen
-		val candidates: MutableList<String> = ArrayList()
+		val candidates: MutableList<String> = ArrayDeque<String>(phraseLen)
 
 		if (phraseLen > spellCheckSettings.prefixLength) {
 			phrasePrefixLen = spellCheckSettings.prefixLength
@@ -417,10 +417,12 @@ class SymSpell(
 			val deletes = dictionary.getDeletes(candidate)
 			if (deletes != null && deletes.size > 0) {
 				for (suggestion in deletes) {
+					val suggestionLength = suggestion.length
+
 					if (filterOnEquivalance(suggestion, curPhrase, candidate, maxEditDistance2)
 						||
 						filterOnPrefixLen(
-							suggestion.length, spellCheckSettings.prefixLength,
+							suggestionLength, spellCheckSettings.prefixLength,
 							phrasePrefixLen, candidate.length, maxEditDistance2
 						)
 					) {
@@ -455,11 +457,11 @@ class SymSpell(
 						phrase (phrase_len<=max_edit_distance &&
 						suggestion_len<=max_edit_distance)
 			*/
-						distance = max(phraseLen.toDouble(), suggestion.length.toDouble())
+						distance = max(phraseLen.toDouble(), suggestionLength.toDouble())
 						if (distance > maxEditDistance2 || !consideredSuggestions.add(suggestion)) {
 							continue
 						}
-					} else if (suggestion.length == 1) {
+					} else if (suggestionLength == 1) {
 						distance =
 							(if (curPhrase.indexOf(suggestion[0]) < 0) phraseLen else phraseLen - 1).toDouble()
 						if (distance > maxEditDistance2 || !consideredSuggestions.add(suggestion)) {
@@ -486,7 +488,7 @@ class SymSpell(
 							if (verbosity != Verbosity.All
 								&& !deleteInSuggestionPrefix(
 									candidate, candidateLen,
-									suggestion, suggestion.length
+									suggestion, suggestionLength
 								) || !consideredSuggestions
 									.add(suggestion)
 							) {
@@ -531,8 +533,10 @@ class SymSpell(
 				}
 
 				for (i in 0 until candidateLen) {
-					val delete =
-						candidate.substring(0, i) + candidate.substring(i + 1, candidateLen)
+					val delete = StringBuilder(candidateLen - 1)
+						.append(candidate, 0, i)
+						.append(candidate, i + 1, candidateLen)
+						.toString()
 					if (consideredDeletes.add(delete)) {
 						candidates.add(delete)
 					}
@@ -618,10 +622,13 @@ class SymSpell(
 		suggestion: String,
 		candidate: String
 	): Boolean {
-		return (phrase.length - maxEditDistance == candidate.length.toDouble()
+		val suggestionLength = suggestion.length
+		val phraseLength = phrase.length
+
+		return (phraseLength - maxEditDistance == candidate.length.toDouble()
 				&& (min > 1
-				&& phrase.substring(phrase.length + 1 - min) != suggestion.substring(suggestion.length + 1 - min))
-				|| (min > 0 && phrase[phrase.length - min] != suggestion[suggestion.length - min] && phrase[phrase.length - min - 1] != suggestion[suggestion.length - min] && phrase[phrase.length - min] != suggestion[suggestion.length - min - 1]))
+				&& phrase.substring(phraseLength + 1 - min) != suggestion.substring(suggestionLength + 1 - min))
+				|| (min > 0 && phrase[phraseLength - min] != suggestion[suggestionLength - min] && phrase[phraseLength - min - 1] != suggestion[suggestionLength - min] && phrase[phraseLength - min] != suggestion[suggestionLength - min - 1]))
 	}
 
 	/**
